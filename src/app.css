@@ -1,0 +1,42 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	box-sizing: border-box;
+}
+
+#root > div:first-of-type {
+	height: calc(100vh - 73px);
+}
+
+:root {
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	overscroll-behavior: contain;
+}
+
+canvas {
+	height: calc(100vh - 73px);
+}
+
+:root {
+	--error: #ff244c;
+	--yellow: #ffde34;
+	--orange: #fa0;
+	--pink: #fc66ca;
+	--purple: #9f6eff;
+	--blue: #00aaff;
+	--ross: #4200ff;
+	--green: #00ffaa;
+	--white: #ffffff;
+	--black: #101013;
+}

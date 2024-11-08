@@ -1,0 +1,10 @@
+dist
+build
+.vscode
+static
+node_modules
+migrations
+.svelte-kit
+scripts
+package-lock.json
+*.log

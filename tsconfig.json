@@ -1,0 +1,42 @@
+{
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["DOM", "DOM.Iterable", "ESNext", "ES2015"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"esModuleInterop": false,
+		"allowSyntheticDefaultImports": true,
+		"strict": false,
+		"forceConsistentCasingInFileNames": false,
+		"resolveJsonModule": true,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"isolatedModules": true,
+		"noEmit": true,
+		"jsx": "react-jsx",
+		"experimentalDecorators": true,
+		"baseUrl": "./",
+		"paths": {
+			"~/*": ["./src/*"],
+			"lib/*": ["./src/lib/*"],
+			"components": ["./src/lib/components"],
+			"modules": ["./src/modules"],
+			"stores": ["./src/lib/stores"],
+			"types": ["./src/lib/types"],
+			"styles": ["./src/lib/styles"]
+		},
+
+		"typeRoots": ["./node_modules/@types", "src/types/global.d.ts"]
+	},
+	"include": ["src", "src/lib/types/global.d.ts"]
+}
+
+// "@theatre/core": "^0.7.2",
+// "@theatre/core": "^0.7.2",
+// "@threlte/core": "7.3.1",
+// "@threlte/extras": "8.12.0",
+// "@threlte/flex": "1.0.3",
+// "@threlte/rapier": "2.0.1",
+// "@threlte/theatre": "3.0.0",
+// "@threlte/xr": "0.1.4",

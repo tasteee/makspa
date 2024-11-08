@@ -1,0 +1,10 @@
+We are using THRELTE + SVELTE v5.
+THAT MEANS we use RUNES like $state, $props, $effect, $derived, etc.
+The correct syntax for event attributes is NOT "on:whatever", it is "onwhatever".
+Do NOT destructure props, or objects, or anything. Always use dot notation to get values.
+Write CLEAN, COMPOSIBLE, FUNCTIONAL, EXPLICIT CODE.
+
+Use SVELTE 5 with RUNES like $state, $props, $effect, $derived, etc.
+Use SVELTE 5 with RUNES like $state, $props, $effect, $derived, etc.
+BE SURE TO USE THE CORRECT SYNTAX AND NOT SVELTE 4 SYNTAX.
+https://svelte.dev/docs/svelte/overview
