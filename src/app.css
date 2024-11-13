@@ -11,7 +11,7 @@
 }
 
 #root > div:first-of-type {
-	height: calc(100vh - 73px);
+	height: calc(100vh - 0px);
 }
 
 :root {
@@ -25,7 +25,7 @@
 }
 
 canvas {
-	height: calc(100vh - 73px);
+	height: calc(100vh - 0px);
 }
 
 :root {

@@ -22,12 +22,14 @@ export const store = $state({
 
 	items: [],
 	selectedItemUid: null,
+	transformItemMode: 'translate',
 
 	models,
 	artists,
 	spaces
 })
 
+const unmatchUid = (uid: string) => (item: any) => item.uid !== uid
 const matchUid = (uid: string) => (item: any) => item.uid === uid
 const findItem = (uid: string) => store.items.find(matchUid(uid))
 const findArtist = (uid: string) => store.artists.find(matchUid(uid))
@@ -55,19 +57,25 @@ const replaceWhere = (predicate: (item: any) => boolean) => (replacement: any) =
 	if (index !== -1) store.items[index] = replacement
 }
 
-// [SECTION] Item
+// [SECTION]
+
+const setTransformItemMode = (value: string) => {
+	console.log('setTransformItemMode', value)
+	store.transformItemMode = value
+}
 
 // [FUNCTION] updateItem
 
 const updateItem = (uid: string, update: any) => {
-	const item = findItem(uid)
-	const updatedItem = { ...item, ...update }
-	console.log({ updatedItem })
-	// replaceWhere(matchUid(uid))(updatedItem)
 	store.items = store.items.map((item) => {
-		if (item.uid === uid) return updatedItem
+		if (item.uid === uid) return { ...item, ...update }
 		return item
 	})
+}
+
+const removeItem = (uid: string) => {
+	store.items = store.items.filter(unmatchUid(uid))
+	deselectItem()
 }
 
 // [FUNCTION] selectItem
@@ -76,10 +84,18 @@ const selectItem = (uid: string) => {
 	store.selectedItemUid = uid
 }
 
-// [FUNCTION] deselectItems
+// [FUNCTION] deselectItem
 
-const deselectItems = () => {
+const deselectItem = () => {
 	store.selectedItemUid = null
+	store.transformItemMode = 'translate'
+}
+
+// [FUNCTION] addItem
+
+const addItem = (item: any) => {
+	store.items = [...store.items, item]
+	selectItem(item.uid)
 }
 
 const isSelectionActive = () => !!store.selectedItemUid
@@ -107,13 +123,13 @@ async function loadItems(uid: string) {
 }
 
 function addItemToSpace(uid: string) {
-	console.log('addItemToSpace', uid)
 	const model = findModel(uid)
 	const item = { ...model, ...DEFAULT_ITEM } as any
+	item.position_y = item.size_y / 100
 	item.uid = nanoid()
 	item.model = uid
-	store.items = [...store.items, item]
-	selectItem(item.uid)
+	console.log('addItemToSpace', item.uid, item)
+	addItem(item)
 }
 
 function enterSpace(uid: string) {
@@ -123,6 +139,8 @@ function enterSpace(uid: string) {
 
 const final = {
 	addItemToSpace,
+	addItem,
+	removeItem,
 	findItem,
 	findArtist,
 	findSpace,
@@ -136,8 +154,9 @@ const final = {
 	enterSpace,
 	isSelectionActive,
 	selectItem,
-	deselectItems,
+	deselectItem,
 	checkItemSelected,
+	setTransformItemMode,
 
 	get state() {
 		return store

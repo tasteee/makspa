@@ -4,24 +4,9 @@
 	import { ChevronDownOutline } from 'flowbite-svelte-icons'
 </script>
 
-<TableHeader class="MainBar" headerType="search">
+<TableHeader divOuterClass="MainBar" headerType="search">
 	<Search slot="search" size="md" />
-	<Button>
-		<svg
-			class="mr-2 h-3.5 w-3.5"
-			fill="currentColor"
-			viewbox="0 0 20 20"
-			xmlns="http://www.w3.org/2000/svg"
-			aria-hidden="true"
-		>
-			<path
-				clip-rule="evenodd"
-				fill-rule="evenodd"
-				d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-			/>
-		</svg>
-		Add product
-	</Button>
+	<Button>Add product</Button>
 	<Button color="light">
 		Actions<ChevronDownOutline />
 	</Button>
@@ -64,15 +49,20 @@
 </TableHeader>
 
 <style>
-	.MainBar {
+	:global(.MainBar) {
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		width: 100vw;
 		height: 72px;
-		box-shadow:
-			0 0 60px 30px #fff,
-			0 0 100px 60px #f0f,
-			0 0 140px 90px #0ff;
+		box-shadow: var(--gradientC);
+	}
+
+	:global(:root) {
+		--gradientA: 0 0 60px 30px #fff, 0 0 100px 60px #f0f, 0 0 140px 90px #0ff;
+		--gradientB: 0 0 60px 30px #f0f, 0 0 100px 60px #0ff, 0 0 140px 90px #fff;
+		--gradientC: 0 0 60px 30px #fff, 0 0 100px 60px #fff, 0 0 140px 90px #fff;
+		--gradientD: 0 0 60px 30px #fff, 0 0 100px 60px #fff, 0 0 140px 90px #fff;
+		--gradientE: 0 0 60px 30px #fff, 0 0 100px 60px #fff, 0 0 140px 90px #fff;
 	}
 </style>

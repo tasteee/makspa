@@ -55,11 +55,12 @@
 	}
 
 	.ModelGallery {
+		user-select: none;
 		margin: 0 auto;
 		display: flex;
 		gap: 12px;
 		position: absolute;
-		bottom: 73px;
+		bottom: 100px;
 		left: 0px;
 		width: 100vw;
 		height: 80px;

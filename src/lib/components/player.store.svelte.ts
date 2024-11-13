@@ -15,29 +15,28 @@ let directionalKeysPressed = $state({
 	w: false,
 	a: false,
 	s: false,
-	d: false,
+	d: false
 })
 
 const handleKeyDown = (event: KeyboardEvent) => {
 	const key = event.key.toLowerCase()
-	if (MOVE_KEYS.includes(key)) {
-		directionalKeysPressed[key] = true
-	}
-	if (key === ' ' && isOnGround) {
-		jump()
-	}
+	const isSpace = key === ' '
+	const isMoveKey = MOVE_KEYS.includes(key)
+	const isJump = isSpace && isOnGround
+	if (isMoveKey) directionalKeysPressed[key] = true
+	if (isJump) jump()
 }
 
 const handleKeyUp = (event: KeyboardEvent) => {
 	const key = event.key.toLowerCase()
-	if (MOVE_KEYS.includes(key)) {
-		directionalKeysPressed[key] = false
-	}
+	const isMoveKey = MOVE_KEYS.includes(key)
+	if (isMoveKey) directionalKeysPressed[key] = false
 }
 
 const jump = () => {
 	if (rigidBody && isOnGround) {
-		rigidBody.applyImpulse({ x: 0, y: JUMP_FORCE, z: 0 }, true)
+		const impulse = new Vector3(0, JUMP_FORCE, 0)
+		rigidBody.applyImpulse(impulse, true)
 		isOnGround = false
 	}
 }
@@ -78,7 +77,7 @@ export const usePlayerStore = () => {
 			const raycastResult = rigidBody.world.castRay(
 				{ x: translation.x, y: translation.y, z: translation.z },
 				{ x: translation.x, y: translation.y - 0.6, z: translation.z },
-				true,
+				true
 			)
 			isOnGround = raycastResult !== null
 		}
@@ -110,6 +109,6 @@ export const usePlayerStore = () => {
 		set rigidBody(value: RigidBody) {
 			console.log('setting ridigBody ', value)
 			rigidBody = value
-		},
+		}
 	}
 }

@@ -42,7 +42,7 @@
 		"@dimforge/rapier3d-compat": "^0.14.0",
 		"@neondatabase/serverless": "^0.10.3",
 		"@threlte/core": "^8.0.0-next.30",
-		"@threlte/extras": "^9.0.0-next.38",
+		"@threlte/extras": "^9.0.0-next.39",
 		"@threlte/flex": "^2.0.0-next.12",
 		"@threlte/rapier": "^3.0.0-next.16",
 		"@threlte/theatre": "^3.0.0-next.9",
@@ -53,6 +53,7 @@
 		"koxy-js": "^1.1.1",
 		"lucide-svelte": "^0.454.0",
 		"svelte-carousel": "^1.0.25",
+		"svelte-hero-icons": "^5.2.0",
 		"svelte-motion": "^0.12.2",
 		"tailwind-merge": "^2.5.4",
 		"three": "^0.170.0"

@@ -1,5 +1,9 @@
-<script>
-	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
+<script lang="ts">
+	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte'
+	import { Drawer, Button, CloseButton, Label, Input, Textarea } from 'flowbite-svelte'
+	import { sineIn } from 'svelte/easing'
+	import PanelSection from './PanelSection.svelte'
+
 	import {
 		ChartPieSolid,
 		GridSolid,
@@ -11,106 +15,129 @@
 		FireSolid,
 		BookSolid,
 		RestoreWindowOutline,
-		LifeSaverSolid
-	} from 'flowbite-svelte-icons';
+		LifeSaverSolid,
+		HomeSolid,
+		HeartSolid,
+		BuildingSolid,
+		UserCircleSolid,
+		CogSolid
+	} from 'flowbite-svelte-icons'
+
+	const panelParams = {
+		x: -320,
+		duration: 200,
+		easing: sineIn
+	}
+
+	let activePanel = $state('')
+	let isHomePanelOpen = $derived(activePanel === 'home')
+	let isSpacePanelOpen = $derived(activePanel === 'space')
+	let isVisitorsPanelOpen = $derived(activePanel === 'visitors')
+	let isShopPanelOpen = $derived(activePanel === 'shop')
+	let isHelpPanelOpen = $derived(activePanel === 'help')
+	let isSettingsPanelOpen = $derived(activePanel === 'settings')
+	let isAccountPanelOpen = $derived(activePanel === 'account')
+
+	const closePanel = () => {
+		console.log('closing panel')
+		activePanel = ''
+	}
+
+	const setActivePanel = (panel: string) => () => {
+		if (activePanel === panel) return closePanel()
+		console.log('setting active panel', panel)
+		activePanel = panel
+	}
 </script>
 
-<Sidebar class="SideBar absolute left-[24px] top-[24px]">
-	<SidebarWrapper>
+{#snippet menuItem(label, Icon)}
+	<SidebarItem class="SideBarItem" onclick={setActivePanel(label)}>
+		<svelte:fragment slot="icon">
+			<Icon size={48} />
+		</svelte:fragment>
+	</SidebarItem>
+{/snippet}
+
+<Drawer
+	class="SideBarPanel"
+	activateClickOutside={false}
+	backdrop={false}
+	transitionType="fly"
+	transitionParams={panelParams}
+	hidden={!isHomePanelOpen}
+>
+	<div class="InnerPanelContainer">
+		<h5 id="drawer-label" class="PanelTitle">
+			<HomeSolid class="me-2.5 h-5 w-5" />Home
+		</h5>
+		<CloseButton on:click={() => (activePanel = '')} class="CloseButton" />
+	</div>
+	<PanelSection />
+	<PanelSection />
+</Drawer>
+
+<Sidebar class="SideBar">
+	<SidebarWrapper class="SideBarWrapper">
 		<SidebarGroup>
-			<SidebarItem label="Dashboard">
-				<svelte:fragment slot="icon">
-					<ChartPieSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Kanban" spanClass="flex-1 ms-3 whitespace-nowrap">
-				<svelte:fragment slot="icon">
-					<GridSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-				<svelte:fragment slot="subtext">
-					<span
-						class="ms-3 inline-flex items-center justify-center rounded-full bg-gray-200 px-2 text-sm font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-					>
-						Pro
-					</span>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Inbox" spanClass="flex-1 ms-3 whitespace-nowrap">
-				<svelte:fragment slot="icon">
-					<MailBoxSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-				<svelte:fragment slot="subtext">
-					<span
-						class="ms-3 inline-flex h-3 w-3 items-center justify-center rounded-full bg-primary-200 p-3 text-sm font-medium text-primary-600 dark:bg-primary-900 dark:text-primary-200"
-					>
-						3
-					</span>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Users">
-				<svelte:fragment slot="icon">
-					<UserSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Products">
-				<svelte:fragment slot="icon">
-					<ShoppingBagSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Sign In">
-				<svelte:fragment slot="icon">
-					<ArrowRightToBracketOutline
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Sign Up">
-				<svelte:fragment slot="icon">
-					<EditOutline
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
+			{@render menuItem('home', HomeSolid)}
+			{@render menuItem('space', LifeSaverSolid)}
+			{@render menuItem('visitors', UserSolid)}
+			{@render menuItem('shop', BuildingSolid)}
 		</SidebarGroup>
 		<SidebarGroup border>
-			<SidebarItem label="Upgrade to Pro">
-				<svelte:fragment slot="icon">
-					<FireSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Documentation">
-				<svelte:fragment slot="icon">
-					<BookSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Components">
-				<svelte:fragment slot="icon">
-					<RestoreWindowOutline
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
-			<SidebarItem label="Help">
-				<svelte:fragment slot="icon">
-					<LifeSaverSolid
-						class="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-					/>
-				</svelte:fragment>
-			</SidebarItem>
+			{@render menuItem('help', LifeSaverSolid)}
+			{@render menuItem('settings', CogSolid)}
+			{@render menuItem('account', UserCircleSolid)}
 		</SidebarGroup>
 	</SidebarWrapper>
 </Sidebar>
+
+<style>
+	:global(.SideBar) {
+		outline: 2px solid var(--black);
+		border-radius: 4px;
+		position: absolute;
+		left: 24px;
+		top: 24px;
+		height: calc(100vh - 256px);
+		width: 64px;
+		z-index: 105;
+	}
+
+	:global(.SideBarWrapper) {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	:global(.SideBarItem) {
+	}
+
+	:global(.InnerPanelContainer) {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	:global(.PanelTitle) {
+		display: flex;
+		align-items: center;
+	}
+
+	:global(.CloseButton) {
+		margin-bottom: 16px;
+	}
+
+	:global(.SideBarPanel) {
+		height: calc(100vh - 256px);
+		margin-left: 100px;
+		margin-top: 24px;
+		outline: 2px solid var(--black);
+		border-radius: 4px;
+	}
+
+	:global(.PanelTextBlock) {
+		margin-bottom: 12px;
+	}
+</style>

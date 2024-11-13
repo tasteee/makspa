@@ -9,20 +9,22 @@
 	} from 'flowbite-svelte-icons'
 </script>
 
-<Skeleton class="py-4" />
-<ImagePlaceholder class="pb-20" />
+<!-- <Skeleton class="py-4" /> -->
+<!-- <ImagePlaceholder class="pb-20" /> -->
 
-<BottomNav position="absolute" navType="application" classInner="grid-cols-5">
-	<BottomNavItem btnName="Home" appBtnPosition="left">
-		<HomeSolid
-			class="mb-1 h-6 w-6 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-primary-500"
-		/>
+<BottomNav
+	class="BottomNav"
+	classActive="activeMenuItem"
+	position="absolute"
+	navType="application"
+	classInner="grid-cols-5"
+>
+	<BottomNavItem class="activeMenuItem" btnName="Home" appBtnPosition="left">
+		<HomeSolid class="icon" />
 		<Tooltip arrow={false}>Home</Tooltip>
 	</BottomNavItem>
 	<BottomNavItem btnName="Wallet" appBtnPosition="middle">
-		<WalletSolid
-			class="mb-1 h-6 w-6 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-primary-500"
-		/>
+		<WalletSolid class="icon" />
 		<Tooltip arrow={false}>Wallet</Tooltip>
 	</BottomNavItem>
 	<div class="flex items-center justify-center">
@@ -36,15 +38,30 @@
 		</BottomNavItem>
 	</div>
 	<BottomNavItem btnName="Settings" appBtnPosition="middle">
-		<AdjustmentsVerticalOutline
-			class="mb-1 h-6 w-6 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-primary-500"
-		/>
+		<AdjustmentsVerticalOutline class="icon" />
 		<Tooltip arrow={false}>Settings</Tooltip>
 	</BottomNavItem>
 	<BottomNavItem btnName="Profile" appBtnPosition="right">
-		<UserCircleSolid
-			class="mb-1 h-6 w-6 text-gray-500 group-hover:text-primary-600 dark:text-gray-400 dark:group-hover:text-primary-500"
-		/>
+		<UserCircleSolid class="icon" />
 		<Tooltip arrow={false}>Profile</Tooltip>
 	</BottomNavItem>
 </BottomNav>
+
+<style>
+	:global(.BottomNav) {
+		bottom: 0;
+		box-shadow: var(--gradientA);
+		outline: 1px solid black;
+	}
+
+	:global(.activeMenuItem) {
+		opacity: 0;
+	}
+
+	:global(.icon) {
+		margin-bottom: 0.25rem;
+		width: 1.5rem;
+		height: 1.5rem;
+		color: #6b7280;
+	}
+</style>

@@ -11,12 +11,6 @@
 
 	type PropsT = { uid: string }
 	const props: PropsT = $props()
-
-	$effect(() => {
-		// store.loadSpace(props.uid)
-		console.log('rendering space', props.uid)
-		console.log('space items: ', [...store.state.items])
-	})
 </script>
 
 <T.Group>

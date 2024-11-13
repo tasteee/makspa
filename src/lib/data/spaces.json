@@ -6,10 +6,11 @@
 		"artists": ["hannah"],
 		"color": "#9f6eff",
 		"is_public": true,
+		"floorColor": "#333333",
 		"thumbnail": "https://i.pinimg.com/474x/65/9d/5f/659d5fd2b1f5ce399fd6f15ac7b3c02b.jpg",
-		"size_x": "24.00",
+		"size_x": "64.00",
 		"size_y": "12.00",
-		"size_z": "24.00",
+		"size_z": "64.00",
 		"visits": 0,
 		"items": [],
 		"created_at": "2024-10-29T01:00:34.100Z"

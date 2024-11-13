@@ -13,7 +13,7 @@
 		display: flex;
 		gap: 12px;
 		position: absolute;
-		top: 0px;
+		bottom: 0px;
 		left: 0px;
 		width: 100vw;
 		height: 32px;
