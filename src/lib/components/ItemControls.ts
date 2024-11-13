@@ -240,7 +240,7 @@ class ControlEvents extends Object3D {
 	}
 
 	onPointerDown(event: PointerEvent) {
-		if (this.debug) console.log('onPointerDown')
+		// if (this.debug) console.log('onPointerDown')
 		this.isTap = true
 		this.domElement.setPointerCapture(event.pointerId)
 		const pointer = this.getPointer(event)
@@ -281,12 +281,12 @@ class ControlEvents extends Object3D {
 			this.current.move(this.startPointer, pointer, this.camera, this.ipoint)
 		}
 		this.startPointer = pointer
-		if (this.debug) console.log('onPointerMove')
+		// if (this.debug) console.log('onPointerMove')
 		this.isTap = false
 	}
 
 	onTap(event: PointerEvent) {
-		if (this.debug) console.log('onTap')
+		// if (this.debug) console.log('onTap')
 	}
 
 	intersect(pointer: Vector3) {

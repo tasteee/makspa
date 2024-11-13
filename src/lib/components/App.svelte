@@ -10,24 +10,26 @@
 	import store from '../stores/store.svelte'
 	import TransformModeToggle from './interface/TransformModeToggle.svelte'
 	import CameraZoomInput from './Camera/CameraZoomInput.svelte'
+	import ItemPanel from './interface/ItemPanel.svelte'
 
 	onMount(() => {
 		keyboard.registerListeners()
 	})
 </script>
 
-<Canvas>
+<Canvas background="#010101">
 	<World>
 		<Scene />
 	</World>
 </Canvas>
 
-{#if !!store.state.selectedItemUid}
+{#if !!store.selectedItemUid}
 	<TransformModeToggle />
 {/if}
 
 <ModelsGallery />
 <BottomNav />
-<CameraZoomInput />
+<!-- <CameraZoomInput /> -->
 <SideBar />
+<ItemPanel />
 <!-- <InputIndicators /> -->

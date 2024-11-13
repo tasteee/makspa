@@ -8,7 +8,7 @@
 		cameraStore.saveCamera('thirdPerson', camera)
 	})
 
-	const configuration = cameraStore.state.thirdPerson
+	const configuration = cameraStore.thirdPerson
 	let camera = $state(null)
 	let controls = $state(null)
 </script>

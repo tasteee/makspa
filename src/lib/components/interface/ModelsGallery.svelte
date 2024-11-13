@@ -2,14 +2,14 @@
 	import { ArrowLeft, ArrowRight, CirclePlus, Heart } from 'lucide-svelte'
 	import store from '../../stores/store.svelte'
 
-	const galleryItems = store.state.models.map((model) => {
+	const galleryItems = store.models.map((model) => {
 		return {
 			alt: model.name,
 			src: model.thumbnail,
 			uid: model.uid,
 			addItem: () => {
 				console.log('adding item based on model uid:', model.uid)
-				store.addItemToSpace(model.uid)
+				store.addItemToSpace(model)
 			}
 		}
 	})

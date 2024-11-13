@@ -48,6 +48,7 @@ type ItemT = {
 	glow_position_x: number
 	glow_position_y: number
 	glow_position_z: number
+	modelUrl: string
 }
 
 type SpaceT = {

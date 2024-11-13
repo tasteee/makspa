@@ -107,7 +107,7 @@ export const usePlayerStore = () => {
 		},
 
 		set rigidBody(value: RigidBody) {
-			console.log('setting ridigBody ', value)
+			// console.log('setting ridigBody ', value)
 			rigidBody = value
 		}
 	}

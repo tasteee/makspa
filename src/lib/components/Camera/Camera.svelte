@@ -1,23 +1,23 @@
 <script lang="ts">
-	import cameraStore from './camera.store.svelte'
 	import IsometricCamera from './IsometricCamera.svelte'
 	import ThirdPersonCamera from './ThirdPersonCamera.svelte'
 	import FirstPersonCamera from './FirstPersonCamera.svelte'
 	import Player from './Player.svelte'
+	import cameraStore from './camera.store.svelte'
 </script>
 
-{#if cameraStore.state.activeCamera === 'isometric'}
+{#if cameraStore.activeCamera === 'isometric'}
 	<IsometricCamera />
 {/if}
 
-{#if cameraStore.state.activeCamera === 'thirdPerson'}
+{#if cameraStore.activeCamera === 'thirdPerson'}
 	<ThirdPersonCamera />
 {/if}
 
-{#if cameraStore.state.activeCamera === 'firstPerson'}
+{#if cameraStore.activeCamera === 'firstPerson'}
 	<Player />
 {/if}
 
-{#if cameraStore.state.activeCamera === 'pointerLock'}
+{#if cameraStore.activeCamera === 'pointerLock'}
 	<Player />
 {/if}

@@ -17,7 +17,7 @@
 	<Camera />
 	<Lighting />
 
-	{#if store.state.activeSpaceUid}
-		<Space uid={store.state.activeSpaceUid} />
+	{#if store.activeSpaceUid}
+		<Space uid={store.activeSpaceUid} />
 	{/if}
 </T.Group>

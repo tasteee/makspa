@@ -4,7 +4,7 @@
 	import { OrbitControls } from '@threlte/extras'
 	import cameraStore from './camera.store.svelte'
 
-	const configuration = cameraStore.state.isometric
+	const configuration = cameraStore.isometric
 	let camera = $state(null)
 	let controls = $state(null)
 

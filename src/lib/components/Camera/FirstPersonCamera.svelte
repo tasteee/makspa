@@ -28,7 +28,7 @@
 		const key = getKey(event)
 		pressedKeys.shift = event.shiftKey
 		pressedKeys[key] = true
-		console.log(pressedKeys)
+		// console.log(pressedKeys)
 	}
 
 	function handleKeyUp(event: KeyboardEvent) {

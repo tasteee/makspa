@@ -1,126 +1,155 @@
-<script>
+<script lang="ts">
 	import { T } from '@threlte/core'
 	import { TransformControls } from '@threlte/extras'
 	import { useGltf, useSuspense } from '@threlte/extras'
 	import store from '../stores/store.svelte'
 	import { windowEvent } from '../modules/windowEvent'
+	import BoundingBox from './BoundingBox.svelte'
 	import { Box3, Vector3 } from 'three'
 	import * as THREE from 'three'
+	import { getNegativeAdjustmentToZeroY } from '../modules/three.helpers'
 
-	let { uid } = $props()
-	let scene = $state(null)
-	let item = $derived(store.findItem(uid))
-	let isSelected = $derived(store.checkItemSelected(uid))
-	let model = $state(null)
+	type PropsT = {
+		uid: string
+	}
+
+	let props: PropsT = $props()
+
+	let item = $derived(store.findItem(props.uid))
+	let isSelected = $derived(store.checkIsItemSelected(props.uid))
+
+	let mesh = $state(null)
 	let controls = $state(null)
+
 	const suspend = useSuspense()
-	let boundingBoxSize = $state(new Vector3()) // to store true size
-	let offsetY = $state(item.size_y / 50) // to correct vertical positioning
-	const gltfUrl = item.file + `?uid=${uid}`
+	const gltfUrl = item.file + `?uid=${props.uid}`
 	const gltf = suspend(useGltf(gltfUrl))
 
 	$effect(() => {
-		if (!model) return
-		;(async () => {
-			const { scene } = await gltf
-			console.log('scene', scene)
-
-			// Center the model
-			const box = new THREE.Box3().setFromObject(scene)
-			const center = box.getCenter(new THREE.Vector3())
-			scene.position.sub(center)
-
-			// Move the scene up so it sits on the floor
-			const boundingBox = new THREE.Box3().setFromObject(scene)
-			const sceneHeight = boundingBox.max.y - boundingBox.min.y
-			scene.position.y += sceneHeight / 2
-		})()
+		if (!mesh) return
+		const adjustment = getNegativeAdjustmentToZeroY(mesh)
+		if (adjustment === 0) return
+		const newPositionY = item.position_y + adjustment
+		store.updateItem(props.uid, { position_y: newPositionY })
 	})
 
-	let position = $derived([item.position_x, offsetY, item.position_z])
+	$effect(() => {
+		if (!mesh) return
+		const THRESHOLD = 5
+		const rotation = mesh.rotation.y
+		const rotationDegrees = THREE.MathUtils.radToDeg(rotation)
+		const alignmentCase0 = rotationDegrees % 90 < THRESHOLD
+		const alignmentCase1 = 90 - (rotationDegrees % 90) < THRESHOLD
+		const isAligned = alignmentCase0 || alignmentCase1
+
+		if (!isAligned) {
+			const nearestRightAngle = Math.round(rotationDegrees / 90) * 90
+			const correctedRotation = THREE.MathUtils.degToRad(nearestRightAngle)
+			store.updateItem(props.uid, { rotation_y: correctedRotation })
+		}
+	})
+
+	let position = $derived([item.position_x, item.position_y, item.position_z])
 	let rotation = $derived([item.rotation_x, item.rotation_y, item.rotation_z])
 	let scale = $derived([item.scale_x, item.scale_y, item.scale_z])
 	let size = $derived([item.size_x, item.size_y, item.size_z])
-	let shouldRenderControls = $derived(isSelected && model)
+	let shouldRenderControls = $derived(isSelected && mesh)
 
+	// event handler for when the item is clicked
 	function handleClick(event) {
 		event.stopPropagation()
-		store.selectItem(uid)
+		store.selectItem(props.uid)
 	}
 
+	// for when the transform controls are used
+	// to translate the mesh
 	function handleMove(event) {
 		const position = event.target.object.position
-		store.updateItem(uid, {
+		store.updateItem(props.uid, {
 			position_x: position.x,
 			position_y: position.y,
 			position_z: position.z
 		})
 	}
 
+	// for when the transform controls are used
+	// to rotate the mesh
 	function handleRotate(event) {
 		const rotation = event.target.object.rotation
-		store.updateItem(uid, {
+		store.updateItem(props.uid, {
 			rotation_x: rotation.x,
 			rotation_y: rotation.y,
 			rotation_z: rotation.z
 		})
 	}
 
+	// for when the transform controls are used
+	// to scale the mesh
 	function handleScale(event) {
 		const scale = event.target.object.scale
-		store.updateItem(uid, {
+		store.updateItem(props.uid, {
 			scale_x: scale.x,
 			scale_y: scale.y,
 			scale_z: scale.z
 		})
 	}
 
+	// transform mode specific event handlers for
+	// onobjectchange event from transform controls
 	const handlers = {
 		translate: handleMove,
 		rotate: handleRotate,
 		scale: handleScale
 	}
 
+	// event handler for when the transform controls are used
+	// to translate, rotate or scale the mesh
 	function onObjectChange(event) {
-		const handler = handlers[store.state.transformItemMode]
+		const handler = handlers[store.transformItemMode]
 		handler(event)
 	}
 
+	// event handler to delete or deselect item
+	// using escape key, backspace key or delete key
 	const handleKeydown = (event) => {
 		const isDeleteKey = event.key === 'Delete'
 		const isBackspaceKey = event.key === 'Backspace'
 		const isEscapeKey = event.key === 'Escape'
-		if (isDeleteKey || isBackspaceKey) store.removeItem(uid)
+		const isNumber1Key = event.key === '1'
+		const isNumber2Key = event.key === '2'
+		const isNumber3Key = event.key === '3'
+		if (isNumber1Key) store.setTransformItemMode('translate')
+		if (isNumber2Key) store.setTransformItemMode('rotate')
+		if (isNumber3Key) store.setTransformItemMode('scale')
+		if (isDeleteKey || isBackspaceKey) store.removeItem(props.uid)
 		if (isEscapeKey) store.deselectItem()
 	}
 
+	// add event listener to deselect with escape key,
+	// or to delete the item with backspace key or delete key
 	$effect(() => {
 		if (!isSelected) return
 		return windowEvent('keydown', handleKeydown)
 	})
 
-	$inspect({ scene, gltf }).with(console.log)
-
+	// event handler to attach controls to the mesh
+	// when the gltf has loaded and the mesh selected
 	$effect(() => {
-		if (!shouldRenderControls || !controls || !model) return
-		controls.attach(model)
-		model.position.set(item.position_x, item.position_y + offsetY, item.position_z)
-		console.log('model.position', model.position.x, model.position.y, model.position.z)
-		console.log('item position', item.position_x, item.position_y, item.position_z)
-		console.log('item size', item.size_x, item.size_y, item.size_z)
+		if (!shouldRenderControls || !controls || !mesh) return
+		controls.attach(mesh)
 	})
 </script>
 
 {#await gltf then data}
 	<T
-		is={data.scene}
+		is={data.scene.children[0]}
 		{size}
 		{position}
 		{rotation}
 		{scale}
 		castShadow
 		receiveShadow
-		bind:ref={model}
+		bind:ref={mesh}
 		onclick={handleClick}
 	/>
 
@@ -128,18 +157,15 @@
 		<TransformControls
 			bind:controls
 			space="local"
-			mode={store.state.transformItemMode}
-			translationSnap={0.025}
-			autoPauseOrbitControls
-			scaleSnap={0.025}
-			rotationSnap={0.025}
-			rotationSnapThreshold={0.025}
-			scaleSnapThreshold={0.025}
-			translationSnapThreshold={0.025}
+			translationSnap={0.02}
+			scaleSnap={0.02}
+			rotationSnap={0.02}
+			rotationSnapThreshold={0.02}
+			scaleSnapThreshold={0.02}
+			translationSnapThreshold={0.02}
 			onobjectChange={onObjectChange}
-			position.x={item.size_x / 100 / 2}
-			position.y={item.size_y / 100 / 2}
-			position.z={item.size_z / 100 / 2}
+			autoPauseOrbitControls
+			mode={store.transformItemMode as any}
 		/>
 	{/if}
 
@@ -153,3 +179,7 @@
 		/>
 	{/if}
 {/await}
+
+{#if mesh && isSelected}
+	<BoundingBox target={mesh} positionY={position[1]} />
+{/if}

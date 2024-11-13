@@ -5,7 +5,7 @@
 	type PropsT = { identifier: string; screenReaderText: string; children: any }
 	const props: PropsT = $props()
 
-	const isPressed = $derived(keyboardStore.state[props.identifier])
+	const isPressed = $derived(keyboardstore[props.identifier])
 	const isPressedClass = isPressed ? 'isPressed' : ''
 </script>
 

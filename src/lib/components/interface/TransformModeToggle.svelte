@@ -6,9 +6,9 @@
 		store.setTransformItemMode(value)
 	}
 
-	let translateColor = $derived(store.state.transformItemMode === 'translate' ? 'primary' : 'light')
-	let rotateColor = $derived(store.state.transformItemMode === 'rotate' ? 'primary' : 'light')
-	let scaleColor = $derived(store.state.transformItemMode === 'scale' ? 'primary' : 'light')
+	let translateColor = $derived(store.transformItemMode === 'translate' ? 'primary' : 'light')
+	let rotateColor = $derived(store.transformItemMode === 'rotate' ? 'primary' : 'light')
+	let scaleColor = $derived(store.transformItemMode === 'scale' ? 'primary' : 'light')
 </script>
 
 <div class="TransformModeToggle">

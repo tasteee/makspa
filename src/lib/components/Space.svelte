@@ -11,10 +11,11 @@
 
 	type PropsT = { uid: string }
 	const props: PropsT = $props()
+	let activeItems = $derived(store.activeSpaceItems)
 </script>
 
 <T.Group>
-	{#each store.state.items as item}
+	{#each activeItems as item}
 		<Item uid={item.uid} />
 	{/each}
 </T.Group>

@@ -2,57 +2,56 @@ import { isometricCameraConfiguration } from './configuration'
 import { thirdPersonCameraConfiguration } from './configuration'
 import { firstPersonCameraConfiguration } from './configuration'
 
-const store = $state({
-	activeCamera: 'isometric',
-	isometric: isometricCameraConfiguration,
-	thirdPerson: thirdPersonCameraConfiguration,
-	firstPerson: firstPersonCameraConfiguration
-})
+class CameraStore {
+	activeCamera = $state('isometric')
+	isometric = $state(isometricCameraConfiguration)
+	thirdPerson = $state(thirdPersonCameraConfiguration)
+	firstPerson = $state(firstPersonCameraConfiguration)
 
-const saveControls = (which: string, controls: any) => {
-	store[which].controls = controls
-}
+	saveControls(which: string, controls: any) {
+		this[which].controls = controls
+	}
 
-const saveCamera = (which: string, camera: any) => {
-	store[which].camera = camera
-}
+	saveCamera(which: string, camera: any) {
+		this[which].camera = camera
+	}
 
-const setActiveCamera = (which: string) => {
-	store.activeCamera = which
-}
+	setActiveCamera(which: string) {
+		this.activeCamera = which
+	}
 
-// cameraStore.adjustZoom(10)
-// cameraStore.adjustZoom(-10)
-const adjustZoom = (amount: number) => {
-	const camera = store[store.activeCamera].camera
-	store[store.activeCamera].camera.zoom = camera.zoom + amount
-}
+	getActiveCamera() {
+		return this[this.activeCamera]
+	}
 
-const setZoom = (value: number) => {
-	store[store.activeCamera].camera.zoom = value
-}
+	adjustZoom(amount: number) {
+		const camera = this[this.activeCamera].camera
+		camera.zoom = camera.zoom + amount
+	}
 
-const getActiveCamera = () => {
-	return store[store.activeCamera]
-}
+	setZoom(value: number) {
+		this[this.activeCamera].camera.zoom = value
+	}
 
-const zoomIn = () => adjustZoom(10)
-const zoomOut = () => adjustZoom(-10)
+	zoomIn() {
+		this.adjustZoom(10)
+	}
 
-const final = {
-	getActiveCamera,
-	setActiveCamera,
-	saveCamera,
-	saveControls,
-	zoomIn,
-	zoomOut,
-	adjustZoom,
-	setZoom,
+	zoomOut() {
+		this.adjustZoom(-10)
+	}
 
-	get state() {
-		return store
+	resetZoom() {
+		this.setZoom(100)
+	}
+
+	resetCamera() {
+		this.setZoom(100)
+		this.setActiveCamera('isometric')
 	}
 }
 
-export default final
-globalThis.cameraStore = final
+const store = $state(new CameraStore())
+
+export default store
+globalThis.cameraStore = store

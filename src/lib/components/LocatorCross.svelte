@@ -7,7 +7,7 @@
 	}>()
 
 	const lineColor = 0x00ff00 // Lime green
-	console.log('RENDERING A LIGHT')
+	// console.log('RENDERING A LIGHT')
 </script>
 
 <T.Group>

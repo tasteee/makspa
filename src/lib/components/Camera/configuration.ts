@@ -1,15 +1,11 @@
-function degrees(angle: number): number {
-	angle = angle % 360
-	if (angle < 0) angle += 360
-	return (angle * Math.PI) / 180
-}
+import { percentageToDegrees } from '../../modules/numbers'
 
 class IsometricCameraConfiguration {
 	camera = null
 	zoom = 225
-	isometricAngle = degrees(36)
-	rotationX = degrees(-36)
-	rotationY = degrees(45)
+	isometricAngle = percentageToDegrees(36)
+	rotationX = percentageToDegrees(-36)
+	rotationY = percentageToDegrees(45)
 
 	distance = 10
 
@@ -34,10 +30,10 @@ class IsometricCameraConfiguration {
 	minDistance = 5
 	maxDistance = 15
 
-	minPolarAngle = degrees(45.264)
-	maxPolarAngle = degrees(99.264)
-	minAzimuthAngle = degrees(0)
-	maxAzimuthAngle = degrees(90)
+	minPolarAngle = percentageToDegrees(45.264)
+	maxPolarAngle = percentageToDegrees(99.264)
+	minAzimuthAngle = percentageToDegrees(0)
+	maxAzimuthAngle = percentageToDegrees(90)
 
 	frustumSize = 10
 

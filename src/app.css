@@ -25,6 +25,7 @@
 }
 
 canvas {
+	background: #010101;
 	height: calc(100vh - 0px);
 }
 

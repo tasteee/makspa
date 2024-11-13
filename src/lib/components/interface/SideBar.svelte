@@ -3,18 +3,10 @@
 	import { Drawer, Button, CloseButton, Label, Input, Textarea } from 'flowbite-svelte'
 	import { sineIn } from 'svelte/easing'
 	import PanelSection from './PanelSection.svelte'
+	import SpacePanel from './SpacePanel.svelte'
 
 	import {
-		ChartPieSolid,
-		GridSolid,
-		MailBoxSolid,
 		UserSolid,
-		ShoppingBagSolid,
-		ArrowRightToBracketOutline,
-		EditOutline,
-		FireSolid,
-		BookSolid,
-		RestoreWindowOutline,
 		LifeSaverSolid,
 		HomeSolid,
 		HeartSolid,
@@ -39,13 +31,13 @@
 	let isAccountPanelOpen = $derived(activePanel === 'account')
 
 	const closePanel = () => {
-		console.log('closing panel')
+		// console.log('closing panel')
 		activePanel = ''
 	}
 
 	const setActivePanel = (panel: string) => () => {
 		if (activePanel === panel) return closePanel()
-		console.log('setting active panel', panel)
+		// console.log('setting active panel', panel)
 		activePanel = panel
 	}
 </script>
@@ -74,6 +66,17 @@
 	</div>
 	<PanelSection />
 	<PanelSection />
+</Drawer>
+
+<Drawer
+	class="SideBarPanel"
+	activateClickOutside={false}
+	backdrop={false}
+	transitionType="fly"
+	transitionParams={panelParams}
+	hidden={!isSpacePanelOpen}
+>
+	<SpacePanel />
 </Drawer>
 
 <Sidebar class="SideBar">
