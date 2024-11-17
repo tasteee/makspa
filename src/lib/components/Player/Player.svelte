@@ -4,7 +4,7 @@
 	import { RigidBody, CollisionGroups, Collider } from '@threlte/rapier'
 	import { onDestroy } from 'svelte'
 	import { PerspectiveCamera, Vector3 } from 'three'
-	import PointerLockControls from './PointerLockControls.svelte'
+	import PointerLockControls from '../Camera/PointerLockControls.svelte'
 
 	let props = $props()
 	const initialPosition = props.position || [0, 0, 0]

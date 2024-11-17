@@ -1,6 +1,6 @@
-import { isometricCameraConfiguration } from './configuration'
-import { thirdPersonCameraConfiguration } from './configuration'
-import { firstPersonCameraConfiguration } from './configuration'
+import { isometricCameraConfiguration } from './camera.configs'
+import { thirdPersonCameraConfiguration } from './camera.configs'
+import { firstPersonCameraConfiguration } from './camera.configs'
 
 class CameraStore {
 	activeCamera = $state('isometric')

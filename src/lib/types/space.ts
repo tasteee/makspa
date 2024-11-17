@@ -67,4 +67,20 @@ type SpaceT = {
 	soundtrack: string[]
 	// asset urls
 	assets: any[]
+
+	grid_opacity: number
+	grid_cell_color: string
+	grid_cell_size: number
+	grid_cell_thickness: number
+	grid_section_color: string
+	grid_section_size: number
+	grid_section_thickness: number
+
+	floor_color_1: string
+	floor_color_2: string
+	floor_opacity_1: number
+	floor_opacity_2: number
+
+	is_grid_visible: boolean
+	is_floor_visible: boolean
 }

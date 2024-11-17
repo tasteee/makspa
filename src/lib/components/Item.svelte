@@ -1,18 +1,35 @@
 <script lang="ts">
 	import { T } from '@threlte/core'
+	import { onMount } from 'svelte'
 	import { TransformControls } from '@threlte/extras'
 	import { useGltf, useSuspense } from '@threlte/extras'
 	import store from '../stores/store.svelte'
 	import { windowEvent } from '../modules/windowEvent'
-	import BoundingBox from './BoundingBox.svelte'
-	import { Box3, Vector3 } from 'three'
+	import BoundingBox from './Helpers/BoundingBox.svelte'
+	import * as helpers from '../modules/three.helpers'
+	import cameraStore from './Camera/camera.store.svelte'
 	import * as THREE from 'three'
-	import { getNegativeAdjustmentToZeroY } from '../modules/three.helpers'
+
+	import {
+		percentageToRadians,
+		radiansToPercentage,
+		percentageToDegrees,
+		sizeToScale,
+		unitToFeet,
+		percentageToOpacity,
+		opacityToPercentage,
+		percentageToRange,
+		formatAsPercentage,
+		formatAsFeet
+	} from '../modules/numbers'
 
 	type PropsT = {
 		uid: string
 	}
 
+	let camera = cameraStore.isometric.camera
+	let cameraControls = cameraStore.isometric.controls
+	let CameraControls = cameraStore.isometric.CameraControls
 	let props: PropsT = $props()
 
 	let item = $derived(store.findItem(props.uid))
@@ -27,7 +44,7 @@
 
 	$effect(() => {
 		if (!mesh) return
-		const adjustment = getNegativeAdjustmentToZeroY(mesh)
+		const adjustment = helpers.getNegativeAdjustmentToZeroY(mesh)
 		if (adjustment === 0) return
 		const newPositionY = item.position_y + adjustment
 		store.updateItem(props.uid, { position_y: newPositionY })
@@ -35,30 +52,45 @@
 
 	$effect(() => {
 		if (!mesh) return
-		const THRESHOLD = 5
-		const rotation = mesh.rotation.y
-		const rotationDegrees = THREE.MathUtils.radToDeg(rotation)
-		const alignmentCase0 = rotationDegrees % 90 < THRESHOLD
-		const alignmentCase1 = 90 - (rotationDegrees % 90) < THRESHOLD
-		const isAligned = alignmentCase0 || alignmentCase1
-
-		if (!isAligned) {
-			const nearestRightAngle = Math.round(rotationDegrees / 90) * 90
-			const correctedRotation = THREE.MathUtils.degToRad(nearestRightAngle)
-			store.updateItem(props.uid, { rotation_y: correctedRotation })
-		}
+		const rotationDegrees = helpers.getRotationYDegrees(mesh)
+		const isAligned = helpers.checkMeshAlignedAxis(rotationDegrees)
+		if (isAligned) return
+		const correctedRotation = helpers.getCorrectedAlignmentRotationY(rotationDegrees)
+		store.updateItem(props.uid, { rotation_y: correctedRotation })
 	})
 
 	let position = $derived([item.position_x, item.position_y, item.position_z])
-	let rotation = $derived([item.rotation_x, item.rotation_y, item.rotation_z])
 	let scale = $derived([item.scale_x, item.scale_y, item.scale_z])
 	let size = $derived([item.size_x, item.size_y, item.size_z])
 	let shouldRenderControls = $derived(isSelected && mesh)
 
+	let rotation = $derived.by(() => {
+		return [
+			percentageToRadians(item.rotation_x),
+			percentageToRadians(item.rotation_y),
+			percentageToRadians(item.rotation_z)
+		]
+	})
+
+	function focusOnSelectedItem() {
+		const targetPosition = new THREE.Vector3(item.position_x, item.position_y, item.position_z)
+		cameraControls.moveTo(targetPosition.x, targetPosition.y, targetPosition.z, true)
+	}
+
+	function handleMouseDown(event) {
+		cameraControls.enabled = false
+	}
+
+	function handleMouseUp(event) {
+		cameraControls.enabled = true
+	}
+
 	// event handler for when the item is clicked
 	function handleClick(event) {
-		event.stopPropagation()
+		event?.stopPropagation?.()
+		event?.preventDefault?.()
 		store.selectItem(props.uid)
+		focusOnSelectedItem()
 	}
 
 	// for when the transform controls are used
@@ -77,9 +109,9 @@
 	function handleRotate(event) {
 		const rotation = event.target.object.rotation
 		store.updateItem(props.uid, {
-			rotation_x: rotation.x,
-			rotation_y: rotation.y,
-			rotation_z: rotation.z
+			rotation_x: radiansToPercentage(rotation.x),
+			rotation_y: radiansToPercentage(rotation.y),
+			rotation_z: radiansToPercentage(rotation.z)
 		})
 	}
 
@@ -110,10 +142,9 @@
 	}
 
 	// event handler to delete or deselect item
-	// using escape key, backspace key or delete key
+	// using escape key or delete key
 	const handleKeydown = (event) => {
 		const isDeleteKey = event.key === 'Delete'
-		const isBackspaceKey = event.key === 'Backspace'
 		const isEscapeKey = event.key === 'Escape'
 		const isNumber1Key = event.key === '1'
 		const isNumber2Key = event.key === '2'
@@ -121,12 +152,12 @@
 		if (isNumber1Key) store.setTransformItemMode('translate')
 		if (isNumber2Key) store.setTransformItemMode('rotate')
 		if (isNumber3Key) store.setTransformItemMode('scale')
-		if (isDeleteKey || isBackspaceKey) store.removeItem(props.uid)
+		if (isDeleteKey) store.removeItem(props.uid)
 		if (isEscapeKey) store.deselectItem()
 	}
 
 	// add event listener to deselect with escape key,
-	// or to delete the item with backspace key or delete key
+	// or to delete the item with delete key
 	$effect(() => {
 		if (!isSelected) return
 		return windowEvent('keydown', handleKeydown)
@@ -137,6 +168,10 @@
 	$effect(() => {
 		if (!shouldRenderControls || !controls || !mesh) return
 		controls.attach(mesh)
+	})
+
+	onMount(() => {
+		focusOnSelectedItem()
 	})
 </script>
 
@@ -164,6 +199,8 @@
 			scaleSnapThreshold={0.02}
 			translationSnapThreshold={0.02}
 			onobjectChange={onObjectChange}
+			onmouseDown={handleMouseDown}
+			onmouseUp={handleMouseUp}
 			autoPauseOrbitControls
 			mode={store.transformItemMode as any}
 		/>

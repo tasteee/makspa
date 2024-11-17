@@ -30,7 +30,6 @@ const keyboardStore = $state({
 	e: false,
 	space: false,
 	enter: false,
-	backspace: false,
 	delete: false,
 	tab: false,
 	esc: false,

@@ -1,0 +1,394 @@
+:root {
+	--errorA: #ff244c;
+	--yellowA: #ffde34;
+	--orangeA: #fa0;
+	--pinkA: #fc66ca;
+	--purpleA: #9f6eff;
+	--blueA: #00aaff;
+	--rossA: #4200ff;
+	--greenA: #00ffaa;
+	--whiteA: #ffffff;
+	--whiteB: #a9a9a9;
+	--black: #101013;
+}
+
+.text-white {
+	color: var(--white);
+}
+
+.text-black {
+	color: var(--black);
+}
+
+:root {
+	--teal: #00b791;
+	--tealAlpha: rgba(0, 188.94, 144.87, 0.2);
+	--tealAccent: rgb(0, 143.62, 108.54);
+	--blue: #00abe3;
+	--blueAlpha: rgba(0, 174.02, 240.53, 0.2);
+	--blueAccent: rgb(0, 131.65, 184.93);
+	--purple: #c95cff;
+	--purpleAlpha: rgba(194.12, 123.02, 233.11, 0.2);
+	--purpleAccent: rgb(154.83, 79.54, 193.65);
+	--pink: #ff00c4;
+	--pinkAlpha: rgba(227.43, 110.08, 186.86, 0.2);
+	--pinkAccent: rgb(186.07, 64.54, 147.68);
+	--red: #ff4c24;
+	--redAlpha: rgba(245.12, 111.91, 83.04, 0.2);
+	--redAccent: rgb(203.2, 64.81, 34.86);
+	--orange: #ee7200;
+	--orangeAlpha: rgba(238.6, 121.25, 35.36, 0.2);
+	--orangeAccent: rgb(194.66, 78.94, 0);
+	--green: #00bd36;
+	--greenAlpha: rgba(63.96, 186.04, 93.6, 0.2);
+	--greenAccent: rgb(0, 145.93, 47.87);
+
+	--surface-0: rgb(0, 0, 0);
+
+	--surface-1: #2c2a30;
+	--surface-2: #2b2b2bd9;
+	--surface-2-shadow: rgba(0, 0, 0, 0.4);
+	--surface-3d: rgb(44, 42, 48);
+	--text-primary: rgb(255, 255, 255);
+	--text-note: rgb(85, 85, 85);
+	--chess: rgb(67, 65, 71);
+	--ui-border: rgba(158, 158, 158, 0.5);
+	--border-p3: rgba(0, 0, 0, 0.3);
+	--border-rec2020: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='halloween'] {
+	color-scheme: dark;
+	--b2: 23.0416% 0 0;
+	--b3: 21.3072% 0 0;
+	--bc: 84.9552% 0 0;
+	--sc: 89.196% 0.0496 305.03;
+	--nc: 84.8742% 0.009322 65.681484;
+	--inc: 90.923% 0.043042 262.880917;
+	--suc: 12.541% 0.033982 149.213788;
+	--wac: 13.3168% 0.031484 58.31834;
+	--erc: 13.144% 0.0398 27.33;
+	--rounded-box: 1rem;
+	--rounded-btn: 0.5rem;
+	--rounded-badge: 1.9rem;
+	--animation-btn: 0.25s;
+	--animation-input: 0.2s;
+	--btn-focus-scale: 0.95;
+	--border-btn: 1px;
+	--tab-border: 1px;
+	--tab-radius: 0.5rem;
+	--p: 77.48% 0.204 60.62;
+	--pc: 19.6935% 0.004671 196.779412;
+	--s: 45.98% 0.248 305.03;
+	--a: 64.8% 0.223 136.073479;
+	--ac: 0% 0 0;
+	--n: 24.371% 0.046608 65.681484;
+	--b1: 24.7759% 0 0;
+	--in: 54.615% 0.215208 262.880917;
+	--su: 62.7052% 0.169912 149.213788;
+	--wa: 66.584% 0.157422 58.31834;
+	--er: 65.72% 0.199 27.33;
+}
+:root:has(input.theme-controller[value='halloween']:checked) {
+	color-scheme: dark;
+	--b2: 23.0416% 0 0;
+	--b3: 21.3072% 0 0;
+	--bc: 84.9552% 0 0;
+	--sc: 89.196% 0.0496 305.03;
+	--nc: 84.8742% 0.009322 65.681484;
+	--inc: 90.923% 0.043042 262.880917;
+	--suc: 12.541% 0.033982 149.213788;
+	--wac: 13.3168% 0.031484 58.31834;
+	--erc: 13.144% 0.0398 27.33;
+	--rounded-box: 1rem;
+	--rounded-btn: 0.5rem;
+	--rounded-badge: 1.9rem;
+	--animation-btn: 0.25s;
+	--animation-input: 0.2s;
+	--btn-focus-scale: 0.95;
+	--border-btn: 1px;
+	--tab-border: 1px;
+	--tab-radius: 0.5rem;
+	--p: 77.48% 0.204 60.62;
+	--pc: 19.6935% 0.004671 196.779412;
+	--s: 45.98% 0.248 305.03;
+	--a: 64.8% 0.223 136.073479;
+	--ac: 0% 0 0;
+	--n: 24.371% 0.046608 65.681484;
+	--b1: 24.7759% 0 0;
+	--in: 54.615% 0.215208 262.880917;
+	--su: 62.7052% 0.169912 149.213788;
+	--wa: 66.584% 0.157422 58.31834;
+	--er: 65.72% 0.199 27.33;
+}
+
+[data-theme='halloween'] {
+	--base2: #1d1d1d;
+	--base3: #191919;
+	--baseContent: #cdcdcd;
+	--secondaryContent: #e3d4f6;
+	--neutralContent: #d2ccc7;
+	--infoContent: #d2e2ff;
+	--successContent: #000a02;
+	--warningContent: #110500;
+	--errorContent: #140202;
+	--roundedBox: 1rem;
+	--roundedButton: 0.5rem;
+	--roundedBadge: 1.9rem;
+	--animationButton: 0.25s;
+	--animationInput: 0.2s;
+	--buttonFocusScale: 0.95;
+	--borderButton: 1px;
+	--tabBorder: 1px;
+	--tabRadius: 0.5rem;
+	--brandColor: #ff9300;
+	--brandColorContent: #131616;
+	--secondary: #7a00c2;
+	--accent: #43a900;
+	--accentContent: #000000;
+	--neutral: #2f1b05;
+	--base1: #212121;
+	--info: #2563eb;
+	--success: #16a34a;
+	--warning: #d97706;
+	--error: #f35248;
+}
+
+.sheIcon {
+	color: #cdcdcd;
+
+	&.dumbIcon {
+		margin-top: 1px;
+	}
+	&.xs {
+		font-size: 16px;
+	}
+	&.sm {
+		font-size: 20px;
+	}
+	&.md {
+		font-size: 24px;
+	}
+	&.lg {
+		font-size: 32px;
+	}
+	&.xl {
+		font-size: 48px;
+	}
+}
+
+.SideBarPanel {
+	position: absolute;
+	top: 64px;
+	/* left: 0; */
+	width: 100vw;
+	/* outline: 2px solid var(--black); */
+	border-radius: 4px;
+	/* padding: 0px !important; */
+}
+
+.bex {
+	--space0: 0px;
+	--space1: 4px;
+	--space2: 8px;
+	--space3: 12px;
+	--space4: 16px;
+	--space5: 24px;
+	--space6: 32px;
+	--space7: 48px;
+}
+
+.SheRow {
+	display: flex;
+	flex-direction: row;
+}
+
+.SheRow.XC {
+	justify-content: center;
+}
+
+.SheRow.YC {
+	align-items: center;
+}
+
+.SheColumn.XC {
+	align-items: center;
+}
+
+.SheColumn.YC {
+	justify-content: center;
+}
+
+.SheInput {
+}
+
+.SheInput.orange {
+	border-color: var(--orange) !important;
+	outline-color: var(--orange) !important;
+}
+
+:root {
+	--orangeRedBorderShadow: 0px 1px 1px 1px var(--red), 0px -1px 0px 1px var(--orange);
+	--pinkBlueBorderShadow: 0px 1px 1px 1px var(--pink), 0px -1px 0px 1px var(--blue);
+	--purpleBlueBorderShadow: 0px 1px 1px 1px var(--purple), 0px -1px 0px 1px var(--blue);
+	--purpleGreenBorderShadow: 0px 1px 1px 1px var(--purple), 0px -1px 0px 1px var(--green);
+	--purpleTealBorderShadow: 0px 1px 1px 1px var(--purple), 0px -1px 0px 1px var(--teal);
+	--pinkWhiteBorderShadow: 0px 1px 1px 1px var(--pink), 0px -1px 0px 1px var(--white);
+	--greenTealBorderShadow: 0px 1px 1px 1px var(--green), 0px -1px 0px 1px var(--teal);
+	--whiteBlackBorderShadow: 0px 1px 1px 1px var(--white), 0px -1px 0px 1px var(--black);
+}
+
+.rounded-box {
+	border-radius: 8px !important;
+}
+
+.SheInput.mixer {
+	--accent: #9fb9d0c4;
+	border-color: var(--orange) !important;
+	outline-color: var(--orange) !important;
+
+	transition: box-shadow 2s ease;
+
+	&:focus-within {
+		animation: mixerBorderAnimation 9s infinite;
+		border: none;
+		outline: none;
+	}
+}
+
+@keyframes mixerBorderAnimation {
+	0%,
+	100% {
+		box-shadow: var(--orangeRedBorderShadow);
+	}
+	20% {
+		box-shadow: var(--pinkBlueBorderShadow);
+	}
+	40% {
+		box-shadow: var(--purpleGreenBorderShadow);
+	}
+	60% {
+		box-shadow: var(--purpleTealBorderShadow);
+	}
+	80% {
+		box-shadow: var(--pinkWhiteBorderShadow);
+	}
+}
+
+label.input input:focus {
+	border: none !important;
+	outline: none !important;
+	box-shadow: 0px 0px 0px 0px var(--black);
+}
+
+label.input:has(input:focus) {
+	box-shadow: 0px 0px 0px 2px var(--white);
+}
+
+/* // PLEASE MAKE THE SCROLLBAR ONLY 6px WIDE */
+
+.Panel::-webkit-scrollbar {
+	width: 6px !important;
+}
+
+.Panel::-webkit-scrollbar-thumb {
+	background-color: var(--pink) !important;
+}
+
+.Panel::-webkit-scrollbar-track {
+	background-color: var(--red) !important;
+}
+
+.Panel::-webkit-scrollbar-corner {
+	background-color: var(--blue) !important;
+}
+
+.Panel::-webkit-scrollbar-button {
+	display: none !important;
+}
+
+.Panel::-webkit-scrollbar-track-piece {
+	background-color: var(--green) !important;
+}
+
+.PanelSection {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+input.switch.toggle[type='checkbox'] {
+	background: var(--surface-1);
+}
+
+input.switch.toggle[type='checkbox']:focus,
+input.switch.toggle[type='checkbox']:active {
+	border: 1px solid var(--white);
+	background: var(--white);
+	outline: none;
+	box-shadow:
+		var(--handleoffsetcalculator) 0 0 2px var(--tglbg) inset,
+		0 0 0 2px var(--tglbg) inset,
+		var(--togglehandleborder);
+}
+
+label.input .SheRange {
+	width: 60%;
+}
+
+label.input:has(input[type='range']:active),
+label.input:has(input[type='range']:focus) {
+	border: none;
+}
+
+label.input:focus-within {
+	z-index: 1000;
+}
+
+label.input {
+	font-size: 12px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+[type='checkbox']:focus,
+[type='radio']:focus {
+	box-shadow: invalidity;
+}
+
+input.switch.toggle[type='checkbox'] {
+	background: var(--gray30);
+	border: 1px solid var(--gray30);
+}
+
+.XYZInputRow {
+	display: flex;
+	gap: 8px;
+	width: 100%;
+}
+
+label.input {
+	background-color: var(--base3);
+	outline: 1px solid var(--chess);
+}
+
+.XYZInputRow label.input {
+	width: calc(33% - 3px);
+
+	& input {
+		padding-left: 5px;
+	}
+}
+
+.SheDropDown-xs {
+	height: 28px;
+}
+
+.SheSkinnyMenu {
+	width: 100px !important;
+	background: var(--black) !important;
+}

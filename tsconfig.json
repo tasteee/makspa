@@ -16,8 +16,11 @@
 		"noEmit": true,
 		"jsx": "react-jsx",
 		"experimentalDecorators": true,
+		"allowArbitraryExtensions": true,
 		"baseUrl": "./",
 		"paths": {
+			"@/*": ["./src/*"],
+			"elements/*": ["./src/lib/components/.elements/*"],
 			"~/*": ["./src/*"],
 			"lib/*": ["./src/lib/*"],
 			"components": ["./src/lib/components"],

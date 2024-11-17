@@ -95,9 +95,5 @@
 		max-width: 48px;
 		margin-top: 20px;
 	}
-
-	:global(.PanelSection) {
-		padding: 0px;
-		margin: 12px 0px;
-	}
+	/*  */
 </style>

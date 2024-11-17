@@ -2,8 +2,10 @@
 	import IsometricCamera from './IsometricCamera.svelte'
 	import ThirdPersonCamera from './ThirdPersonCamera.svelte'
 	import FirstPersonCamera from './FirstPersonCamera.svelte'
-	import Player from './Player.svelte'
+	import Player from '../Player/Player.svelte'
 	import cameraStore from './camera.store.svelte'
+
+	$inspect(cameraStore.activeCamera)
 </script>
 
 {#if cameraStore.activeCamera === 'isometric'}
@@ -15,7 +17,7 @@
 {/if}
 
 {#if cameraStore.activeCamera === 'firstPerson'}
-	<Player />
+	<FirstPersonCamera />
 {/if}
 
 {#if cameraStore.activeCamera === 'pointerLock'}

@@ -13,7 +13,7 @@
 	let boxHelper = $state(null)
 	let target = $derived(props.target)
 	let isVisible = $derived(props.isVisible ?? true)
-	let color = $derived(props.color ?? '#eb4f27')
+	let color = $derived(props.color ?? '#fc66ca')
 	let positionY = $derived(props.positionY)
 
 	const disposer = () => {

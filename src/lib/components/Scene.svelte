@@ -6,16 +6,17 @@
 	import Space from './Space.svelte'
 	import Ground from './Ground.svelte'
 	import store from '../stores/store.svelte'
-	import Player from './Camera/Player.svelte'
-
+	import ResetCameraButton from './Camera/ResetCameraButton.svelte'
+	import ItemFocuser from './ItemFocuser.svelte'
 	interactivity()
 </script>
 
 <T.Group>
-	<!-- <Player /> -->
 	<Ground />
 	<Camera />
 	<Lighting />
+	<ResetCameraButton />
+	<ItemFocuser />
 
 	{#if store.activeSpaceUid}
 		<Space uid={store.activeSpaceUid} />

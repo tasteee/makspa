@@ -1,0 +1,46 @@
+:root {
+	/* Typography */
+	--font-family: 'Geist Mono', 'Fira Code', 'Courier New', Courier, monospace;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	box-sizing: border-box;
+	line-height: 1;
+}
+
+body {
+	font-family: 'Geist Mono', 'Fira Code', 'Courier New', Courier, monospace;
+	font-size: 16px;
+	line-height: 1;
+	color: #fff;
+	background-color: #000;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 700;
+	line-height: 1;
+	color: var(--gray0);
+	margin: 0;
+	margin-bottom: 8px;
+}
+
+h1 {
+	font-size: 24px;
+}
+
+h2 {
+	font-size: 20px;
+}
+
+h3 {
+	font-size: 18px;
+}

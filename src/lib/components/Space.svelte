@@ -3,19 +3,17 @@
 	import Item from './Item.svelte'
 	import { T } from '@threlte/core'
 
-	// If Space.svelte is rendering, that means the artist has
-	// indicated that they want to enter a space.
-
-	// We will use props.uid to load the space and the items and
-	// render them accordingly.
-
 	type PropsT = { uid: string }
 	const props: PropsT = $props()
-	let activeItems = $derived(store.activeSpaceItems)
+	// let uid = $derived(props.uid)
+	// let space = $derived(store.findSpace(uid))
+	let activeItems = $derived(store.activeSpaceItems.slice(0, 10))
 </script>
 
-<T.Group>
-	{#each activeItems as item}
-		<Item uid={item.uid} />
-	{/each}
-</T.Group>
+{#if activeItems.length > 0}
+	<T.Group>
+		{#each activeItems as item}
+			<Item uid={item.uid} />
+		{/each}
+	</T.Group>
+{/if}

@@ -1,0 +1,188 @@
+[data-greenTheme] {
+	/* Primary Colors */
+	--green0: #1de28d;
+	--green1: #50e699;
+	--green2: #6feaa6;
+	--green3: #88edb3;
+	--green4: #9ef1bf;
+	--green5: #b3f4cc;
+
+	/* Surface Colors */
+	--surfaceA0: #0c0d0d;
+	--surfaceA20: #242424;
+	--surfaceA40: #3b3b3b;
+	--surfaceA60: #545454;
+	--surfaceA80: #6e6e6e;
+	--surfaceA100: #898989;
+
+	/* Mixed Colors */
+	--mixedA0: #15201a;
+	--mixedA20: #2a352f;
+	--mixedA40: #414b45;
+	--mixedA60: #59625d;
+	--mixedA80: #737a76;
+	--mixedA100: #8d9390;
+}
+
+[data-orangeTheme] {
+	/* Primary Colors */
+	--brandColorA0: #ec8609;
+	--brandColorA10: #f19332;
+	--brandColorA20: #f6a14e;
+	--brandColorA30: #faae68;
+	--brandColorA40: #fdbb81;
+	--brandColorA50: #ffc999;
+
+	/* Surface Colors */
+	--surfaceA0: #0c0d0d;
+	--surfaceA10: #242424;
+	--surfaceA20: #3b3b3b;
+	--surfaceA30: #545454;
+	--surfaceA40: #6e6e6e;
+	--surfaceA50: #898989;
+
+	/* Mixed Surface Colors */
+	--mixedA0: #352414;
+	--mixedA10: #493929;
+	--mixedA20: #5e4e40;
+	--mixedA30: #746559;
+	--mixedA40: #8a7d72;
+	--mixedA50: #a0968d;
+}
+
+[data-themeMono] {
+	--g0: #ffffff;
+	--g1: #dfdfdf;
+	--g2: #c0c0c0;
+	--g3: #a2a2a2;
+	--g4: #858585;
+	--g5: #696969;
+	--g6: #4e4e4e;
+	--g7: #353535;
+	--g8: #1e1e1e;
+	--g9: #000000;
+}
+
+:root {
+	--error: #ff244c;
+	--yellow: #ffde34;
+	--orange: #fa0;
+	--pink: #fc66ca;
+	--purple: #9f6eff;
+	--blue: #00aaff;
+	--ross: #4200ff;
+	--green: #00ffaa;
+	--black: #101013;
+	--white: #ffffff;
+	--gray0: rgb(255, 255, 255);
+	--gray1: rgb(252, 252, 252);
+	--gray2: rgb(250, 250, 250);
+	--gray3: rgb(247, 247, 247);
+	--gray4: rgb(244, 244, 245);
+	--gray5: rgb(240, 240, 241);
+	--gray6: rgb(236, 236, 238);
+	--gray7: rgb(232, 232, 234);
+	--gray8: rgb(228, 228, 231);
+	--gray9: rgb(224, 224, 227);
+	--gray10: rgb(220, 220, 223);
+	--gray11: rgb(216, 216, 220);
+	--gray12: rgb(212, 212, 216);
+	--gray13: rgb(199, 199, 204);
+	--gray14: rgb(186, 186, 193);
+	--gray15: rgb(174, 174, 181);
+	--gray16: rgb(161, 161, 170);
+	--gray17: rgb(149, 149, 158);
+	--gray18: rgb(137, 137, 146);
+	--gray19: rgb(125, 125, 134);
+	--gray20: rgb(113, 113, 122);
+	--gray21: rgb(105, 105, 114);
+	--gray22: rgb(97, 97, 106);
+	--gray23: rgb(90, 90, 99);
+	--gray24: rgb(82, 82, 91);
+	--gray25: rgb(77, 77, 86);
+	--gray26: rgb(72, 72, 80);
+	--gray27: rgb(68, 68, 75);
+	--gray28: rgb(63, 63, 70);
+	--gray29: rgb(57, 57, 63);
+	--gray30: rgb(51, 51, 56);
+	--gray31: rgb(45, 45, 49);
+	--gray32: rgb(39, 39, 42);
+	--gray33: rgb(35, 35, 38);
+	--gray34: rgb(31, 31, 34);
+	--gray35: rgb(28, 28, 31);
+	--gray36: rgb(24, 24, 27);
+	--gray37: rgb(18, 18, 20);
+	--gray38: rgb(9, 9, 11);
+	--gray39: rgb(4, 5, 6);
+	--gray40: rgb(0, 0, 0);
+	--yellow0: rgb(255, 253, 243);
+	--yellow1: rgb(254, 252, 232);
+	--yellow2: rgb(254, 250, 214);
+	--yellow3: rgb(254, 249, 195);
+	--yellow4: rgb(254, 247, 181);
+	--yellow5: rgb(255, 244, 167);
+	--yellow6: rgb(254, 242, 153);
+	--yellow7: rgb(254, 240, 138);
+	--yellow8: rgb(254, 236, 122);
+	--yellow9: rgb(254, 232, 106);
+	--yellow10: rgb(254, 228, 90);
+	--yellow11: rgb(253, 224, 71);
+	--yellow12: rgb(252, 219, 61);
+	--yellow13: rgb(252, 214, 50);
+	--yellow14: rgb(251, 209, 38);
+	--yellow15: rgb(250, 204, 21);
+	--yellow16: rgb(246, 198, 18);
+	--yellow17: rgb(242, 191, 15);
+	--yellow18: rgb(238, 185, 12);
+	--yellow19: rgb(234, 179, 8);
+	--yellow20: rgb(226, 169, 7);
+	--yellow21: rgb(218, 158, 6);
+	--yellow22: rgb(210, 148, 5);
+	--yellow23: rgb(202, 138, 4);
+	--yellow24: rgb(192, 128, 5);
+	--yellow25: rgb(181, 118, 6);
+	--yellow26: rgb(171, 108, 7);
+	--yellow27: rgb(161, 98, 7);
+	--yellow28: rgb(154, 93, 9);
+	--yellow29: rgb(147, 87, 11);
+	--yellow30: rgb(140, 82, 13);
+	--yellow31: rgb(133, 77, 14);
+	--yellow32: rgb(128, 73, 15);
+	--yellow33: rgb(123, 70, 16);
+	--yellow34: rgb(118, 66, 17);
+	--yellow35: rgb(113, 63, 18);
+	--yellow36: rgb(89, 47, 13);
+	--yellow37: rgb(66, 32, 6);
+	--yellow38: rgb(38, 20, 4);
+}
+
+.ShePanelSection .SheDivider:not(:first-of-type) .SheDividerLabel {
+	font-size: 12px !important;
+}
+/* 
+.ShePanelSection .SheDivider:not(:first-of-type) .nestedHider {
+	width: 24px;
+}
+
+.ShePanelSection .SheDivider:not(:first-of-type) .nestedHider {
+	width: 24px;
+}
+
+.nestedHider {
+	width: 0px;
+}
+
+.SheDivider .nestedHider::before,
+.SheDivider .nestedHider::after {
+	content: '';
+	height: 1px;
+	background-color: var(--gray25);
+} */
+
+.contentBox .ShePanelInnerSection:first-child {
+	margin-top: 0px;
+}
+
+.contentBox .ShePanelInnerSection:first-child .SheDivider:first-of-type {
+	margin-top: 4px;
+}

@@ -9,6 +9,16 @@ import { sizeToScale } from '../modules/numbers'
 class Store {
 	session = $state({})
 
+	activeMainBarPanel = $state('')
+	checkIsPanelOpen = (panel: string) => this.activeMainBarPanel === panel
+	closePanel = () => (this.activeMainBarPanel = '')
+
+	setActivePanel = (panel: string) => {
+		if (!panel) return this.closePanel()
+		const isActive = panel === this.activeMainBarPanel
+		this.activeMainBarPanel = isActive ? '' : panel
+	}
+
 	isAuthenticated = $state(true)
 	isLoadingArtist = $state(false)
 	isLoadingSpaces = $state(false)
@@ -27,6 +37,7 @@ class Store {
 	activeSpaceUid = $state(spaces[0].uid)
 	activeSpace = $derived.by(() => this.findSpace(this.activeSpaceUid))
 	isSelectionActive = $derived.by(() => this.selectedItemUid !== null)
+	isItemPanelOpen = $state(false)
 
 	findSpace = (uid: string) => this.spaces.find(this.matchUid(uid))
 	findArtist = (uid: string) => this.artists.find(this.matchUid(uid))
@@ -38,6 +49,7 @@ class Store {
 	checkSelectionActive = () => this.selectedItemUid !== null
 	checkIsItemSelected = (uid: string) => this.selectedItemUid === uid
 	getSelectedItem = () => this.findItem(this.selectedItemUid)
+
 	selectedItem = $derived.by(() => this.getSelectedItem())
 
 	setTransformItemMode = (value: string) => {
@@ -51,11 +63,15 @@ class Store {
 
 	selectItem = (uid: string) => {
 		this.selectedItemUid = uid
+		this.isItemPanelOpen = true
+		const selected = this.findItem(uid)
+		window.item = selected
 	}
 
 	deselectItem = () => {
-		this.selectedItemUid = null
+		this.isItemPanelOpen = false
 		this.setTransformItemMode('translate')
+		this.selectedItemUid = null
 	}
 
 	addItem = (item: any) => {
@@ -97,6 +113,11 @@ class Store {
 
 	enterSpace = (uid: string) => {
 		this.activeSpaceUid = uid
+	}
+
+	updateSpace = (key: string, value: any) => {
+		const activeSpace = this.findSpace(this.activeSpaceUid)
+		activeSpace[key] = value
 	}
 
 	updateItem = (uid: string, update: any) => {

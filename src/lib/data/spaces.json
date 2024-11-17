@@ -6,13 +6,31 @@
 		"artists": ["hannah"],
 		"color": "#9f6eff",
 		"is_public": true,
-		"floorColor": "#333333",
 		"thumbnail": "https://i.pinimg.com/474x/65/9d/5f/659d5fd2b1f5ce399fd6f15ac7b3c02b.jpg",
-		"size_x": "64.00",
-		"size_y": "12.00",
-		"size_z": "64.00",
+		"size_x": 24.0,
+		"size_y": 12.0,
+		"size_z": 24.0,
 		"visits": 0,
 		"items": [],
-		"created_at": "2024-10-29T01:00:34.100Z"
+		"created_at": "2024-10-29T01:00:34.100Z",
+
+		"grid_cell_color": "#878787",
+		"grid_cell_size": 0.1,
+		"grid_cell_thickness": 1,
+		"grid_section_color": "#d1d1d1",
+		"section_color": "#d1d1d1",
+		"show_section_dividers": true,
+		"show_grid_cell_dividers": true,
+		"section_size": 1,
+		"section_thickness": 1,
+		"fade_strength": 1,
+		"fade_distance": 20,
+		"is_grid_visible": true,
+		"is_floor_visible": true,
+
+		"floor_color_1": "#010101",
+		"floor_opacity_1": 50,
+		"floor_color_2": "#000000",
+		"floor_opacity_2": 80
 	}
 ]

@@ -3,12 +3,12 @@
 
 	// usually this import strategy should work:
 	//import {Motion} from "svelte-motion";
-	import Motion from 'svelte-motion/src/motion/MotionSSR.svelte';
-	let area;
+	import Motion from 'svelte-motion/src/motion/MotionSSR.svelte'
+	let area
 </script>
 
 <div class="background">
-	<div class="drag-area" bind:this={area} />
+	<div class="drag-area" bind:this={area}></div>
 	<Motion drag dragConstraints={{ current: area }} let:motion>
 		<div class="box center unselectable" use:motion>Drag me</div>
 	</Motion>

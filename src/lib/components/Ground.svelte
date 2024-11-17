@@ -7,37 +7,52 @@
 	const handleGroundClick = (event: MouseEvent) => {
 		event.stopPropagation()
 		const shouldDeselect = store.checkSelectionActive()
-		// console.log('shouldDeselect', shouldDeselect)
 		if (shouldDeselect) store.deselectItem()
 	}
 
-	const spaceSizeX = store.activeSpace.size_x
-	const spaceSizeZ = store.activeSpace.size_z
-	const spaceSizeY = store.activeSpace.size_y
-	const floorSize = [spaceSizeX, 0.1, spaceSizeZ]
+	let space = $derived(store.activeSpace)
+	let spaceSizeX = $derived(space.size_x)
+	let spaceSizeZ = $derived(space.size_z)
+	let floorSize = $derived([spaceSizeX, 0.05, spaceSizeZ])
+	let gridSize = $derived([spaceSizeX, spaceSizeZ])
+	let cellColor = $derived(space.grid_cell_color)
+	let sectionColor = $derived(space.grid_section_color)
+	let cellSize = $derived(space.grid_cell_size)
+	let cellThickness = $derived(space.is_grid_visible ? space.grid_cell_thickness : 0)
+	let sectionSize = $derived(space.section_size)
+	let sectionThickness = $derived(space.is_grid_visible ? space.section_thickness : 0)
+	let fadeStrength = $derived(space.fade_strength)
+	let fadeDistance = $derived(space.fade_distance)
+
+	let floorColor1 = $derived(space.floor_color_1)
+	let floorColor2 = $derived(space.floor_color_2)
+	let floorOpacity1 = $derived(space.is_floor_visible ? space.floor_opacity_1 / 100 : 0)
+	let floorOpacity2 = $derived(space.is_floor_visible ? space.floor_opacity_2 / 100 : 0)
 </script>
 
+<!-- @ts-ignore file -->
 <Grid
 	type="grid"
-	sectionThickness={0.5}
-	cellColor="#515151"
-	cellSize={0.2}
-	cellThickness={1}
-	cellDividers={true}
 	position.y={-0.005}
-	sectionColor="#d1d1d1"
-	sectionDividers={true}
-	sectionSize={1}
-	fadeStrength={1}
-	fadeDistance={25}
+	{gridSize}
+	{cellSize}
+	{cellThickness}
+	{cellColor}
+	{sectionColor}
+	{sectionThickness}
+	{sectionSize}
+	{fadeStrength}
+	{fadeDistance}
 	followCamera={false}
+	backgroundColor={floorColor1}
+	backgroundOpacity={floorOpacity1}
 />
 
-<T.Group position={[0, -0.095, 0]} ondblclick={handleGroundClick} receiveShadow castShadow>
+<T.Group position={[0, -0.04, 0]} ondblclick={handleGroundClick} receiveShadow castShadow>
 	<AutoColliders shape={'cuboid'}>
 		<T.Mesh>
 			<T.BoxGeometry args={floorSize} />
-			<T.MeshStandardMaterial color="#010101" />
+			<T.MeshStandardMaterial color={floorColor2} opacity={floorOpacity2} transparent />
 		</T.Mesh>
 	</AutoColliders>
 </T.Group>

@@ -1,3 +1,4 @@
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vitest/config'
@@ -8,11 +9,11 @@ const topAwait = topLevelAwait({
 	promiseImportName: (i) => `__tla_${i}`
 })
 
+const preprocess = [vitePreprocess()]
+
 export default defineConfig({
 	plugins: [mkcert(), sveltekit(), topAwait],
-	test: {
-		include: ['src/**/*.{test,spec}.{js,ts}']
-	},
+	preprocess,
 
 	optimizeDeps: {
 		exclude: ['@threlte/flex'] // Exclude the problematic package from optimization

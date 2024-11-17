@@ -23,14 +23,7 @@
 	--gradientD: linear-gradient(90deg, #8f01ff 0%, #fdb83b 100%);
 
 	--gradientA: linear-gradient(#ffffff66, #ffffff00 100%), linear-gradient(#ffffff33, #ffffff33),
-		linear-gradient(
-			55deg,
-			var(--orange),
-			var(--pink) 25%,
-			var(--purple) 50%,
-			var(--blue) 75%,
-			var(--green)
-		);
+		linear-gradient(55deg, var(--orange), var(--pink) 25%, var(--purple) 50%, var(--blue) 75%, var(--green));
 
 	--gradientB: radial-gradient(at 76% 0%, rgba(31, 221, 255, 0.36) 0px, transparent 50%),
 		radial-gradient(at 1% 0%, rgba(255, 133, 173, 0.26) 0px, transparent 50%),
@@ -59,4 +52,6 @@
 	--relume-library-lite-rl-white: white;
 	--untitled-ui-primary900: #42307d;
 	--untitled-ui-primary500: #9e77ed;
+
+	--rotateBottomAway: rotate3d(3, 0, 0, 30deg);
 }

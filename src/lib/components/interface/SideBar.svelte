@@ -1,146 +1,119 @@
 <script lang="ts">
-	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte'
-	import { Drawer, Button, CloseButton, Label, Input, Textarea } from 'flowbite-svelte'
-	import { sineIn } from 'svelte/easing'
-	import PanelSection from './PanelSection.svelte'
-	import SpacePanel from './SpacePanel.svelte'
+	import TiHome from 'svelte-icons/ti/TiHome.svelte'
+	import TiMap from 'svelte-icons/ti/TiMap.svelte'
+	import TiBook from 'svelte-icons/ti/TiBook.svelte'
+	import Icon from '@iconify/svelte'
+	import store from '../../stores/store.svelte'
 
-	import {
-		UserSolid,
-		LifeSaverSolid,
-		HomeSolid,
-		HeartSolid,
-		BuildingSolid,
-		UserCircleSolid,
-		CogSolid
-	} from 'flowbite-svelte-icons'
+	let isHomePanelOpen = $derived.by(() => store.checkIsPanelOpen('home'))
+	let isSpacePanelOpen = $derived.by(() => store.checkIsPanelOpen('space'))
+	let isVisitorsPanelOpen = $derived.by(() => store.checkIsPanelOpen('visitors'))
+	let isShopPanelOpen = $derived.by(() => store.checkIsPanelOpen('shop'))
+	let isSettingsPanelOpen = $derived.by(() => store.checkIsPanelOpen('settings'))
+	let isAccountPanelOpen = $derived.by(() => store.checkIsPanelOpen('account'))
 
-	const panelParams = {
-		x: -320,
-		duration: 200,
-		easing: sineIn
+	let homeButtonClass = $derived.by(() => (isHomePanelOpen ? 'isActive' : ''))
+	let spaceButtonClass = $derived.by(() => (isSpacePanelOpen ? 'isActive' : ''))
+	let visitorsButtonClass = $derived.by(() => (isVisitorsPanelOpen ? 'isActive' : ''))
+	let shopButtonClass = $derived.by(() => (isShopPanelOpen ? 'isActive' : ''))
+	let accountButtonClass = $derived.by(() => (isAccountPanelOpen ? 'isActive' : ''))
+	let settingsButtonClass = $derived.by(() => (isSettingsPanelOpen ? 'isActive' : ''))
+
+	const activatePanel = (panel: string) => () => {
+		store.setActivePanel(panel)
 	}
 
-	let activePanel = $state('')
-	let isHomePanelOpen = $derived(activePanel === 'home')
-	let isSpacePanelOpen = $derived(activePanel === 'space')
-	let isVisitorsPanelOpen = $derived(activePanel === 'visitors')
-	let isShopPanelOpen = $derived(activePanel === 'shop')
-	let isHelpPanelOpen = $derived(activePanel === 'help')
-	let isSettingsPanelOpen = $derived(activePanel === 'settings')
-	let isAccountPanelOpen = $derived(activePanel === 'account')
-
-	const closePanel = () => {
-		// console.log('closing panel')
-		activePanel = ''
-	}
-
-	const setActivePanel = (panel: string) => () => {
-		if (activePanel === panel) return closePanel()
-		// console.log('setting active panel', panel)
-		activePanel = panel
-	}
+	$effect(() => {
+		console.log({ homeButtonClass, spaceButtonClass, visitorsButtonClass })
+	})
 </script>
 
-{#snippet menuItem(label, Icon)}
-	<SidebarItem class="SideBarItem" onclick={setActivePanel(label)}>
-		<svelte:fragment slot="icon">
-			<Icon size={48} />
-		</svelte:fragment>
-	</SidebarItem>
-{/snippet}
+<div id="SideBar">
+	<ul id="TopSideBar" class="SideBar menu rounded-box bg-base-200">
+		<li>
+			<button class={spaceButtonClass} onclick={activatePanel('space')}>
+				<Icon icon="pixelarticons:edit" class="sheIcon md" />
+			</button>
+		</li>
+	</ul>
 
-<Drawer
-	class="SideBarPanel"
-	activateClickOutside={false}
-	backdrop={false}
-	transitionType="fly"
-	transitionParams={panelParams}
-	hidden={!isHomePanelOpen}
->
-	<div class="InnerPanelContainer">
-		<h5 id="drawer-label" class="PanelTitle">
-			<HomeSolid class="me-2.5 h-5 w-5" />Home
-		</h5>
-		<CloseButton on:click={() => (activePanel = '')} class="CloseButton" />
-	</div>
-	<PanelSection />
-	<PanelSection />
-</Drawer>
+	<ul class="SideBar menu rounded-box bg-base-200">
+		<li>
+			<button class={visitorsButtonClass} onclick={activatePanel('visitors')}>
+				<Icon icon="pixelarticons:users" class="sheIcon md dumbIcon" />
+			</button>
+		</li>
+	</ul>
 
-<Drawer
-	class="SideBarPanel"
-	activateClickOutside={false}
-	backdrop={false}
-	transitionType="fly"
-	transitionParams={panelParams}
-	hidden={!isSpacePanelOpen}
->
-	<SpacePanel />
-</Drawer>
+	<ul class="SideBar menu rounded-box bg-base-200">
+		<li>
+			<button class={shopButtonClass} onclick={activatePanel('shop')}>
+				<Icon icon="pixelarticons:coin" class="sheIcon md" />
+			</button>
+		</li>
+	</ul>
 
-<Sidebar class="SideBar">
-	<SidebarWrapper class="SideBarWrapper">
-		<SidebarGroup>
-			{@render menuItem('home', HomeSolid)}
-			{@render menuItem('space', LifeSaverSolid)}
-			{@render menuItem('visitors', UserSolid)}
-			{@render menuItem('shop', BuildingSolid)}
-		</SidebarGroup>
-		<SidebarGroup border>
-			{@render menuItem('help', LifeSaverSolid)}
-			{@render menuItem('settings', CogSolid)}
-			{@render menuItem('account', UserCircleSolid)}
-		</SidebarGroup>
-	</SidebarWrapper>
-</Sidebar>
+	<ul class="SideBar menu rounded-box bg-base-200">
+		<li>
+			<button class={settingsButtonClass} onclick={activatePanel('settings')}>
+				<Icon icon="pixelarticons:sliders" class="sheIcon md" />
+			</button>
+		</li>
+	</ul>
 
-<style>
-	:global(.SideBar) {
-		outline: 2px solid var(--black);
-		border-radius: 4px;
-		position: absolute;
-		left: 24px;
-		top: 24px;
-		height: calc(100vh - 256px);
-		width: 64px;
-		z-index: 105;
+	<ul id="BottomSideBar" class="SideBar menu rounded-box bg-base-200">
+		<li>
+			<button class={accountButtonClass} onclick={activatePanel('account')}>
+				<Icon icon="pixelarticons:human-handsdown" class="sheIcon md" />
+			</button>
+		</li>
+	</ul>
+</div>
+
+<style scoped>
+	.SideBar.menu button:focus {
+		background: var(--chess) !important;
 	}
 
-	:global(.SideBarWrapper) {
-		height: 100%;
+	button.isActive {
+		background: var(--chess);
+		color: var(--white);
+		filter: drop-shadow(0px 1px 29px rgba(255, 255, 255, 0.1));
+	}
+
+	:global(button.isActive .sheIcon) {
+		filter: drop-shadow(0px 2px 12px var(--white));
+	}
+
+	#SideBar {
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
+		gap: 16px;
+		position: absolute;
+		top: 96px;
+		left: 24px;
+		z-index: 20;
 	}
 
-	:global(.SideBarItem) {
+	#TopSideBar {
 	}
 
-	:global(.InnerPanelContainer) {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+	.SideBar {
+		background: var(--surface-1);
+		gap: 12px;
+		outline: 2px solid var(--surface-0);
+		border-radius: 8px;
+		padding: 0px;
 	}
 
-	:global(.PanelTitle) {
-		display: flex;
-		align-items: center;
+	#BottomSideBar {
 	}
 
-	:global(.CloseButton) {
-		margin-bottom: 16px;
+	.menu > li *:active {
+		background: var(--chess);
 	}
 
-	:global(.SideBarPanel) {
-		height: calc(100vh - 256px);
-		margin-left: 100px;
-		margin-top: 24px;
-		outline: 2px solid var(--black);
-		border-radius: 4px;
-	}
-
-	:global(.PanelTextBlock) {
-		margin-bottom: 12px;
+	.menu > li *:focus {
+		background: var(--purple);
 	}
 </style>

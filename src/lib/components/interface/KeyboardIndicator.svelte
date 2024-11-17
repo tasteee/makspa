@@ -1,24 +1,22 @@
 <script lang="ts">
-	import { Kbd, ArrowKeyUp, ArrowKeyDown, ArrowKeyRight, ArrowKeyLeft } from 'flowbite-svelte'
-	import keyboardStore from '../../../stores/keyboard.svelte.ts'
-
-	type PropsT = { identifier: string; screenReaderText: string; children: any }
-	const props: PropsT = $props()
-
-	const isPressed = $derived(keyboardstore[props.identifier])
-	const isPressedClass = isPressed ? 'isPressed' : ''
+	import keyboardStore from '../../stores/keyboard.svelte'
+	type PropsT = { identifier: string; displayValue?: string; screenReaderText: string; children: any }
+	let props: PropsT = $props()
+	let displayValue = $derived(props.displayValue || props.identifier)
+	let isPressed = $derived(keyboardStore[props.identifier])
+	let isPressedClass = $derived(isPressed ? 'isPressed' : '')
+	let className = $derived('KeyboardIndicator kbd ' + isPressedClass)
 </script>
 
-<kbd data-testid="keyboard-indicator" class="KeyboardIndicator {isPressedClass}">
-	{@render props.children()}
-
+<kbd class={className}>
+	{displayValue}
 	{#if props.screenReaderText}
 		<span class="sr-only">{props.screenReaderText}</span>
 	{/if}
 </kbd>
 
 <style>
-	.KeyboardIndicator {
+	/* .KeyboardIndicator {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
@@ -38,10 +36,11 @@
 		font-weight: 600;
 		color: #1f2937;
 		background-color: #f3f4f6;
-	}
+	} */
 
 	.isPressed {
 		box-shadow: inset 0px 0px 8px var(--black);
-		color: #adbfc2;
+		background-color: var(--white);
+		color: var(--black);
 	}
 </style>
