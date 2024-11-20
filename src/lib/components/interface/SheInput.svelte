@@ -94,7 +94,7 @@
 		padding: 0 8px;
 		border-radius: 5px;
 		background-color: transparent;
-		box-shadow: inset 0 0 0 1px var(--gray25);
+		box-shadow: var(--shadowBorder25);
 		color: var(--gray0);
 		font-size: 14px;
 		transition: all 0.1s ease-in-out;
@@ -132,18 +132,11 @@
 	}
 
 	.SheInput:hover {
-		box-shadow:
-			inset 0 0 0 1px var(--gray0),
-			0 0 12px 2px #ffffff08,
-			inset 0 0 12px 2px #ffffff08,
-			inset -2px 2px 5px 2px rgb(254 242 153 / 8%);
+		box-shadow: var(--hoverShadowBorder);
 	}
 
 	.SheInput:active {
-		box-shadow:
-			inset 0 0 0 1px var(--gray0),
-			0 0 2px 2px #ffffff85,
-			inset 0 0 2px 2px #ffffff85;
+		box-shadow: var(--activeShadowBorder);
 	}
 
 	.SheInput:hover {
@@ -152,7 +145,8 @@
 
 	.SheInput:focus-within {
 		background: var(--gray35);
-		box-shadow: inset 0 0 0 1px var(--gray8);
+		box-shadow: var(--shadowBorder8);
+
 		& .label {
 			color: var(--gray0);
 		}
@@ -241,7 +235,7 @@
 
 	/* Disabled state */
 	.SheInput[data-disabled='true'] {
-		box-shadow: inset 0 0 0 1px var(--gray20);
+		box-shadow: var(--shadowBorder20);
 		color: var(--gray20);
 		cursor: not-allowed;
 		pointer-events: none;
@@ -275,7 +269,7 @@
 	input[type='color']::-webkit-color-swatch {
 		border: none;
 		border-radius: 3px;
-		box-shadow: inset 0 0 0 1px var(--gray12);
+		box-shadow: var(--shadowBorder12);
 	}
 
 	.color-value {

@@ -32,8 +32,6 @@
 	let isSettingsPanelOpen = $derived.by(() => store.checkIsPanelOpen('settings'))
 	let isAccountPanelOpen = $derived.by(() => store.checkIsPanelOpen('account'))
 	let isSupportPanelOpen = $derived.by(() => store.checkIsPanelOpen('support'))
-
-	$inspect({ isShopPanelOpen, isHomePanelOpen, isSpacePanelOpen })
 </script>
 
 {#if isShopPanelOpen}

@@ -21,7 +21,12 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div class="SheDivider {classes}" style:gap={8} data-label-position={props.labelPosition} onclick={props.onClick}>
+<div
+	class="SheDivider noselect {classes}"
+	style:gap={8}
+	data-label-position={props.labelPosition}
+	onclick={props.onClick}
+>
 	<!-- Before line -->
 	{#if props.nested && isLabelStart}
 		<!-- <span class="NestedDividerLine"></span> -->

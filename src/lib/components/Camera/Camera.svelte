@@ -4,8 +4,6 @@
 	import FirstPersonCamera from './FirstPersonCamera.svelte'
 	import Player from '../Player/Player.svelte'
 	import cameraStore from './camera.store.svelte'
-
-	$inspect(cameraStore.activeCameraName)
 </script>
 
 {#if cameraStore.activeCameraName === 'isometric'}

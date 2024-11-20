@@ -23,39 +23,39 @@
 		<span class="label">{props.label}</span>
 	{/if}
 
-	<div class="switch-wrapper {size}">
+	<div class="SwitchWrapper {size}">
 		<input type="checkbox" {checked} disabled={props.isDisabled} onchange={handleChange} />
 		<div class="circle"></div>
 	</div>
 </label>
 
 <style>
-	.switch-wrapper.small {
+	.SwitchWrapper.small {
 		width: 32px;
 		height: 18px;
 	}
 
-	.switch-wrapper.large {
+	.SwitchWrapper.large {
 		width: 48px;
 		height: 26px;
 	}
 
-	.switch-wrapper.medium {
+	.SwitchWrapper.medium {
 		width: 40px;
 		height: 22px;
 	}
 
-	.switch-wrapper.small .circle {
+	.SwitchWrapper.small .circle {
 		width: 14px;
 		height: 14px;
 	}
 
-	.switch-wrapper.large .circle {
+	.SwitchWrapper.large .circle {
 		width: 22px;
 		height: 22px;
 	}
 
-	.switch-wrapper.medium .circle {
+	.SwitchWrapper.medium .circle {
 		width: 18px;
 		height: 18px;
 	}
@@ -69,7 +69,7 @@
 		user-select: none;
 	}
 
-	.SheSwitch:hover .switch-wrapper {
+	.SheSwitch:hover .SwitchWrapper {
 		background: var(--gray30);
 	}
 
@@ -82,10 +82,10 @@
 		color: var(--gray0);
 	}
 
-	.switch-wrapper {
+	.SwitchWrapper {
 		position: relative;
 		border-radius: 999px;
-		box-shadow: inset 0 0 0 1px var(--gray15);
+		box-shadow: var(--shadowBorder15);
 		transition: all 0.2s ease;
 	}
 
@@ -110,8 +110,8 @@
 	}
 
 	/* Checked state */
-	.SheSwitch[data-checked='true'] .switch-wrapper {
-		box-shadow: inset 0 0 0 1px var(--gray0);
+	.SheSwitch[data-checked='true'] .SwitchWrapper {
+		box-shadow: var(--shadowBorder0);
 	}
 
 	.SheSwitch[data-checked='true'] .circle {
@@ -129,8 +129,8 @@
 		color: var(--gray25);
 	}
 
-	.SheSwitch[data-disabled='true'] .switch-wrapper {
-		box-shadow: inset 0 0 0 1px var(--gray25);
+	.SheSwitch[data-disabled='true'] .SwitchWrapper {
+		box-shadow: var(--shadowBorder25);
 	}
 
 	.SheSwitch[data-disabled='true'] .circle {

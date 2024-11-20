@@ -32,6 +32,9 @@
 	const updateIsVisible = updater('is_visible')
 	const updateIsGlowing = updater('is_glowing')
 	const updateIsObstructive = updater('is_obstructive')
+	const updateGlowPositionX = updater('glow_position_x')
+	const updateGlowPositionY = updater('glow_position_y')
+	const updateGlowPositionZ = updater('glow_position_z')
 
 	let isSizeOpen = $state(true)
 	let isPositionOpen = $state(true)
@@ -39,13 +42,15 @@
 	let isScaleOpen = $state(true)
 	let isOptionsOpen = $state(true)
 	let isGlowOpen = $state(true)
-
+	let isGlowPositionOpen = $state(true)
 	const toggleSize = () => (isSizeOpen = !isSizeOpen)
 	const togglePosition = () => (isPositionOpen = !isPositionOpen)
 	const toggleRotation = () => (isRotationOpen = !isRotationOpen)
 	const toggleScale = () => (isScaleOpen = !isScaleOpen)
 	const toggleOptions = () => (isOptionsOpen = !isOptionsOpen)
 	const toggleGlow = () => (isGlowOpen = !isGlowOpen)
+	const toggleGlowPosition = () => (isGlowPositionOpen = !isGlowPositionOpen)
+
 	let sizeX = $derived.by(() => toDecimals(item.size_x, 2))
 	let sizeY = $derived.by(() => toDecimals(item.size_y, 2))
 	let sizeZ = $derived.by(() => toDecimals(item.size_z, 2))
@@ -58,6 +63,9 @@
 	let scaleX = $derived.by(() => toDecimals(item.scale_x, 3))
 	let scaleY = $derived.by(() => toDecimals(item.scale_y, 3))
 	let scaleZ = $derived.by(() => toDecimals(item.scale_z, 3))
+	let glowPositionX = $derived.by(() => toDecimals(item.glow_position_x, 0))
+	let glowPositionY = $derived.by(() => toDecimals(item.glow_position_y, 0))
+	let glowPositionZ = $derived.by(() => toDecimals(item.glow_position_z, 0))
 	let opacity = $derived.by(() => toDecimals(item.opacity, 1))
 	let isVisible = $derived.by(() => item.is_visible)
 	let isGlowing = $derived.by(() => item.is_glowing)
@@ -70,48 +78,6 @@
 
 {#if !!item.uid}
 	<ShePanel side="right" title="Item" onCloseClick={store.deselectItem} isOpen>
-		<ShePanelSection
-			row
-			label="Size"
-			isOpen={isSizeOpen}
-			onClick={toggleSize}
-			bottomText="Position is static. Change scale to resize an item."
-		>
-			<SheInput
-				type="number"
-				label="X"
-				decimals={2}
-				min={0.1}
-				max={50}
-				step={0.01}
-				value={sizeX}
-				isDisabled
-				onChange={updateSizeX}
-			/>
-			<SheInput
-				type="number"
-				label="Y"
-				decimals={2}
-				min={0.1}
-				max={50}
-				step={0.01}
-				value={sizeY}
-				isDisabled
-				onChange={updateSizeY}
-			/>
-			<SheInput
-				type="number"
-				label="Z"
-				decimals={2}
-				min={0.1}
-				max={50}
-				step={0.01}
-				value={sizeZ}
-				isDisabled
-				onChange={updateSizeZ}
-			/>
-		</ShePanelSection>
-
 		<ShePanelSection row label="Position" isOpen={isPositionOpen} onClick={togglePosition}>
 			<SheInput
 				type="number"
@@ -178,52 +144,123 @@
 			/>
 		</ShePanelSection>
 
-		<ShePanelSection row label="Scale" isOpen={isScaleOpen} onClick={toggleScale}>
-			<SheInput
-				type="number"
-				label="X"
-				decimals={3}
-				min={0.1}
-				max={100}
-				step={0.025}
-				value={scaleX}
-				onChange={updateScaleX}
-			/>
-			<SheInput
-				type="number"
-				label="Y"
-				decimals={3}
-				min={0.1}
-				max={100}
-				step={0.025}
-				value={scaleY}
-				onChange={updateScaleY}
-			/>
-			<SheInput
-				type="number"
-				label="Z"
-				decimals={3}
-				min={0.1}
-				max={100}
-				step={0.025}
-				value={scaleZ}
-				onChange={updateScaleZ}
-			/>
+		<ShePanelSection label="Scale" isOpen={isScaleOpen} onClick={toggleScale}>
+			<ShePanelInnerSection row label="Size" isOpen={isSizeOpen} onClick={toggleSize}>
+				<SheInput
+					type="number"
+					label="X"
+					decimals={2}
+					min={0.1}
+					max={50}
+					step={0.01}
+					value={sizeX}
+					isDisabled
+					onChange={updateSizeX}
+				/>
+				<SheInput
+					type="number"
+					label="Y"
+					decimals={2}
+					min={0.1}
+					max={50}
+					step={0.01}
+					value={sizeY}
+					isDisabled
+					onChange={updateSizeY}
+				/>
+				<SheInput
+					type="number"
+					label="Z"
+					decimals={2}
+					min={0.1}
+					max={50}
+					step={0.01}
+					value={sizeZ}
+					isDisabled
+					onChange={updateSizeZ}
+				/>
+			</ShePanelInnerSection>
+			<div class="row" style="gap: 8px;">
+				<SheInput
+					type="number"
+					label="X"
+					decimals={3}
+					min={0.1}
+					max={100}
+					step={0.025}
+					value={scaleX}
+					onChange={updateScaleX}
+				/>
+				<SheInput
+					type="number"
+					label="Y"
+					decimals={3}
+					min={0.1}
+					max={100}
+					step={0.025}
+					value={scaleY}
+					onChange={updateScaleY}
+				/>
+				<SheInput
+					type="number"
+					label="Z"
+					decimals={3}
+					min={0.1}
+					max={100}
+					step={0.025}
+					value={scaleZ}
+					onChange={updateScaleZ}
+				/>
+			</div>
 		</ShePanelSection>
 
 		<ShePanelSection label="Glow" isOpen={isGlowOpen} onClick={toggleGlow}>
 			<SheSwitch label="Glowing" value={isGlowing} onChange={updateIsGlowing} />
-			<SheColorInput label="Color" value={glowColor} onChange={updateGlowColor} />
-			<SheInput
-				type="range"
-				label="Intensity"
-				min={0}
-				max={100}
-				step={1}
-				value={glowIntensity}
-				isDisabled={!isGlowing}
-				onChange={updateGlowIntensity}
-			/>
+			{#if isGlowing}
+				<SheColorInput label="Color" value={glowColor} onChange={updateGlowColor} />
+				<SheInput
+					type="range"
+					label="Intensity"
+					min={0}
+					max={100}
+					step={1}
+					value={glowIntensity}
+					isDisabled={!isGlowing}
+					onChange={updateGlowIntensity}
+				/>
+				<ShePanelInnerSection row label="Position" isOpen={isGlowPositionOpen} onClick={toggleGlowPosition}>
+					<SheInput
+						type="number"
+						label="X"
+						decimals={0}
+						min={0}
+						max={100}
+						step={1}
+						value={glowPositionX}
+						onChange={updateGlowPositionX}
+					/>
+					<SheInput
+						type="number"
+						label="Y"
+						decimals={0}
+						min={0}
+						max={100}
+						step={1}
+						value={glowPositionY}
+						onChange={updateGlowPositionY}
+					/>
+					<SheInput
+						type="number"
+						label="Z"
+						decimals={0}
+						min={0}
+						max={100}
+						step={1}
+						value={glowPositionZ}
+						onChange={updateGlowPositionZ}
+					/>
+				</ShePanelInnerSection>
+			{/if}
 		</ShePanelSection>
 
 		<ShePanelSection label="Options" isOpen={isOptionsOpen} onClick={toggleOptions}>

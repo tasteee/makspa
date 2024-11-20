@@ -11,8 +11,6 @@
 		duration: 300,
 		easing: sineInOut
 	}
-
-	$inspect({ isOpen })
 </script>
 
 <Drawer

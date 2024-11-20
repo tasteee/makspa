@@ -9,12 +9,17 @@
 	import * as helpers from '../modules/three.helpers'
 	import cameraStore from './Camera/camera.store.svelte'
 	import * as THREE from 'three'
-
+	import { Box3, Vector3 } from 'three'
+	import { useCursor } from '@threlte/extras'
 	import { percentageToRadians, radiansToPercentage } from '../modules/numbers'
 
 	type PropsT = {
 		uid: string
 	}
+
+	let boundingBox = $state(new Box3())
+	let boundingBoxSize = $state(new Vector3())
+	let boundingBoxCenter = $state(new Vector3())
 
 	let cameraControls = cameraStore.isometric.controls
 	let props: PropsT = $props()
@@ -48,6 +53,17 @@
 
 	$effect(() => {
 		if (!mesh) return
+
+		// Calculate the bounding box based on the transformed object
+		boundingBox.setFromObject(mesh)
+
+		// Get the size and center
+		boundingBox.getSize(boundingBoxSize) // Gives the width, height, depth
+		boundingBox.getCenter(boundingBoxCenter) // Center of the bounding box
+	})
+
+	$effect(() => {
+		if (!mesh) return
 		const adjustment = helpers.getNegativeAdjustmentToZeroY(mesh)
 		if (adjustment === 0) return
 		const newPositionY = item.position_y + adjustment
@@ -72,11 +88,28 @@
 		return [percentageToRadians(rotationX), percentageToRadians(rotationY), percentageToRadians(rotationZ)]
 	})
 
+	let glowPosition = $derived.by(() => {
+		if (!boundingBoxSize) return [0, 0, 0]
+
+		// Calculate offsets based on the bounding box dimensions
+		const xOffset = (item.glow_position_x / 100) * boundingBoxSize.x
+		const yOffset = (item.glow_position_y / 100) * boundingBoxSize.y
+		const zOffset = (item.glow_position_z / 100) * boundingBoxSize.z
+
+		// Start at the corner (boundingBox.min) and add offsets
+		const x = boundingBox.min.x + xOffset + positionX
+		const y = boundingBox.min.y + yOffset + (positionY - 0.5)
+		const z = boundingBox.min.z + zOffset + positionZ
+
+		return [x, y, z]
+	})
+
 	function focusOnSelectedItem() {
 		cameraControls.moveTo(positionX, positionY, positionZ, true)
 	}
 
 	function handleMouseDown(event) {
+		store.setMouseDownOnUid(props.uid)
 		cameraControls.enabled = false
 	}
 
@@ -97,8 +130,9 @@
 			rotation_y: radiansToPercentage(rotation.y),
 			rotation_z: radiansToPercentage(rotation.z)
 		})
+	}
 
-		// Then reapply the opacity to all materials
+	$effect(() => {
 		if (mesh) {
 			mesh.traverse((child) => {
 				if (child.material) {
@@ -107,7 +141,7 @@
 				}
 			})
 		}
-	}
+	})
 
 	// event handler for when the item is clicked
 	function handleClick(event) {
@@ -120,8 +154,24 @@
 	// event handler for when the transform controls are used
 	// to translate, rotate or scale the mesh
 	function onObjectChange(event) {
-		console.log('on object change...')
+		// console.log('on object change...')
 		// TODO: On move, play clicks sound.
+	}
+
+	function handleMeshMouseEnter(event) {
+		event?.stopPropagation?.()
+		event?.preventDefault?.()
+		store.setMouseOverUid(props.uid)
+	}
+
+	function handleMeshMouseLeave(event) {
+		event?.stopPropagation?.()
+		event?.preventDefault?.()
+		store.setMouseOverUid(null)
+	}
+
+	function handleMeshMouseDown(event) {
+		store.setMouseDownOnUid(props.uid)
 	}
 
 	// event handler to delete or deselect item
@@ -164,15 +214,34 @@
 {#await gltf then data}
 	<T
 		is={data.scene.children[0]}
-		{size}
-		{position}
-		{rotation}
-		{scale}
 		castShadow
 		receiveShadow
 		bind:ref={mesh}
 		onclick={handleClick}
+		{size}
+		{position}
+		{rotation}
+		{scale}
+		onpointerenter={handleMeshMouseEnter}
+		onpointerleave={handleMeshMouseLeave}
 	/>
+
+	{#if item.is_glowing}
+		<T.PointLight
+			castShadow
+			color={item.glow_color}
+			intensity={item.glow_intensity}
+			distance={item.glow_distance}
+			position={glowPosition}
+		/>
+
+		{#if isSelected}
+			<T.Mesh position={glowPosition}>
+				<T.BoxGeometry args={[0.05, 0.05, 0.05]} />
+				<T.MeshBasicMaterial color="limegreen" />
+			</T.Mesh>
+		{/if}
+	{/if}
 
 	{#if shouldRenderControls}
 		<TransformControls
@@ -189,16 +258,6 @@
 			onmouseUp={handleMouseUp}
 			autoPauseOrbitControls
 			mode={store.transformItemMode as any}
-		/>
-	{/if}
-
-	{#if item.is_glowing}
-		<T.PointLight
-			castShadow
-			color={item.glow_color}
-			intensity={item.glow_intensity}
-			distance={item.glow_distance}
-			position={[item.glow_position_x, item.glow_position_y, item.glow_position_z]}
 		/>
 	{/if}
 {/await}

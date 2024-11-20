@@ -34,6 +34,40 @@ class Store {
 	activeSpace = $derived.by(() => this.findSpace(this.activeSpaceUid))
 	isSelectionActive = $derived.by(() => this.selectedItemUid !== null)
 	isItemPanelOpen = $state(false)
+	mouseDownOnUid = $state(null)
+	mouseOverUid = $state(null)
+	camera = $state(null)
+	cameraControls = $state(null)
+	cameraPositionX = $state(0)
+	cameraPositionY = $state(0)
+	cameraPositionZ = $state(0)
+	cameraRotationX = $state(0)
+	cameraRotationY = $state(0)
+	cameraRotationZ = $state(0)
+	cameraZoom = $state(0)
+
+	saveCamera = (camera) => {
+		this.camera = camera
+	}
+
+	saveControls = (controls) => {
+		this.cameraControls = controls
+	}
+
+	saveCameraAndControls = (camera, controls) => {
+		this.camera = camera
+		this.cameraControls = controls
+	}
+
+	setMouseOverUid = (uid: string) => {
+		console.log('setMouseOverUid', uid)
+		this.mouseOverUid = uid
+	}
+
+	setMouseDownOnUid = (uid: string) => {
+		console.log('setMouseDownOnUid', uid)
+		this.mouseDownOnUid = uid
+	}
 
 	findSpace = (uid: string) => this.spaces.find(matchUid(uid))
 	findArtist = (uid: string) => this.artists.find(matchUid(uid))

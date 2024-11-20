@@ -8,7 +8,7 @@
 	import store from '../stores/store.svelte'
 	import ItemPanelVertical from './Interface/ItemPanelVertical.svelte'
 	import SheTopBar from './Interface/SheTopBar.svelte'
-
+	import CameraDetails from './Interface/CameraDetails.svelte'
 	onMount(() => {
 		keyboard.registerListeners()
 	})
@@ -138,3 +138,5 @@
 	<!-- <TransformModeControl /> -->
 {/if}
 <!-- <InputIndicators /> -->
+
+<!-- <CameraDetails /> -->

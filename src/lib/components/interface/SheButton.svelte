@@ -40,6 +40,7 @@
 <style>
 	:global {
 		.SheButton {
+			user-select: none;
 			font-size: 14px;
 			font-weight: 400;
 			padding: 1px 8px;
@@ -55,7 +56,7 @@
 			justify-content: center;
 			height: 30px;
 			background-color: transparent;
-			box-shadow: inset 0 0 0 1px var(--gray10);
+			box-shadow: var(--shadowBorder10);
 			color: var(--gray10);
 		}
 
@@ -81,7 +82,7 @@
 		.SheButton.dark {
 			background-color: var(--gray40);
 			color: var(--gray5);
-			box-shadow: inset 0px 0px 0px 1px var(--gray30);
+			box-shadow: var(--shadowBorder25);
 
 			&:hover {
 				background-color: var(--gray30);
@@ -116,7 +117,7 @@
 		}
 
 		.SheButton:disabled {
-			box-shadow: inset 0 0 0 1px var(--gray20);
+			box-shadow: var(--shadowBorder20);
 			color: var(--gray20);
 			cursor: not-allowed;
 			pointer-events: none;

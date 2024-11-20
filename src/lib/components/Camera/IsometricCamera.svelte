@@ -5,19 +5,28 @@
 	import * as THREE from 'three'
 	import cameraStore from './camera.store.svelte'
 	import store from '../../stores/store.svelte'
+	import throttle from 'just-throttle'
 
-	const configuration = cameraStore.isometric
 	CameraControls.install({ THREE: THREE })
+	const configuration = cameraStore.isometric
 	configuration.CameraControls = CameraControls
 
-	let camera = $state(null)
-	let cameraControls = $state(null)
 	let clock = $state(new Clock())
-	let selectedItem = $derived(store.selectedItem)
-	const { invalidate, scene, renderer } = useThrelte()
+	const { invalidate, renderer } = useThrelte()
 
-	function createCameraControls(camera, domElement) {
-		const controls = new CameraControls(camera, domElement)
+	const handleControlsUpdate = throttle(() => {
+		console.log('camera controls update')
+		store.cameraPositionX = store.camera.position.x
+		store.cameraPositionY = store.camera.position.y
+		store.cameraPositionZ = store.camera.position.z
+		store.cameraRotationX = store.camera.rotation.x
+		store.cameraRotationY = store.camera.rotation.y
+		store.cameraRotationZ = store.camera.rotation.z
+		store.cameraZoom = store.camera.zoom
+	}, 333)
+
+	function createCameraControls(domElement) {
+		const controls = new CameraControls(store.camera, domElement)
 		controls.mouseButtons.left = CameraControls.ACTION.ROTATE
 		controls.mouseButtons.middle = CameraControls.ACTION.DOLLY
 		controls.mouseButtons.right = CameraControls.ACTION.TRUCK
@@ -29,6 +38,8 @@
 		controls.zoom = configuration.orthographicZoom
 		controls.minZoom = configuration.minZoom
 		controls.maxZoom = configuration.maxZoom
+		controls.minPolarAngle = configuration.minPolarAngle
+		controls.maxPolarAngle = configuration.maxPolarAngle
 		controls.near = configuration.near
 		controls.far = configuration.far
 		controls.left = configuration.left
@@ -36,8 +47,9 @@
 		controls.top = configuration.top
 		controls.bottom = configuration.bottom
 		controls.zoomTo(configuration.orthographicZoom, true)
-		// controls.verticalDragToForward = true
+		controls.verticalDragToForward = true
 		window.control = controls
+		controls.addEventListener('update', handleControlsUpdate)
 
 		return controls
 	}
@@ -53,17 +65,12 @@
 		camera.updateProjectionMatrix()
 	}
 
-	// Animation loop using useTask
 	useTask(() => {
-		if (!cameraControls || !camera) return
-
+		if (!store.cameraControls || !store.camera) return
 		const delta = clock.getDelta()
-		const hasUpdated = cameraControls.update(delta)
+		const hasUpdated = store.cameraControls.update(delta)
 
-		if (hasUpdated) {
-			invalidate()
-		}
-
+		if (hasUpdated) invalidate()
 		return () => {
 			clock.stop()
 		}
@@ -72,8 +79,8 @@
 	// Handle window resize
 	$effect(() => {
 		const handleResize = () => {
-			if (camera) {
-				updateCameraFrustum(camera)
+			if (store.camera) {
+				updateCameraFrustum(store.camera)
 				invalidate()
 			}
 		}
@@ -84,6 +91,18 @@
 			window.removeEventListener('resize', handleResize)
 		}
 	})
+
+	const onCreate = (camera) => {
+		updateCameraFrustum(camera)
+		store.saveCamera(camera)
+
+		if (renderer) {
+			const cameraControls = createCameraControls(renderer.domElement)
+			store.saveControls(cameraControls)
+			cameraStore.saveCamera('isometric', camera)
+			cameraStore.saveControls('isometric', cameraControls)
+		}
+	}
 </script>
 
 <T.OrthographicCamera
@@ -96,15 +115,7 @@
 	right={configuration.right}
 	top={configuration.top}
 	bottom={configuration.bottom}
-	oncreate={(ref) => {
-		camera = ref
-		updateCameraFrustum(ref)
-		if (renderer) {
-			cameraControls = createCameraControls(ref, renderer.domElement)
-			cameraStore.saveCamera('isometric', ref)
-			cameraStore.saveControls('isometric', cameraControls)
-		}
-	}}
+	oncreate={onCreate}
 	ondestroy={() => {
 		if (cameraControls) {
 			cameraControls.dispose()

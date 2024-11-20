@@ -1,0 +1,20 @@
+:root {
+	--shadowBorder40: inset 0 0 0 1px var(--gray40);
+	--shadowBorder32: inset 0 0 0 1px var(--gray32);
+	--shadowBorder30: inset 0 0 0 1px var(--gray30);
+	--shadowBorder25: inset 0 0 0 1px var(--gray25);
+	--shadowBorder20: inset 0 0 0 1px var(--gray20);
+	--shadowBorder15: inset 0 0 0 1px var(--gray15);
+	--shadowBorder12: inset 0 0 0 1px var(--gray12);
+	--shadowBorder10: inset 0 0 0 1px var(--gray10);
+	--shadowBorder8: inset 0 0 0 1px var(--gray8);
+	--shadowBorder0: inset 0 0 0 1px var(--gray0);
+
+	--activeShadowBorder: var(--shadowBorder0), 0 0 2px 2px #ffffff85, inset 0 0 2px 2px #ffffff85;
+	--hoverShadowBorder: var(--shadowBorder0), 0 0 12px 2px #ffffff08, inset 0 0 12px 2px #ffffff08,
+		inset -2px 2px 5px 2px rgb(254 242 153 / 8%);
+}
+
+.noselect {
+	user-select: none;
+}

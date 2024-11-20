@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { ButtonGroup, Button, Input } from 'flowbite-svelte'
 	import { ZoomIn, ZoomOut } from 'lucide-svelte'
 	import cameraStore from './camera.store.svelte'
+	import SheButtonGroup from '../Interface/SheButtonGroup.svelte'
+	import SheButton from '../Interface/SheButton.svelte'
+	import SheInput from '../Interface/SheInput.svelte'
 
 	const camera = cameraStore.getActiveCamera()
 	let zoom = $derived(camera.zoom)
@@ -13,15 +15,15 @@
 </script>
 
 <div class="CameraZoomInput">
-	<ButtonGroup divClass="CameraZoomInputGroup">
-		<Button onclick={cameraStore.zoomOut}>
+	<SheButtonGroup divClass="CameraZoomInputGroup">
+		<SheButton onclick={cameraStore.zoomOut}>
 			<ZoomOut />
-		</Button>
-		<Input class="CameraZoomInputInput" type="number" value={zoom} onchange={onZoomChange} />
-		<Button onclick={cameraStore.zoomIn}>
+		</SheButton>
+		<SheInput class="CameraZoomInputInput" type="number" value={zoom} onchange={onZoomChange} />
+		<SheButton onclick={cameraStore.zoomIn}>
 			<ZoomIn />
-		</Button>
-	</ButtonGroup>
+		</SheButton>
+	</SheButtonGroup>
 </div>
 
 <style>

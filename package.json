@@ -31,6 +31,7 @@
 		"daisyui": "^4.12.14",
 		"flowbite": "^2.5.2",
 		"flowbite-svelte": "^0.47.3",
+		"postcss-simple-vars": "^7.0.1",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.7",
 		"prettier-plugin-tailwindcss": "^0.6.8",
@@ -58,13 +59,18 @@
 		"camera-controls": "^2.9.0",
 		"flowbite-svelte-blocks": "^1.1.4",
 		"flowbite-svelte-icons": "^2.0.2",
+		"just-debounce": "^1.1.0",
+		"just-throttle": "^4.2.0",
 		"koxy-js": "^1.1.1",
 		"lucide-svelte": "^0.456.0",
+		"postcss-apply": "^0.12.0",
+		"postcss-css-variables": "^0.19.0",
 		"svelte-carousel": "^1.0.25",
 		"svelte-hero-icons": "^5.2.0",
 		"svelte-icons": "^2.1.0",
 		"svelte-motion": "^0.12.2",
 		"tailwind-merge": "^2.5.4",
-		"three": "^0.170.0"
+		"three": "^0.170.0",
+		"three-freeform-controls": "^0.3.0"
 	}
 }

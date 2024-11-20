@@ -53,14 +53,14 @@
 		.ModelCarousel .carouselBox {
 			/* grid grid-cols-2 gap-2 */
 			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 10px;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 12px;
 		}
 
 		.ModelItem {
 			width: 100%;
 			position: relative;
-			overflow: hidden;
+			overflow: visible;
 		}
 
 		.ModelUnderlay {
@@ -86,7 +86,7 @@
 			transform: translate(-50%, -50%);
 			transition: all 0.25s ease-in-out;
 			display: flex;
-			/* flex-direction: column; */
+			flex-direction: column;
 			gap: 6px;
 		}
 

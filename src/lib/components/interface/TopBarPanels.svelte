@@ -1,14 +1,8 @@
 <script lang="ts">
-	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte'
-	import { Drawer, Button, CloseButton, Label, Input, Textarea } from 'flowbite-svelte'
-	import { sineIn } from 'svelte/easing'
-	import PanelSection from './PanelSection.svelte'
 	import SpacePanel from './SpacePanel.svelte'
 	import ShopPanel from './ShopPanel.svelte'
 	import store from '../../stores/store.svelte'
-	import { sineInOut } from 'svelte/easing'
 	import HomePanel from './HomePanel.svelte'
-	import ShopPanelVertical from './ShopPanelVertical.svelte'
 	// import ShopPanel from './ShopPanel.svelte'
 	// import VisitorsPanel from './VisitorsPanel.svelte'
 	// import ShopPanel from './ShopPanel.svelte'
@@ -16,16 +10,6 @@
 	// import AccountPanel from './AccountPanel.svelte'
 	// import SupportPanel from './SupportPanel.svelte'
 	// import HelpPanel from './HelpPanel.svelte'
-
-	import {
-		UserSolid,
-		LifeSaverSolid,
-		HomeSolid,
-		HeartSolid,
-		BuildingSolid,
-		UserCircleSolid,
-		CogSolid
-	} from 'flowbite-svelte-icons'
 
 	let isHomePanelOpen = $derived.by(() => store.checkIsPanelOpen('home'))
 	let isSpacePanelOpen = $derived.by(() => store.checkIsPanelOpen('space'))
@@ -38,7 +22,6 @@
 
 {#if isShopPanelOpen}
 	<ShopPanel />
-	<!-- <ShopPanelVertical /> -->
 {/if}
 
 {#if isHomePanelOpen}

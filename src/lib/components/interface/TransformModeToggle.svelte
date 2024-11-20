@@ -34,6 +34,7 @@
 		}
 
 		.TransformModeToggle {
+			user-select: none;
 			position: absolute;
 			top: 0px;
 			left: 0px;
