@@ -24,3 +24,22 @@ canvas {
 	background: #010101;
 	height: 100vh !important;
 }
+
+* {
+	scrollbar-color: var(--gray32) transparent;
+	scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+	width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: var(--white);
+	border-radius: 20px;
+	border: 3px solid var(--gray25);
+}

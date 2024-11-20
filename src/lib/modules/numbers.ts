@@ -1,5 +1,13 @@
 import { MathUtils } from 'three'
 
+function toDecimals(value: number, decimals: number = 2): number {
+	return parseFloat(value.toFixed(decimals))
+}
+
+function toInteger(value: number): number {
+	return Math.round(value)
+}
+
 function percentageToRadians(percentage: number): number {
 	const degrees = (percentage / 100) * 360
 	return degrees * MathUtils.DEG2RAD
@@ -62,5 +70,7 @@ export {
 	opacityToPercentage,
 	percentageToRange,
 	formatAsPercentage,
-	formatAsFeet
+	formatAsFeet,
+	toDecimals,
+	toInteger
 }

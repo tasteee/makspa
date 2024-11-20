@@ -5,8 +5,6 @@
 
 	type PropsT = { uid: string }
 	const props: PropsT = $props()
-	// let uid = $derived(props.uid)
-	// let space = $derived(store.findSpace(uid))
 	let activeItems = $derived(store.activeSpaceItems.slice(0, 10))
 </script>
 

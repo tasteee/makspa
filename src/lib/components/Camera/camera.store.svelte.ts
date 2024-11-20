@@ -1,9 +1,9 @@
-import { isometricCameraConfiguration } from './camera.configs'
-import { thirdPersonCameraConfiguration } from './camera.configs'
-import { firstPersonCameraConfiguration } from './camera.configs'
+import isometricCameraConfiguration from './configs/isometric.config'
+import thirdPersonCameraConfiguration from './configs/thirdPerson.config'
+import firstPersonCameraConfiguration from './configs/firstPerson.config'
 
 class CameraStore {
-	activeCamera = $state('isometric')
+	activeCameraName = $state('isometric')
 	isometric = $state(isometricCameraConfiguration)
 	thirdPerson = $state(thirdPersonCameraConfiguration)
 	firstPerson = $state(firstPersonCameraConfiguration)
@@ -17,20 +17,20 @@ class CameraStore {
 	}
 
 	setActiveCamera(which: string) {
-		this.activeCamera = which
+		this.activeCameraName = which
 	}
 
 	getActiveCamera() {
-		return this[this.activeCamera]
+		return this[this.activeCameraName]
 	}
 
 	adjustZoom(amount: number) {
-		const camera = this[this.activeCamera].camera
+		const camera = this[this.activeCameraName].camera
 		camera.zoom = camera.zoom + amount
 	}
 
 	setZoom(value: number) {
-		this[this.activeCamera].camera.zoom = value
+		this[this.activeCameraName].camera.zoom = value
 	}
 
 	zoomIn() {
@@ -51,7 +51,6 @@ class CameraStore {
 	}
 }
 
-const store = $state(new CameraStore())
-
+const store = new CameraStore()
 export default store
 globalThis.cameraStore = store

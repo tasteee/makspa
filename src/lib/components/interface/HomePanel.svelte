@@ -14,7 +14,7 @@
 	let isOpen = $derived.by(() => store.checkIsPanelOpen('home'))
 </script>
 
-<ShePanel class="HomePanel" side="left" title="Home" onCloseClick={() => store.setActivePanel('home')} {isOpen}>
+<ShePanel class="HomePanel" side="left" title="Home" {isOpen}>
 	<ShePanelSection label="News">
 		<p>howdy</p>
 	</ShePanelSection>

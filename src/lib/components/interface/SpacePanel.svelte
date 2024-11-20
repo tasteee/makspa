@@ -243,7 +243,7 @@
 	</ShePanelInnerSection>
 {/snippet}
 
-<ShePanel side="left" title="Space" onCloseClick={() => (store.activeMainBarPanel = '')} {isOpen}>
+<ShePanel side="left" title="Space" {isOpen}>
 	{@render infoSection()}
 	{@render floorSection()}
 	{@render gridSection()}

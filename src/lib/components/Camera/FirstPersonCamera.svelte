@@ -2,7 +2,7 @@
 	import { T } from '@threlte/core'
 	import { onMount, onDestroy } from 'svelte'
 	import cameraStore from './camera.store.svelte'
-	import { firstPersonCameraConfiguration } from './camera.configs'
+	import firstPersonCameraConfiguration from './configs/firstPerson.config'
 
 	const config = firstPersonCameraConfiguration
 	let camera = $state(null)

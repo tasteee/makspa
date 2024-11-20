@@ -17,8 +17,6 @@
 	const label = props.label ?? ''
 	const isLabelStart = !props.labelPosition || props.labelPosition === 'start'
 	const classes = classcat([props.class, props.nested && 'nested'])
-
-	$inspect('SheDivider', { props, label, classes })
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->

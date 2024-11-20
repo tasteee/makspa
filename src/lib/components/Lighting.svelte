@@ -10,8 +10,8 @@
 <!-- Ambient light for overall scene brightness -->
 <T.AmbientLight intensity={0.94} />
 <!-- Hemisphere light for natural sky-ground reflection -->
-<T.HemisphereLight intensity={0.5} color="#ffffff" groundColor="#8888ff" />
+<T.HemisphereLight intensity={0.9} color="#ffffff" groundColor="#8888ff" />
 <!-- Point light at center for additional fill -->
 <T.PointLight intensity={0.6} position.x={0} position.y={5} position.z={0} distance={20} decay={2} />
-<T.DirectionalLight castShadow position={[8, 20, -3]} />
+<T.DirectionalLight castShadow position={[0, 20, 0]} />
 <ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />

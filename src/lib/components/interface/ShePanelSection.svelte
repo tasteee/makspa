@@ -1,7 +1,5 @@
 <script lang="ts">
 	import SheDivider from './SheDivider.svelte'
-	import SheIcon from './SheIcon.svelte'
-	import SheButton from './SheButton.svelte'
 	import classcat from 'classcat'
 
 	type PropsT = {
@@ -12,6 +10,7 @@
 		onClick?: () => void
 		noPadding?: boolean
 		row?: boolean
+		bottomText?: string
 	}
 
 	let props: PropsT = $props()
@@ -31,6 +30,11 @@
 	<div class="contentBox {dirClass} gap2">
 		{@render props.children()}
 	</div>
+	{#if props.bottomText}
+		<div class="bottomText">
+			<small>{props.bottomText}</small>
+		</div>
+	{/if}
 </div>
 
 <style lang="postcss">
@@ -62,6 +66,12 @@
 			&.row {
 				flex-direction: row;
 			}
+		}
+
+		.ShePanelSection .bottomText {
+			margin-top: 8px;
+			font-size: 14px;
+			color: var(--gray10);
 		}
 	}
 </style>

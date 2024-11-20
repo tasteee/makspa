@@ -14,7 +14,6 @@
 	let cameraControls = $state(null)
 	let clock = $state(new Clock())
 	let selectedItem = $derived(store.selectedItem)
-	let selectedItemUid = $derived(!!selectedItem?.uid)
 	const { invalidate, scene, renderer } = useThrelte()
 
 	function createCameraControls(camera, domElement) {
@@ -28,6 +27,8 @@
 		controls.truckSpeed = configuration.truckSpeed
 		controls.position = configuration.position
 		controls.zoom = configuration.orthographicZoom
+		controls.minZoom = configuration.minZoom
+		controls.maxZoom = configuration.maxZoom
 		controls.near = configuration.near
 		controls.far = configuration.far
 		controls.left = configuration.left
@@ -35,6 +36,7 @@
 		controls.top = configuration.top
 		controls.bottom = configuration.bottom
 		controls.zoomTo(configuration.orthographicZoom, true)
+		// controls.verticalDragToForward = true
 		window.control = controls
 
 		return controls

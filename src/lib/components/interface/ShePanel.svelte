@@ -2,11 +2,12 @@
 	import SheIcon from './SheIcon.svelte'
 	import SheSpacer from './SheSpacer.svelte'
 	import SheButton from './SheButton.svelte'
+	import store from '../../stores/store.svelte'
 
 	type PropsT = {
 		class?: string
 		title: string
-		onCloseClick: () => void
+		onCloseClick?: () => void
 		isOpen: boolean
 		children: () => any
 		side?: 'left' | 'right'
@@ -14,6 +15,11 @@
 	}
 
 	let props: PropsT = $props()
+
+	const handleCloseClick = () => {
+		const close = props.onCloseClick ?? store.closePanel
+		close()
+	}
 </script>
 
 {#if props.isOpen}
@@ -21,7 +27,7 @@
 		<div class="ShePanelHeader">
 			<div class="ShePanelHeaderTopRow">
 				<h1 class="ShePanelTitle">{props.title}</h1>
-				<SheButton kind="dark" onClick={props.onCloseClick} iconLibrary="pixelarticons" icon="close" />
+				<SheButton kind="dark" onClick={handleCloseClick} iconLibrary="pixelarticons" icon="close" />
 			</div>
 			{#if props.headerAccessory}
 				<div class="ShePanelHeaderAccessory">{@render props.headerAccessory()}</div>

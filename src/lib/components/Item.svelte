@@ -10,30 +10,17 @@
 	import cameraStore from './Camera/camera.store.svelte'
 	import * as THREE from 'three'
 
-	import {
-		percentageToRadians,
-		radiansToPercentage,
-		percentageToDegrees,
-		sizeToScale,
-		unitToFeet,
-		percentageToOpacity,
-		opacityToPercentage,
-		percentageToRange,
-		formatAsPercentage,
-		formatAsFeet
-	} from '../modules/numbers'
+	import { percentageToRadians, radiansToPercentage } from '../modules/numbers'
 
 	type PropsT = {
 		uid: string
 	}
 
-	let camera = cameraStore.isometric.camera
 	let cameraControls = cameraStore.isometric.controls
-	let CameraControls = cameraStore.isometric.CameraControls
 	let props: PropsT = $props()
 
-	let item = $derived(store.findItem(props.uid))
-	let isSelected = $derived(store.checkIsItemSelected(props.uid))
+	let item = $derived.by(() => store.findItem(props.uid) || {})
+	let isSelected = $derived.by(() => store.checkIsItemSelected(props.uid))
 
 	let mesh = $state(null)
 	let controls = $state(null)
@@ -41,6 +28,23 @@
 	const suspend = useSuspense()
 	const gltfUrl = item.file + `?uid=${props.uid}`
 	const gltf = suspend(useGltf(gltfUrl))
+
+	let sizeX = $derived(item.size_x)
+	let sizeY = $derived(item.size_y)
+	let sizeZ = $derived(item.size_z)
+	let positionX = $derived(item.position_x)
+	let positionY = $derived(item.position_y)
+	let positionZ = $derived(item.position_z)
+	let rotationX = $derived(item.rotation_x)
+	let rotationY = $derived(item.rotation_y)
+	let rotationZ = $derived(item.rotation_z)
+	let scaleX = $derived(item.scale_x)
+	let scaleY = $derived(item.scale_y)
+	let scaleZ = $derived(item.scale_z)
+	let opacity = $derived(item.opacity / 100)
+	let isVisible = $derived(item.is_visible)
+	let isGlowing = $derived(item.is_glowing)
+	let isObstructive = $derived(item.is_obstructive)
 
 	$effect(() => {
 		if (!mesh) return
@@ -59,22 +63,17 @@
 		store.updateItem(props.uid, { rotation_y: correctedRotation })
 	})
 
-	let position = $derived([item.position_x, item.position_y, item.position_z])
-	let scale = $derived([item.scale_x, item.scale_y, item.scale_z])
-	let size = $derived([item.size_x, item.size_y, item.size_z])
-	let shouldRenderControls = $derived(isSelected && mesh)
+	let shouldRenderControls = $derived.by(() => isSelected && mesh)
+	let position = $derived.by(() => [positionX, positionY, positionZ])
+	let scale = $derived.by(() => [scaleX, scaleY, scaleZ])
+	let size = $derived.by(() => [sizeX, sizeY, sizeZ])
 
 	let rotation = $derived.by(() => {
-		return [
-			percentageToRadians(item.rotation_x),
-			percentageToRadians(item.rotation_y),
-			percentageToRadians(item.rotation_z)
-		]
+		return [percentageToRadians(rotationX), percentageToRadians(rotationY), percentageToRadians(rotationZ)]
 	})
 
 	function focusOnSelectedItem() {
-		const targetPosition = new THREE.Vector3(item.position_x, item.position_y, item.position_z)
-		cameraControls.moveTo(targetPosition.x, targetPosition.y, targetPosition.z, true)
+		cameraControls.moveTo(positionX, positionY, positionZ, true)
 	}
 
 	function handleMouseDown(event) {
@@ -83,6 +82,31 @@
 
 	function handleMouseUp(event) {
 		cameraControls.enabled = true
+		const position = event.target.object.position
+		const rotation = event.target.object.rotation
+		const scale = event.target.object.scale
+
+		store.updateItem(props.uid, {
+			position_x: position.x,
+			position_y: position.y,
+			position_z: position.z,
+			scale_x: scale.x,
+			scale_y: scale.y,
+			scale_z: scale.z,
+			rotation_x: radiansToPercentage(rotation.x),
+			rotation_y: radiansToPercentage(rotation.y),
+			rotation_z: radiansToPercentage(rotation.z)
+		})
+
+		// Then reapply the opacity to all materials
+		if (mesh) {
+			mesh.traverse((child) => {
+				if (child.material) {
+					child.material.transparent = true
+					child.material.opacity = opacity
+				}
+			})
+		}
 	}
 
 	// event handler for when the item is clicked
@@ -93,52 +117,11 @@
 		focusOnSelectedItem()
 	}
 
-	// for when the transform controls are used
-	// to translate the mesh
-	function handleMove(event) {
-		const position = event.target.object.position
-		store.updateItem(props.uid, {
-			position_x: position.x,
-			position_y: position.y,
-			position_z: position.z
-		})
-	}
-
-	// for when the transform controls are used
-	// to rotate the mesh
-	function handleRotate(event) {
-		const rotation = event.target.object.rotation
-		store.updateItem(props.uid, {
-			rotation_x: radiansToPercentage(rotation.x),
-			rotation_y: radiansToPercentage(rotation.y),
-			rotation_z: radiansToPercentage(rotation.z)
-		})
-	}
-
-	// for when the transform controls are used
-	// to scale the mesh
-	function handleScale(event) {
-		const scale = event.target.object.scale
-		store.updateItem(props.uid, {
-			scale_x: scale.x,
-			scale_y: scale.y,
-			scale_z: scale.z
-		})
-	}
-
-	// transform mode specific event handlers for
-	// onobjectchange event from transform controls
-	const handlers = {
-		translate: handleMove,
-		rotate: handleRotate,
-		scale: handleScale
-	}
-
 	// event handler for when the transform controls are used
 	// to translate, rotate or scale the mesh
 	function onObjectChange(event) {
-		const handler = handlers[store.transformItemMode]
-		handler(event)
+		console.log('on object change...')
+		// TODO: On move, play clicks sound.
 	}
 
 	// event handler to delete or deselect item
@@ -172,7 +155,10 @@
 
 	onMount(() => {
 		focusOnSelectedItem()
+		// TODO: Play pop sound.
 	})
+
+	// TODO: On delete, play unpop sound.
 </script>
 
 {#await gltf then data}

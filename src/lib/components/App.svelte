@@ -1,36 +1,17 @@
 <script lang="ts">
 	import { Canvas } from '@threlte/core'
 	import Scene from './Scene.svelte'
-	import TopBar from './Interface/TopBar.svelte'
-	import SideBar from './Interface/SideBar.svelte'
-	import TransformModeControl from './Interface/TransformModeControl.svelte'
 	import TransformModeToggle from './Interface/TransformModeToggle.svelte'
 	import { World } from '@threlte/rapier'
 	import keyboard from '../stores/keyboard.svelte'
 	import { onMount } from 'svelte'
 	import store from '../stores/store.svelte'
 	import ItemPanelVertical from './Interface/ItemPanelVertical.svelte'
-	import ShePanel from './Interface/ShePanel.svelte'
-	import SheIcon from './Interface/SheIcon.svelte'
-	import SheButton from './Interface/SheButton.svelte'
-	import SheDivider from './Interface/SheDivider.svelte'
-	import SheInput from './Interface/SheInput.svelte'
-	import SheSwitch from './Interface/SheSwitch.svelte'
 	import SheTopBar from './Interface/SheTopBar.svelte'
-
-	let isSwitchOn0 = $state(false)
-	let isSwitchOn1 = $state(false)
-	let isSwitchOn2 = $state(false)
 
 	onMount(() => {
 		keyboard.registerListeners()
 	})
-
-	let rangeValue = $state(0)
-	let updateRangeValue = (value: number) => {
-		console.log('updateRangeValue', value)
-		rangeValue = value
-	}
 </script>
 
 <Canvas background="#010101">

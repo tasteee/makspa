@@ -5,21 +5,21 @@
 	import Player from '../Player/Player.svelte'
 	import cameraStore from './camera.store.svelte'
 
-	$inspect(cameraStore.activeCamera)
+	$inspect(cameraStore.activeCameraName)
 </script>
 
-{#if cameraStore.activeCamera === 'isometric'}
+{#if cameraStore.activeCameraName === 'isometric'}
 	<IsometricCamera />
 {/if}
 
-{#if cameraStore.activeCamera === 'thirdPerson'}
+{#if cameraStore.activeCameraName === 'thirdPerson'}
 	<ThirdPersonCamera />
 {/if}
 
-{#if cameraStore.activeCamera === 'firstPerson'}
+{#if cameraStore.activeCameraName === 'firstPerson'}
 	<FirstPersonCamera />
 {/if}
 
-{#if cameraStore.activeCamera === 'pointerLock'}
+{#if cameraStore.activeCameraName === 'pointerLock'}
 	<Player />
 {/if}

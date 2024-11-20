@@ -44,8 +44,6 @@
 		props.onChange?.(value)
 		stateValue = value
 	}
-
-	let finalValue = $derived(formatNumber(stateValue ?? 0))
 </script>
 
 <label class="SheInput {props.class}" data-type={type} data-disabled={props.isDisabled} data-size={size}>
@@ -53,18 +51,18 @@
 		<span class="label">{props.label}</span>
 	{/if}
 	{#if type === 'longtext'}
-		<textarea value={finalValue} placeholder={props.placeholder} disabled={props.isDisabled} oninput={handleInput}
+		<textarea value={props.value} placeholder={props.placeholder} disabled={props.isDisabled} oninput={handleInput}
 		></textarea>
 	{:else if type === 'color'}
 		<div class="color-input-wrapper">
-			<input type="color" value={finalValue} disabled={props.isDisabled} oninput={handleInput} />
-			<span class="color-value">{finalValue}</span>
+			<input type="color" value={props.value} disabled={props.isDisabled} oninput={handleInput} />
+			<span class="color-value">{props.value}</span>
 			<SheIcon library="pixelarticons" icon="copy" size="small" />
 		</div>
 	{:else}
 		<input
 			{type}
-			value={finalValue}
+			value={props.value}
 			placeholder={props.placeholder}
 			min={props.min}
 			max={props.max}
@@ -77,7 +75,7 @@
 		<input
 			class="rangeValueInput"
 			type="number"
-			value={finalValue}
+			value={props.value}
 			min={props.min}
 			max={props.max}
 			step={props.step}

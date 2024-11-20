@@ -6,26 +6,22 @@ import spaces from '../data/spaces.json'
 import artists from '../data/artists.json'
 import { sizeToScale } from '../modules/numbers'
 
+type SessionT = {
+	user?: string
+}
+
+const matchUid = (uid: string) => (item: any) => item.uid === uid
+const unmatchUid = (uid: string) => (item: any) => item.uid !== uid
+
 class Store {
-	session = $state({})
-
+	session = $state<SessionT>({})
 	activeMainBarPanel = $state('')
-	checkIsPanelOpen = (panel: string) => this.activeMainBarPanel === panel
-	closePanel = () => (this.activeMainBarPanel = '')
-
-	setActivePanel = (panel: string) => {
-		if (!panel) return this.closePanel()
-		const isActive = panel === this.activeMainBarPanel
-		this.activeMainBarPanel = isActive ? '' : panel
-	}
-
 	isAuthenticated = $state(true)
 	isLoadingArtist = $state(false)
 	isLoadingSpaces = $state(false)
 	isEnteringSpace = $state(false)
 	isLoadingItems = $state(false)
 	isLoadingSpace = $state(false)
-
 	activeArtist = $state(artists[0])
 	activeArtistUid = $state(artists[0].uid)
 	activeSpaceItems = $state([])
@@ -39,25 +35,32 @@ class Store {
 	isSelectionActive = $derived.by(() => this.selectedItemUid !== null)
 	isItemPanelOpen = $state(false)
 
-	findSpace = (uid: string) => this.spaces.find(this.matchUid(uid))
-	findArtist = (uid: string) => this.artists.find(this.matchUid(uid))
-	findItem = (uid: string) => this.activeSpaceItems.find(this.matchUid(uid))
+	findSpace = (uid: string) => this.spaces.find(matchUid(uid))
+	findArtist = (uid: string) => this.artists.find(matchUid(uid))
+	findItem = (uid: string) => this.activeSpaceItems.find(matchUid(uid))
 
-	matchUid = (uid: string) => (item: any) => item.uid === uid
-	unmatchUid = (uid: string) => (item: any) => item.uid !== uid
+	checkIsPanelOpen = (panel: string) => this.activeMainBarPanel === panel
+	closePanel = () => (this.activeMainBarPanel = '')
 
-	checkSelectionActive = () => this.selectedItemUid !== null
+	setActivePanel = (panel: string) => {
+		if (!panel) return this.closePanel()
+		const isActive = this.checkIsPanelOpen(panel)
+		if (isActive) return this.closePanel()
+		this.activeMainBarPanel = panel
+	}
+
+	checkItemSelectionActive = () => this.selectedItemUid !== null
 	checkIsItemSelected = (uid: string) => this.selectedItemUid === uid
 	getSelectedItem = () => this.findItem(this.selectedItemUid)
-
-	selectedItem = $derived.by(() => this.getSelectedItem())
+	isAnyItemSelected = $derived.by(() => this.checkItemSelectionActive())
+	selectedItem = $state(null)
 
 	setTransformItemMode = (value: string) => {
 		this.transformItemMode = value
 	}
 
 	removeItem = (uid: string) => {
-		this.activeSpaceItems = this.activeSpaceItems.filter(this.unmatchUid(uid))
+		this.activeSpaceItems = this.activeSpaceItems.filter(unmatchUid(uid))
 		this.deselectItem()
 	}
 
@@ -65,13 +68,14 @@ class Store {
 		this.selectedItemUid = uid
 		this.isItemPanelOpen = true
 		const selected = this.findItem(uid)
-		window.item = selected
+		this.selectedItem = selected
 	}
 
 	deselectItem = () => {
 		this.isItemPanelOpen = false
 		this.setTransformItemMode('translate')
 		this.selectedItemUid = null
+		this.selectedItem = null
 	}
 
 	addItem = (item: any) => {

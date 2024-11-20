@@ -27,14 +27,7 @@
 	</div>
 {/snippet}
 
-<ShePanel
-	class="ShopPanel"
-	side="left"
-	title="Shop"
-	onCloseClick={() => store.setActivePanel('shop')}
-	{isOpen}
-	{headerAccessory}
->
+<ShePanel class="ShopPanel" side="left" title="Shop" {isOpen} {headerAccessory}>
 	<div class="CarouselWrapper">
 		<ModelCarouselVertical />
 	</div>

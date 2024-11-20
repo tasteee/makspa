@@ -6,7 +6,7 @@
 
 	const handleGroundClick = (event: MouseEvent) => {
 		event.stopPropagation()
-		const shouldDeselect = store.checkSelectionActive()
+		const shouldDeselect = store.checkItemSelectionActive()
 		if (shouldDeselect) store.deselectItem()
 	}
 
