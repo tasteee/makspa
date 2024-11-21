@@ -7,7 +7,7 @@
 </script>
 
 {#if cameraStore.activeCameraName === 'isometric'}
-	<IsometricCamera />
+	<ThirdPersonCamera />
 {/if}
 
 {#if cameraStore.activeCameraName === 'thirdPerson'}

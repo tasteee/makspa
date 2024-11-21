@@ -25,6 +25,7 @@
 	let props: PropsT = $props()
 	let mesh = $state(null)
 	let controls = $state(null)
+	let isMouseOver = $derived.by(() => store.mouseOverUid === props.uid)
 
 	let item = $derived.by(() => store.findItem(props.uid) || {})
 	let isSelected = $derived.by(() => store.checkIsItemSelected(props.uid))
@@ -111,17 +112,8 @@
 		return [x, y, z]
 	})
 
-	function focusOnSelectedItem() {
-		cameraControls.moveTo(positionX, positionY, positionZ, true)
-	}
-
-	function handleMouseDown(event) {
-		store.setMouseDownOnUid(props.uid)
-		cameraControls.enabled = false
-	}
-
 	function handleMouseUp(event) {
-		cameraControls.enabled = true
+		// cameraControls.enabled = true
 		const position = event.target.object.position
 		const rotation = event.target.object.rotation
 		const scale = event.target.object.scale
@@ -155,14 +147,7 @@
 		event?.stopPropagation?.()
 		event?.preventDefault?.()
 		store.selectItem(props.uid)
-		focusOnSelectedItem()
-	}
-
-	// event handler for when the transform controls are used
-	// to translate, rotate or scale the mesh
-	function onObjectChange(event) {
-		// console.log('on object change...')
-		// TODO: On move, play clicks sound.
+		// focusOnSelectedItem()
 	}
 
 	function handleMeshMouseEnter(event) {
@@ -211,7 +196,7 @@
 	})
 
 	onMount(() => {
-		focusOnSelectedItem()
+		// focusOnSelectedItem()
 		// TODO: Play pop sound.
 	})
 
@@ -220,12 +205,14 @@
 	$effect(() => {
 		if (!mesh) return
 		mesh.userData.uid = props.uid
+		store.itemMeshes.push(mesh)
 	})
 </script>
 
 {#await gltf then data}
 	<T
 		is={data.scene.children[0]}
+		userData={{ uid: props.uid }}
 		castShadow
 		receiveShadow
 		bind:ref={mesh}
@@ -254,26 +241,13 @@
 			</T.Mesh>
 		{/if}
 	{/if}
-
-	{#if shouldRenderControls}
-		<TransformControls
-			bind:controls
-			space="local"
-			translationSnap={0.02}
-			scaleSnap={0.02}
-			rotationSnap={0.02}
-			rotationSnapThreshold={0.02}
-			scaleSnapThreshold={0.02}
-			translationSnapThreshold={0.02}
-			onobjectChange={onObjectChange}
-			onmouseDown={handleMouseDown}
-			onmouseUp={handleMouseUp}
-			autoPauseOrbitControls
-			mode={store.transformItemMode as any}
-		/>
-	{/if}
 {/await}
 
-{#if mesh && isSelected}
-	<BoundingBox target={mesh} positionY={position[1]} />
+{#if mesh}
+	{#if isMouseOver}
+		<BoundingBox color="#ffffff" target={mesh} positionY={position[1]} />
+	{/if}
+	{#if isSelected}
+		<BoundingBox target={mesh} positionY={position[1]} />
+	{/if}
 {/if}

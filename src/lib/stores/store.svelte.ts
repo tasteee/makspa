@@ -1,3 +1,4 @@
+import * as THREE from 'three'
 import { DEFAULT_ITEM } from '../data/item'
 import { nanoid } from 'nanoid'
 import api from '../api'
@@ -14,6 +15,8 @@ const matchUid = (uid: string) => (item: any) => item.uid === uid
 const unmatchUid = (uid: string) => (item: any) => item.uid !== uid
 
 class Store {
+	itemMeshes = $state<THREE.Mesh[]>([])
+	itemsGroup = $state<THREE.Group>(null)
 	session = $state<SessionT>({})
 	activeMainBarPanel = $state('')
 	isAuthenticated = $state(true)
@@ -45,6 +48,10 @@ class Store {
 	cameraRotationY = $state(0)
 	cameraRotationZ = $state(0)
 	cameraZoom = $state(0)
+
+	getItemMeshes = () => {
+		return this.itemsGroup.children.filter((child) => !!child.userData.uid)
+	}
 
 	saveCamera = (camera) => {
 		this.camera = camera
