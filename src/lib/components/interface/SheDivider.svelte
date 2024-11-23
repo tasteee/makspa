@@ -21,12 +21,7 @@
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
-<div
-	class="SheDivider noselect {classes}"
-	style:gap={8}
-	data-label-position={props.labelPosition}
-	onclick={props.onClick}
->
+<div class="SheDivider noselect {classes}" style:gap={8} data-label-position={props.labelPosition}>
 	<!-- Before line -->
 	{#if props.nested && isLabelStart}
 		<!-- <span class="NestedDividerLine"></span> -->
@@ -35,7 +30,7 @@
 
 	<!-- Label -->
 	{#if label}
-		<span class="SheDividerLabel">{label}</span>
+		<span class="SheDividerLabel" onclick={props.onClick}>{label}</span>
 	{/if}
 
 	<!-- After line -->
@@ -49,6 +44,7 @@
 			size="small"
 			color="var(--gray15)"
 			icon={props.isOpen ? 'chevron-down' : 'chevron-up'}
+			onClick={props.onClick}
 		/>
 	{/if}
 </div>

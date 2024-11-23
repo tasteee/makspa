@@ -1,263 +1,153 @@
 <script lang="ts">
 	import { T } from '@threlte/core'
-	import { onMount } from 'svelte'
-	import { TransformControls } from '@threlte/extras'
-	import { useGltf, useSuspense } from '@threlte/extras'
-	import store from '../stores/store.svelte'
-	import { windowEvent } from '../modules/windowEvent'
-	import BoundingBox from './Helpers/BoundingBox.svelte'
+	import BoundingBox from '../modules/BoundingBox.svelte'
 	import * as helpers from '../modules/three.helpers'
-	import cameraStore from './Camera/camera.store.svelte'
-	import * as THREE from 'three'
-	import { Box3, Vector3 } from 'three'
-	import { useCursor } from '@threlte/extras'
-	import { percentageToRadians, radiansToPercentage } from '../modules/numbers'
+	import { percentageToRadians } from '../modules/numbers'
+	import DragControls from '../modules/DragControls.svelte'
+	import { useModel } from './useModel.svelte'
+	import stores from '../stores'
 
 	type PropsT = {
 		uid: string
 	}
 
-	let boundingBox = $state(new Box3())
-	let boundingBoxSize = $state(new Vector3())
-	let boundingBoxCenter = $state(new Vector3())
-
-	let cameraControls = cameraStore.isometric.controls
 	let props: PropsT = $props()
-
-	let item = $derived.by(() => store.findItem(props.uid) || {})
-	let isSelected = $derived.by(() => store.checkIsItemSelected(props.uid))
-
 	let mesh = $state(null)
-	let controls = $state(null)
+	let item = $derived(stores.spaceItems.getItemByUid(props.uid) || {})
+	let isSelected = $derived(stores.spaceItems.selectedItemUid === props.uid)
+	let isVisible = $derived(item.is_visible)
+	let isGlowing = $derived(item.is_glowing)
+	let isObstructive = $derived(item.is_obstructive)
+	let isDragging = $state(false)
+	let isMouseDown = $state(false)
+	let isPressedAlt = $derived.by(() => stores.keyboard.pressedKeys.includes('alt'))
 
-	const suspend = useSuspense()
-	const gltfUrl = item.file + `?uid=${props.uid}`
-	const gltf = suspend(useGltf(gltfUrl))
+	let dragAxes = $derived.by(() => {
+		if (!isSelected) return ''
+		if (isPressedAlt) return 'y'
+		return 'xz'
+	})
 
-	let sizeX = $derived(item.size_x)
-	let sizeY = $derived(item.size_y)
-	let sizeZ = $derived(item.size_z)
 	let positionX = $derived(item.position_x)
 	let positionY = $derived(item.position_y)
 	let positionZ = $derived(item.position_z)
-	let rotationX = $derived(item.rotation_x)
-	let rotationY = $derived(item.rotation_y)
-	let rotationZ = $derived(item.rotation_z)
+	let rotationX = $derived(percentageToRadians(item.rotation_x))
+	let rotationY = $derived(percentageToRadians(item.rotation_y))
+	let rotationZ = $derived(percentageToRadians(item.rotation_z))
 	let scaleX = $derived(item.scale_x)
 	let scaleY = $derived(item.scale_y)
 	let scaleZ = $derived(item.scale_z)
 	let opacity = $derived(item.opacity / 100)
-	let isVisible = $derived(item.is_visible)
-	let isGlowing = $derived(item.is_glowing)
-	let isObstructive = $derived(item.is_obstructive)
 
-	$effect(() => {
-		if (!mesh) return
-
-		// Calculate the bounding box based on the transformed object
-		boundingBox.setFromObject(mesh)
-
-		// Get the size and center
-		boundingBox.getSize(boundingBoxSize) // Gives the width, height, depth
-		boundingBox.getCenter(boundingBoxCenter) // Center of the bounding box
-	})
-
-	$effect(() => {
-		if (!mesh) return
-		const adjustment = helpers.getNegativeAdjustmentToZeroY(mesh)
-		if (adjustment === 0) return
-		const newPositionY = item.position_y + adjustment
-		store.updateItem(props.uid, { position_y: newPositionY })
-	})
-
-	$effect(() => {
-		if (!mesh) return
-		const rotationDegrees = helpers.getRotationYDegrees(mesh)
-		const isAligned = helpers.checkMeshAlignedAxis(rotationDegrees)
-		if (isAligned) return
-		const correctedRotation = helpers.getCorrectedAlignmentRotationY(rotationDegrees)
-		store.updateItem(props.uid, { rotation_y: correctedRotation })
-	})
-
-	let shouldRenderControls = $derived.by(() => isSelected && mesh)
 	let position = $derived.by(() => [positionX, positionY, positionZ])
-	let scale = $derived.by(() => [scaleX, scaleY, scaleZ])
-	let size = $derived.by(() => [sizeX, sizeY, sizeZ])
+	let scale = $derived.by(() => [item.scale_x, item.scale_y, item.scale_z])
+	let size = $derived.by(() => [item.size_x, item.size_y, item.size_z])
+	let rotation = $derived([item.rotation_x, item.rotation_y, item.rotation_z])
 
-	let rotation = $derived.by(() => {
-		return [percentageToRadians(rotationX), percentageToRadians(rotationY), percentageToRadians(rotationZ)]
-	})
+	const gltf = useModel(item.modelUrl)
 
-	let glowPosition = $derived.by(() => {
-		if (!boundingBoxSize) return [0, 0, 0]
-
-		// Calculate offsets based on the bounding box dimensions
-		const xOffset = (item.glow_position_x / 100) * boundingBoxSize.x
-		const yOffset = (item.glow_position_y / 100) * boundingBoxSize.y
-		const zOffset = (item.glow_position_z / 100) * boundingBoxSize.z
-
-		// Start at the corner (boundingBox.min) and add offsets
-		const x = boundingBox.min.x + xOffset + positionX
-		const y = boundingBox.min.y + yOffset + (positionY - 0.5)
-		const z = boundingBox.min.z + zOffset + positionZ
-
-		return [x, y, z]
-	})
-
-	function focusOnSelectedItem() {
-		cameraControls.moveTo(positionX, positionY, positionZ, true)
+	const setUpMesh = () => {
+		const adjustment = helpers.getNegativeAdjustmentToZeroY(mesh)
+		const newPositionY = item.position_y + adjustment
+		const rotationDegrees = helpers.getRotationYDegrees(mesh)
+		const correctedRotation = helpers.getCorrectedAlignmentRotationY(rotationDegrees)
+		const updates = { uid: props.uid, rotation_y: correctedRotation, position_y: newPositionY }
+		stores.spaceItems.updateItem(updates)
 	}
 
-	function handleMouseDown(event) {
-		store.setMouseDownOnUid(props.uid)
-		cameraControls.enabled = false
+	const handleDragStart = () => {
+		if (!isSelected) return
+		stores.camera.controls.enabled = false
+		isDragging = true
+		console.log('dragging')
 	}
 
-	function handleMouseUp(event) {
-		cameraControls.enabled = true
-		const position = event.target.object.position
-		const rotation = event.target.object.rotation
-		const scale = event.target.object.scale
+	const handleDragEnd = () => {
+		if (!isSelected) return
+		stores.camera.controls.enabled = true
+		isDragging = false
+		console.log('drag end')
+	}
 
-		store.updateItem(props.uid, {
-			position_x: position.x,
-			position_y: position.y,
-			position_z: position.z,
-			scale_x: scale.x,
-			scale_y: scale.y,
-			scale_z: scale.z,
-			rotation_x: radiansToPercentage(rotation.x),
-			rotation_y: radiansToPercentage(rotation.y),
-			rotation_z: radiansToPercentage(rotation.z)
+	const handleDrag = (event) => {
+		if (!isSelected) return
+
+		stores.spaceItems.updateItem({
+			uid: props.uid,
+			position_x: event.object.position.x,
+			position_y: event.object.position.y,
+			position_z: event.object.position.z
 		})
 	}
 
-	$effect(() => {
-		if (mesh) {
-			mesh.traverse((child) => {
-				if (child.material) {
-					child.material.transparent = true
-					child.material.opacity = opacity
-				}
-			})
-		}
-	})
+	const handleHoverStart = (event) => {
+		event.object.material.emissive.set('#00FFD5')
+		event.object.material.emissiveIntensity = 0.05
+		event.object.material.emissive.opacity = 0.1
+		event.object.castShadow = true
+		event.object.receiveShadow = true
+	}
 
-	// event handler for when the item is clicked
+	const handleHoverEnd = (event) => {
+		event.object.material.emissive.set(0, 0, 0)
+	}
+
 	function handleClick(event) {
+		if (isDragging) return
+		if (isSelected) return
 		event?.stopPropagation?.()
 		event?.preventDefault?.()
-		store.selectItem(props.uid)
-		focusOnSelectedItem()
+		stores.spaceItems.selectItem(props.uid)
 	}
 
-	// event handler for when the transform controls are used
-	// to translate, rotate or scale the mesh
-	function onObjectChange(event) {
-		// console.log('on object change...')
-		// TODO: On move, play clicks sound.
+	const handlePointerDown = (event) => {
+		if (isSelected) return
+		isMouseDown = true
 	}
 
-	function handleMeshMouseEnter(event) {
-		event?.stopPropagation?.()
-		event?.preventDefault?.()
-		store.setMouseOverUid(props.uid)
+	const handlePointerUp = (event) => {
+		if (isSelected) return
+		if (!isMouseDown) return
+		isMouseDown = false
 	}
 
-	function handleMeshMouseLeave(event) {
-		event?.stopPropagation?.()
-		event?.preventDefault?.()
-		store.setMouseOverUid(null)
-	}
-
-	function handleMeshMouseDown(event) {
-		store.setMouseDownOnUid(props.uid)
-	}
-
-	// event handler to delete or deselect item
-	// using escape key or delete key
-	const handleKeydown = (event) => {
-		const isDeleteKey = event.key === 'Delete'
-		const isEscapeKey = event.key === 'Escape'
-		const isNumber1Key = event.key === '1'
-		const isNumber2Key = event.key === '2'
-		const isNumber3Key = event.key === '3'
-		if (isNumber1Key) store.setTransformItemMode('translate')
-		if (isNumber2Key) store.setTransformItemMode('rotate')
-		if (isNumber3Key) store.setTransformItemMode('scale')
-		if (isDeleteKey) store.removeItem(props.uid)
-		if (isEscapeKey) store.deselectItem()
-	}
-
-	// add event listener to deselect with escape key,
-	// or to delete the item with delete key
 	$effect(() => {
 		if (!isSelected) return
-		return windowEvent('keydown', handleKeydown)
+		console.log('isPressedAlt', isPressedAlt)
+		if (stores.keyboard.isPressedDelete) stores.spaceItems.deleteItem(props.uid)
+		if (stores.keyboard.isPressedEscape) stores.spaceItems.deselectItem()
+		if (stores.keyboard.isPressedSpace) stores.camera.moveToItem(props.uid)
+		// if (keyboardStore.isPressedDigit1) store.setTransformItemMode('translate')
+		// if (keyboardStore.isPressedDigit2) store.setTransformItemMode('rotate')
+		// if (keyboardStore.isPressedDigit3) store.setTransformItemMode('scale')
 	})
-
-	// event handler to attach controls to the mesh
-	// when the gltf has loaded and the mesh selected
-	$effect(() => {
-		if (!shouldRenderControls || !controls || !mesh) return
-		controls.attach(mesh)
-	})
-
-	onMount(() => {
-		focusOnSelectedItem()
-		// TODO: Play pop sound.
-	})
-
-	// TODO: On delete, play unpop sound.
 </script>
 
 {#await gltf then data}
-	<T
+	<T.Mesh
 		is={data.scene.children[0]}
 		castShadow
 		receiveShadow
 		bind:ref={mesh}
 		onclick={handleClick}
-		{size}
-		{position}
-		{rotation}
-		{scale}
-		onpointerenter={handleMeshMouseEnter}
-		onpointerleave={handleMeshMouseLeave}
+		onpointerdown={handlePointerDown}
+		onpointerup={handlePointerUp}
+		position={[positionX, positionY, positionZ]}
+		rotation={[rotationX, rotationY, rotationZ]}
+		scale={[scaleX, scaleY, scaleZ]}
+		oncreate={setUpMesh}
 	/>
 
-	{#if item.is_glowing}
-		<T.PointLight
-			castShadow
-			color={item.glow_color}
-			intensity={item.glow_intensity}
-			distance={item.glow_distance}
-			position={glowPosition}
-		/>
-
-		{#if isSelected}
-			<T.Mesh position={glowPosition}>
-				<T.BoxGeometry args={[0.05, 0.05, 0.05]} />
-				<T.MeshBasicMaterial color="limegreen" />
-			</T.Mesh>
-		{/if}
-	{/if}
-
-	{#if shouldRenderControls}
-		<TransformControls
-			bind:controls
-			space="local"
-			translationSnap={0.02}
-			scaleSnap={0.02}
-			rotationSnap={0.02}
-			rotationSnapThreshold={0.02}
-			scaleSnapThreshold={0.02}
-			translationSnapThreshold={0.02}
-			onobjectChange={onObjectChange}
-			onmouseDown={handleMouseDown}
-			onmouseUp={handleMouseUp}
-			autoPauseOrbitControls
-			mode={store.transformItemMode as any}
+	{#if mesh}
+		<DragControls
+			isEnabled={isSelected}
+			axes={dragAxes}
+			onHoverStart={handleHoverStart}
+			onHoverEnd={handleHoverEnd}
+			onDragStart={handleDragStart}
+			onDragEnd={handleDragEnd}
+			onDrag={handleDrag}
+			target={mesh}
 		/>
 	{/if}
 {/await}

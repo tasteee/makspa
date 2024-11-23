@@ -4,7 +4,7 @@
 
 	type PropsT = {
 		class?: string
-		kind?: 'dark' | 'light' | string
+		kind?: 'dark' | 'light' | 'mid' | string
 		size?: 'small' | 'medium' | 'large' | string
 		isDisabled?: boolean
 		isActive?: boolean
@@ -18,7 +18,11 @@
 	// SVELTE 5: RUNES: $props()
 	let props: PropsT = $props()
 	let iconSide = $derived(props.iconSide || 'left')
-	let classes = $derived(classcat([props.class, props.kind, props.size, props.isActive ? 'isActive' : '']))
+	let activeClass = props.isActive ? 'isActive' : ''
+	let hasIconClass = props.icon ? 'hasIcon' : ''
+	let hasChildrenClass = props.children ? 'hasChildren' : ''
+	let sizeClass = props.size || 'medium'
+	let classes = $derived(classcat([props.class, props.kind, sizeClass, activeClass, hasIconClass, hasChildrenClass]))
 </script>
 
 {#snippet icon()}
@@ -40,17 +44,18 @@
 <style>
 	:global {
 		.SheButton {
+			font-family: var(--font-family);
 			user-select: none;
 			font-size: 14px;
 			font-weight: 400;
-			padding: 1px 8px;
 			border-radius: 5px;
 			cursor: pointer;
 			transition: all 0.1s ease-in-out;
 			outline: none;
 			border: none;
 			text-align: center;
-			gap: 8px;
+			gap: 2px;
+			padding: 1px 8px 0px;
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
@@ -58,62 +63,102 @@
 			background-color: transparent;
 			box-shadow: var(--shadowBorder10);
 			color: var(--gray10);
-		}
 
-		.SheButton.light {
-			background: var(--gray5);
-			color: var(--gray40);
-			box-shadow: none;
-
-			.SheButtonIcon {
-				color: var(--gray20);
+			&.small {
+				height: 24px;
 			}
 
-			&:hover {
-				background: var(--gray0);
+			&.medium {
+				height: 30px;
+			}
+
+			&.large {
+				height: 40px;
+				padding: 0px 8px 0px;
+			}
+
+			&.light {
+				background: var(--gray5);
 				color: var(--gray40);
+				box-shadow: none;
 
 				.SheButtonIcon {
+					color: var(--gray20);
+				}
+
+				&:hover {
+					background: var(--gray0);
 					color: var(--gray40);
+
+					.SheButtonIcon {
+						color: var(--gray40);
+					}
 				}
 			}
-		}
 
-		.SheButton.dark {
-			background-color: var(--gray40);
-			color: var(--gray5);
-			box-shadow: var(--shadowBorder25);
-
-			&:hover {
+			&.mid {
 				background-color: var(--gray30);
-				color: var(--gray0);
+				color: var(--gray15);
+				box-shadow: var(--shadowBorder40);
 
 				.SheButtonIcon {
+					color: var(--gray15);
+				}
+
+				&:hover {
+					background-color: var(--gray35);
 					color: var(--gray0);
+
+					.SheButtonIcon {
+						color: var(--gray0);
+					}
+				}
+
+				&.isActive {
+					background: var(--gray35);
+					box-shadow:
+						inset 0 0 0 1px var(--gray0),
+						0 0 2px 2px #ffffff44;
 				}
 			}
 
-			&.isActive {
-				background: var(--gray35);
-				box-shadow:
-					inset 0 0 0 1px var(--gray0),
-					0 0 2px 2px #ffffff44;
+			&.dark {
+				background-color: var(--gray40);
+				color: var(--gray10);
+				box-shadow: var(--shadowBorder25);
+
+				&:hover {
+					background-color: var(--gray35);
+					color: var(--gray0);
+					box-shadow: var(--shadowBorder20);
+
+					.SheButtonIcon {
+						color: var(--gray0);
+					}
+				}
+
+				&.isActive {
+					background: var(--gray25);
+					box-shadow: var(--shadowBorder10);
+				}
+			}
+
+			&.hasChildren.hasIcon {
+				padding-right: 10px;
+			}
+
+			&.hasIcon:not(.hasChildren) {
+				padding-right: 0px;
 			}
 		}
 
 		.SheButton:hover {
 			background: var(--gray35);
-			box-shadow:
-				inset 0 0 0 1px var(--gray0),
-				0 0 2px 2px #ffffff44,
-				inset 0 0 2px 2px #ffffff44;
+			box-shadow: inset 0 0 0 1px var(--gray0);
 		}
 
 		.SheButton:active {
-			box-shadow:
-				inset 0 0 0 1px var(--gray0),
-				0 0 12px 2px #ffffff85,
-				inset 0 0 12px 2px #ffffff85;
+			box-shadow: inset 0 0 0 1px var(--gray0);
 		}
 
 		.SheButton:disabled {
@@ -121,19 +166,6 @@
 			color: var(--gray20);
 			cursor: not-allowed;
 			pointer-events: none;
-		}
-
-		.SheButton.small {
-			height: 24px;
-		}
-
-		.SheButton.large {
-			height: 40px;
-			padding: 0px 8px 0px;
-		}
-
-		.SheButtonIcon {
-			margin: 0 4px;
 		}
 	}
 </style>

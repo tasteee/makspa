@@ -14,17 +14,6 @@
 	let clock = $state(new Clock())
 	const { invalidate, renderer } = useThrelte()
 
-	const handleControlsUpdate = throttle(() => {
-		console.log('camera controls update')
-		store.cameraPositionX = store.camera.position.x
-		store.cameraPositionY = store.camera.position.y
-		store.cameraPositionZ = store.camera.position.z
-		store.cameraRotationX = store.camera.rotation.x
-		store.cameraRotationY = store.camera.rotation.y
-		store.cameraRotationZ = store.camera.rotation.z
-		store.cameraZoom = store.camera.zoom
-	}, 333)
-
 	function createCameraControls(domElement) {
 		const controls = new CameraControls(store.camera, domElement)
 		controls.mouseButtons.left = CameraControls.ACTION.ROTATE
@@ -48,9 +37,6 @@
 		controls.bottom = configuration.bottom
 		controls.zoomTo(configuration.orthographicZoom, true)
 		controls.verticalDragToForward = true
-		window.control = controls
-		controls.addEventListener('update', handleControlsUpdate)
-
 		return controls
 	}
 

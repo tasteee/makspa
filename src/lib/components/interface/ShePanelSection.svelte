@@ -49,7 +49,7 @@
 			flex-direction: column;
 			padding: 0px 16px;
 			height: auto;
-			margin-bottom: 16px;
+			margin-bottom: 8px;
 			gap: var(--gap);
 		}
 
@@ -62,6 +62,8 @@
 		.ShePanelSection .contentBox {
 			flex-direction: column;
 			gap: 8px;
+			padding-left: 4px;
+			padding-right: 4px;
 
 			&.row {
 				flex-direction: row;

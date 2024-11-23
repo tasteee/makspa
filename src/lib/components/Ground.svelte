@@ -2,15 +2,15 @@
 	import { T } from '@threlte/core'
 	import { AutoColliders } from '@threlte/rapier'
 	import { Grid } from '@threlte/extras'
-	import store from '../stores/store.svelte'
+	import stores from '../stores'
 
 	const handleGroundClick = (event: MouseEvent) => {
 		event.stopPropagation()
-		const shouldDeselect = store.checkItemSelectionActive()
-		if (shouldDeselect) store.deselectItem()
+		const shouldDeselect = !!stores.spaceItems.selectedItemUid
+		if (shouldDeselect) stores.spaceItems.deselectItem()
 	}
 
-	let space = $derived(store.activeSpace)
+	let space = $derived(stores.main.activeSpace)
 	let spaceSizeX = $derived(space.size_x)
 	let spaceSizeZ = $derived(space.size_z)
 	let floorSize = $derived([spaceSizeX, 0.05, spaceSizeZ])
@@ -19,10 +19,10 @@
 	let sectionColor = $derived(space.grid_section_color)
 	let cellSize = $derived(space.grid_cell_size)
 	let cellThickness = $derived(space.is_grid_visible ? space.grid_cell_thickness : 0)
-	let sectionSize = $derived(space.section_size)
-	let sectionThickness = $derived(space.is_grid_visible ? space.section_thickness : 0)
-	let fadeStrength = $derived(space.fade_strength)
-	let fadeDistance = $derived(space.fade_distance)
+	let sectionSize = $derived(space.grid_section_size)
+	let sectionThickness = $derived(space.is_grid_visible ? space.grid_section_thickness : 0)
+	let fadeStrength = $derived(space.grid_fade_strength)
+	let fadeDistance = $derived(space.grid_fade_distance)
 
 	let floorColor1 = $derived(space.floor_color_1)
 	let floorColor2 = $derived(space.floor_color_2)

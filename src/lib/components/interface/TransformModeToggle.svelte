@@ -21,16 +21,19 @@
 
 <style>
 	:global {
-		.TransformModeToggle .TransformModeToggleGroup .rotateButton {
-			border-radius: 0px;
-		}
-
 		.TransformModeToggle .TransformModeToggleGroup .translateButton {
 			border-radius: 5px 0px 0px 5px;
+			padding: 0px 12px;
+		}
+
+		.TransformModeToggle .TransformModeToggleGroup .rotateButton {
+			border-radius: 0px;
+			padding: 0px 12px;
 		}
 
 		.TransformModeToggle .TransformModeToggleGroup .scaleButton {
 			border-radius: 0px 5px 5px 0px;
+			padding: 0px 12px;
 		}
 
 		.TransformModeToggle {
@@ -44,11 +47,12 @@
 			justify-content: center;
 			height: 0px;
 			overflow: visible;
+			margin-top: 24px;
 		}
 
 		.TransformModeToggleGroup {
-			position: relative;
-			margin-top: 12px;
+			/* position: relative; */
+			/* margin-top: 12px; */
 			display: flex;
 			gap: 0;
 		}

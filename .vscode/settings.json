@@ -5,8 +5,9 @@
 		"**/.hg": true,
 		"**/CVS": true,
 		"**/.DS_Store": true,
-		"**/Thumbs.db": true
+		"**/Thumbs.db": true,
+		"src/lib/components/Interface/_junk": true
 	},
-	"hide-files.files": [],
+	"hide-files.files": ["src/lib/components/Interface/_junk"],
 	"dimmer.enabled": false
 }

@@ -3,7 +3,7 @@
 	import SpacePanel from './SpacePanel.svelte'
 	// import VisitorsPanel from './VisitorsPanel.svelte'
 	import ShopPanel from './ShopPanel.svelte'
-	import SheButton from './SheButton.svelte'
+	import SheIconButton from './SheIconButton.svelte'
 	import TopBarPanels from './TopBarPanels.svelte'
 	// import SettingsPanel from './SettingsPanel.svelte'
 	// import AccountPanel from './AccountPanel.svelte'
@@ -31,31 +31,31 @@
 	{/if}
 
 	<div class="IconsContainer">
-		<SheButton
-			kind="dark"
+		<SheIconButton
+			kind={activePanel === 'space' ? 'light' : 'dark'}
 			isActive={activePanel === 'space'}
 			size="large"
 			class="TopBarIconButton"
 			onClick={togglePanel('space')}
-			iconLibrary="pixelarticons"
+			library="pixelarticons"
 			icon="edit"
 		/>
-		<SheButton
-			kind="dark"
+		<SheIconButton
+			kind={activePanel === 'shop' ? 'light' : 'dark'}
 			isActive={activePanel === 'shop'}
 			size="large"
 			class="TopBarIconButton"
 			onClick={togglePanel('shop')}
-			iconLibrary="pixelarticons"
+			library="pixelarticons"
 			icon="coin"
 		/>
-		<SheButton
-			kind="dark"
+		<SheIconButton
+			kind={activePanel === 'home' ? 'light' : 'dark'}
 			isActive={activePanel === 'home'}
 			size="large"
 			class="TopBarIconButton"
 			onClick={togglePanel('home')}
-			iconLibrary="pixelarticons"
+			library="pixelarticons"
 			icon="home"
 		/>
 	</div>
@@ -83,7 +83,7 @@
 		}
 
 		.SheTopBar .IconsContainer {
-			margin-top: 12px;
+			margin-top: 16px;
 			margin-left: 12px;
 			display: inline-flex;
 			gap: 12px;
@@ -97,23 +97,13 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background: var(--gray40);
+			/* background: var(--gray40);
 			border: none;
 			box-shadow: var(--shadowBorder32);
 			border-radius: 8px;
 			color: var(--gray10);
 			cursor: pointer;
-			transition: all 0.2s ease;
-		}
-
-		.SheTopBar .TopBarIconButton:hover {
-			background-color: var(--gray36);
-		}
-
-		.SheTopBar .TopBarIconButton[data-active='true'] {
-			background-color: var(--gray32);
-			color: var(--gray0);
-			box-shadow: var(--shadowBorder0);
+			transition: all 0.2s ease; */
 		}
 
 		.SheTopBar .TopBarPanels {

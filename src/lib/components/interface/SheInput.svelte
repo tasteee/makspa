@@ -1,10 +1,11 @@
 <script lang="ts">
 	import * as helpers from '../../modules/numbers'
 	import SheIcon from './SheIcon.svelte'
+	import classcat from 'classcat'
 
 	type PropsT = {
 		label?: string
-		type?: 'text' | 'number' | 'color' | 'range' | 'longtext'
+		type?: 'text' | 'number' | 'color' | 'range' | 'textarea'
 		value?: string | number
 		placeholder?: string
 		min?: string | number
@@ -20,6 +21,7 @@
 	let props: PropsT = $props()
 	let size = $derived(props.size ?? 'medium')
 	let type = $derived(props.type ?? 'text')
+	let isDisabled = $derived(props.isDisabled ? 'Disabled' : '')
 	let stateValue = $state(props.value ?? '')
 	let shouldShowRangeValue = $derived(type === 'range')
 
@@ -44,25 +46,21 @@
 		props.onChange?.(value)
 		stateValue = value
 	}
+
+	let classes = $derived(classcat([props.class, type, size, isDisabled]))
 </script>
 
-<label class="SheInput {props.class}" data-type={type} data-disabled={props.isDisabled} data-size={size}>
-	{#if props.label}
-		<span class="label">{props.label}</span>
-	{/if}
-	{#if type === 'longtext'}
-		<textarea value={props.value} placeholder={props.placeholder} disabled={props.isDisabled} oninput={handleInput}
+<label class="SheInput {classes}" data-type={type} data-size={size}>
+	<span class="label">{props.label}</span>
+
+	{#if type === 'textarea'}
+		<textarea disabled={props.isDisabled} value={props.value} placeholder={props.placeholder} oninput={handleInput}
 		></textarea>
-	{:else if type === 'color'}
-		<div class="color-input-wrapper">
-			<input type="color" value={props.value} disabled={props.isDisabled} oninput={handleInput} />
-			<span class="color-value">{props.value}</span>
-			<SheIcon library="pixelarticons" icon="copy" size="small" />
-		</div>
 	{:else}
 		<input
 			{type}
 			value={props.value}
+			data-value={props.value}
 			placeholder={props.placeholder}
 			min={props.min}
 			max={props.max}
@@ -101,33 +99,44 @@
 		width: 100%;
 	}
 
-	.SheInput[data-size='small'] {
+	.SheInput [type='range'] {
+		background: var(--gray20);
+		height: 2px;
+	}
+
+	.SheInput.small {
 		height: 24px;
 		font-size: 12px;
 	}
 
-	.SheInput[data-size='medium'] {
+	.SheInput.medium {
 		height: 30px;
 		font-size: 14px;
 	}
 
-	.SheInput[data-size='large'] {
+	.SheInput.large {
 		height: 36px;
 		font-size: 16px;
 	}
 
-	.SheInput[data-size='small'] input,
-	.SheInput[data-size='small'] textarea {
+	.SheInput input,
+	.SheInput textarea {
+		background: transparent;
+		height: 100%;
+	}
+
+	.SheInput.small input,
+	.SheInput.small textarea {
 		font-size: 12px;
 	}
 
-	.SheInput[data-size='medium'] input,
-	.SheInput[data-size='medium'] textarea {
+	.SheInput.medium input,
+	.SheInput.medium textarea {
 		font-size: 14px;
 	}
 
-	.SheInput[data-size='large'] input,
-	.SheInput[data-size='large'] textarea {
+	.SheInput.large input,
+	.SheInput.large textarea {
 		font-size: 16px;
 	}
 
@@ -167,7 +176,6 @@
 		width: 100%;
 		min-width: 0;
 		padding: 0;
-		padding-top: 1px;
 	}
 
 	/* Remove number input arrows */
@@ -178,7 +186,7 @@
 	}
 
 	/* Custom range slider styling */
-	input[type='range'] {
+	input {
 		appearance: none;
 		background: var(--gray20);
 		height: 2px;
@@ -186,12 +194,11 @@
 		padding-top: 0;
 	}
 
-	input[type='range'] + .rangeValueInput {
-		padding-top: 1px;
+	input + .rangeValueInput {
 		width: 30%;
 	}
 
-	input[type='range']::-webkit-slider-thumb {
+	input::-webkit-slider-thumb {
 		appearance: none;
 		width: 12px;
 		height: 12px;
@@ -201,7 +208,7 @@
 	}
 
 	/* Textarea styling */
-	.SheInput[data-type='longtext'] {
+	.SheInput.textarea {
 		height: auto;
 		align-items: flex-start;
 		padding: 8px;
@@ -234,47 +241,15 @@
 	}
 
 	/* Disabled state */
-	.SheInput[data-disabled='true'] {
+	.SheInput.disabled {
 		box-shadow: var(--shadowBorder20);
 		color: var(--gray20);
 		cursor: not-allowed;
 		pointer-events: none;
 	}
 
-	.SheInput[data-disabled='true'] input,
-	.SheInput[data-disabled='true'] textarea {
+	.SheInput.disabled input,
+	.SheInput.disabled textarea {
 		color: var(--gray20);
-	}
-
-	/* Color input styling */
-	.color-input-wrapper {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-	}
-
-	input[type='color'] {
-		width: 20px;
-		height: 20px;
-		padding: 0;
-		border: none;
-		cursor: pointer;
-	}
-
-	input[type='color']::-webkit-color-swatch-wrapper {
-		padding: 0;
-	}
-
-	input[type='color']::-webkit-color-swatch {
-		border: none;
-		border-radius: 3px;
-		box-shadow: var(--shadowBorder12);
-	}
-
-	.color-value {
-		font-size: 14px;
-		font-weight: 500;
-		color: var(--gray12);
 	}
 </style>

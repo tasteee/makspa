@@ -1,27 +1,17 @@
+import * as THREE from 'three'
 import { DEFAULT_ITEM } from '../data/item'
 import { nanoid } from 'nanoid'
 import api from '../api'
 import models from '../data/models.json'
 import spaces from '../data/spaces.json'
 import artists from '../data/artists.json'
-import { sizeToScale } from '../modules/numbers'
-
-type SessionT = {
-	user?: string
-}
-
-const matchUid = (uid: string) => (item: any) => item.uid === uid
-const unmatchUid = (uid: string) => (item: any) => item.uid !== uid
+import u from '../modules/utilities'
+import loaderStore from './loaders.store.svelte'
 
 class Store {
-	session = $state<SessionT>({})
 	activeMainBarPanel = $state('')
-	isAuthenticated = $state(true)
-	isLoadingArtist = $state(false)
-	isLoadingSpaces = $state(false)
 	isEnteringSpace = $state(false)
 	isLoadingItems = $state(false)
-	isLoadingSpace = $state(false)
 	activeArtist = $state(artists[0])
 	activeArtistUid = $state(artists[0].uid)
 	activeSpaceItems = $state([])
@@ -34,44 +24,10 @@ class Store {
 	activeSpace = $derived.by(() => this.findSpace(this.activeSpaceUid))
 	isSelectionActive = $derived.by(() => this.selectedItemUid !== null)
 	isItemPanelOpen = $state(false)
-	mouseDownOnUid = $state(null)
-	mouseOverUid = $state(null)
-	camera = $state(null)
-	cameraControls = $state(null)
-	cameraPositionX = $state(0)
-	cameraPositionY = $state(0)
-	cameraPositionZ = $state(0)
-	cameraRotationX = $state(0)
-	cameraRotationY = $state(0)
-	cameraRotationZ = $state(0)
-	cameraZoom = $state(0)
 
-	saveCamera = (camera) => {
-		this.camera = camera
-	}
-
-	saveControls = (controls) => {
-		this.cameraControls = controls
-	}
-
-	saveCameraAndControls = (camera, controls) => {
-		this.camera = camera
-		this.cameraControls = controls
-	}
-
-	setMouseOverUid = (uid: string) => {
-		console.log('setMouseOverUid', uid)
-		this.mouseOverUid = uid
-	}
-
-	setMouseDownOnUid = (uid: string) => {
-		console.log('setMouseDownOnUid', uid)
-		this.mouseDownOnUid = uid
-	}
-
-	findSpace = (uid: string) => this.spaces.find(matchUid(uid))
-	findArtist = (uid: string) => this.artists.find(matchUid(uid))
-	findItem = (uid: string) => this.activeSpaceItems.find(matchUid(uid))
+	findSpace = (uid: string) => this.spaces.find(u.array.matchUid(uid))
+	findArtist = (uid: string) => this.artists.find(u.array.matchUid(uid))
+	findItem = (uid: string) => this.activeSpaceItems.find(u.array.matchUid(uid))
 
 	checkIsPanelOpen = (panel: string) => this.activeMainBarPanel === panel
 	closePanel = () => (this.activeMainBarPanel = '')
@@ -94,7 +50,7 @@ class Store {
 	}
 
 	removeItem = (uid: string) => {
-		this.activeSpaceItems = this.activeSpaceItems.filter(unmatchUid(uid))
+		this.activeSpaceItems = this.activeSpaceItems.filter(u.array.unmatchUid(uid))
 		this.deselectItem()
 	}
 
@@ -118,35 +74,36 @@ class Store {
 	}
 
 	loadSpace = async (uid: string) => {
-		this.isLoadingSpace = true
+		loaderStore.start('space')
 		const [error, space] = await api.getSpace(uid)
 		this.activeSpace = space as any
-		this.isLoadingSpace = false
+		loaderStore.stop('space')
 	}
 
 	loadArtist = async (uid: string) => {
-		this.isLoadingArtist = true
+		loaderStore.start('artist')
 		const [error, artist] = await api.getArtist(uid)
 		this.activeArtist = artist as any
-		this.isLoadingArtist = false
+		loaderStore.stop('artist')
 	}
 
 	loadItems = async (uid: string) => {
-		this.isLoadingItems = true
+		loaderStore.start('items')
 		const [error, items] = await api.getSpaceItems(uid)
 		this.activeSpaceItems = items as any
-		this.isLoadingItems = false
+		loaderStore.stop('items')
 	}
 
 	addItemToSpace = (model: any) => {
 		const item = { ...model, ...DEFAULT_ITEM } as any
-		item.size_x = sizeToScale(item.size_x)
-		item.size_y = sizeToScale(item.size_y)
-		item.size_z = sizeToScale(item.size_z)
+		item.size_x = u.number.sizeToScale(item.size_x)
+		item.size_y = u.number.sizeToScale(item.size_y)
+		item.size_z = u.number.sizeToScale(item.size_z)
 		item.modelUrl = model.file + `?uid=${item.uid}`
 		item.model = model.uid
 		item.uid = nanoid()
 		this.addItem(item)
+		this.selectItem(item.uid)
 	}
 
 	enterSpace = (uid: string) => {

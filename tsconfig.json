@@ -17,19 +17,19 @@
 		"jsx": "react-jsx",
 		"experimentalDecorators": true,
 		"allowArbitraryExtensions": true,
-		"baseUrl": "./",
+		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
-			"elements/*": ["./src/lib/components/.elements/*"],
-			"~/*": ["./src/*"],
-			"lib/*": ["./src/lib/*"],
-			"components": ["./src/lib/components"],
-			"modules": ["./src/modules"],
-			"stores": ["./src/lib/stores"],
-			"types": ["./src/lib/types"],
-			"styles": ["./src/lib/styles"]
+			"@/*": ["src/*"],
+			"~/*": ["src/*"],
+			"$lib/*": ["src/lib/*"],
+			"@lib/*": ["src/lib/*"],
+			"components/*": ["src/lib/components/*"],
+			"@modules/*": ["src/lib/modules/*"],
+			"modules/*": ["src/lib/modules/*"],
+			"stores/*": ["src/lib/stores/*"],
+			"types/*": ["src/lib/types/*"],
+			"styles/*": ["src/lib/styles/*"]
 		},
-
 		"typeRoots": ["./node_modules/@types", "src/types/global.d.ts"]
 	},
 	"include": ["src", "src/lib/types/global.d.ts"]

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import keyboardStore from '../../stores/keyboard.svelte'
+	import keyboardStore from '../../stores/keyboard.store.svelte'
 	type PropsT = { identifier: string; displayValue?: string; screenReaderText: string; children: any }
 	let props: PropsT = $props()
 	let displayValue = $derived(props.displayValue || props.identifier)

@@ -2,7 +2,9 @@
 	import SheIcon from './SheIcon.svelte'
 	import SheSpacer from './SheSpacer.svelte'
 	import SheButton from './SheButton.svelte'
+	import SheIconButton from './SheIconButton.svelte'
 	import store from '../../stores/store.svelte'
+	import classcat from 'classcat'
 
 	type PropsT = {
 		class?: string
@@ -12,35 +14,57 @@
 		children: () => any
 		side?: 'left' | 'right'
 		headerAccessory?: () => any
+		isCollapsible?: boolean
 	}
 
 	let props: PropsT = $props()
+	let isCollapsed = $state(false)
+
+	const toggleCollapse = () => {
+		isCollapsed = !isCollapsed
+	}
 
 	const handleCloseClick = () => {
 		const close = props.onCloseClick ?? store.closePanel
 		close()
 	}
+
+	const collapsibleClass = props.isCollapsible ? 'isCollapsible' : ''
+	const collapsedClass = $derived(isCollapsed ? 'isCollapsed' : '')
+	const classes = $derived.by(() => classcat([props.class, collapsibleClass, collapsedClass]))
 </script>
 
 {#if props.isOpen}
-	<div class="ShePanel {props.class}" data-side={props.side}>
+	<div class="ShePanel {classes}" data-side={props.side}>
 		<div class="ShePanelHeader">
 			<div class="ShePanelHeaderTopRow">
 				<h1 class="ShePanelTitle">{props.title}</h1>
-				<SheButton kind="dark" onClick={handleCloseClick} iconLibrary="pixelarticons" icon="close" />
+				<div class="ShePanelHeaderIcons">
+					{#if props.isCollapsible}
+						<SheIconButton kind="dark" onClick={toggleCollapse} library="pixelarticons" icon="minus" />
+					{/if}
+					<SheIconButton kind="dark" onClick={handleCloseClick} library="pixelarticons" icon="close" />
+				</div>
 			</div>
 			{#if props.headerAccessory}
 				<div class="ShePanelHeaderAccessory">{@render props.headerAccessory()}</div>
 			{/if}
 		</div>
-		<div class="ShePanelContent">
-			{@render props.children()}
-			<SheSpacer />
-		</div>
+		{#if !isCollapsed}
+			<div class="ShePanelContent">
+				{@render props.children()}
+				<SheSpacer />
+			</div>
+		{/if}
 	</div>
 {/if}
 
 <style>
+	.ShePanelHeaderIcons {
+		display: flex;
+		gap: 8px;
+	}
+
 	.ShePanelHeaderTopRow {
 		display: flex;
 		justify-content: space-between;
@@ -55,6 +79,10 @@
 
 	.ShePanel {
 		--background: var(--gray40);
+	}
+
+	.ShePanel.isCollapsible.isCollapsed {
+		height: auto;
 	}
 
 	.ShePanel {
@@ -76,11 +104,11 @@
 	}
 
 	.ShePanel[data-side='left'] {
-		left: 12px;
+		left: 24px;
 	}
 
 	.ShePanel[data-side='right'] {
-		right: 12px;
+		right: 24px;
 	}
 
 	.ShePanelHeader {

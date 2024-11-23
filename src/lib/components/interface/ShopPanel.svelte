@@ -2,27 +2,39 @@
 	import store from '../../stores/store.svelte'
 	import ShePanel from './ShePanel.svelte'
 	import SheButton from './SheButton.svelte'
+	import stores from '../../stores'
 	import SheInput from './SheInput.svelte'
+	import SheIconButton from './SheIconButton.svelte'
+	import { onMount } from 'svelte'
 	import ModelCarouselVertical from './ModelCarouselVertical.svelte'
 
-	let isOpen = $derived.by(() => store.checkIsPanelOpen('shop'))
+	let shouldShowCarousel = $state(false)
+	let isOpen = $derived(stores.main.activeMainBarPanel === 'shop')
 	let search = $state('')
 
 	let updateSearch = (value: string) => {
 		search = value
 	}
+
+	onMount(() => {
+		setTimeout(() => {
+			shouldShowCarousel = true
+		}, 99)
+	})
 </script>
 
 {#snippet headerAccessory()}
 	<div class="ShopPanelHeaderAccessory">
 		<SheInput label="" value={search} onChange={updateSearch} />
-		<SheButton kind="light" onClick={() => {}} iconLibrary="pixelarticons" icon="search" />
+		<SheIconButton kind="light" onClick={() => {}} library="pixelarticons" icon="search" />
 	</div>
 {/snippet}
 
 <ShePanel class="ShopPanel" side="left" title="Shop" {isOpen} {headerAccessory}>
 	<div class="CarouselWrapper">
-		<ModelCarouselVertical />
+		{#if shouldShowCarousel}
+			<ModelCarouselVertical />
+		{/if}
 	</div>
 </ShePanel>
 

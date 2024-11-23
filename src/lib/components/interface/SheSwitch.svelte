@@ -30,6 +30,11 @@
 </label>
 
 <style>
+	.SheSwitch {
+		margin-bottom: 2px;
+		padding: 0px 4px;
+	}
+
 	.SwitchWrapper.small {
 		width: 32px;
 		height: 18px;

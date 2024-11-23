@@ -1,6 +1,6 @@
 <script lang="ts">
 	import KeyboardIndicator from './KeyboardIndicator.svelte'
-	import { ArrowKeyUp, ArrowKeyDown, ArrowKeyRight, ArrowKeyLeft } from 'flowbite-svelte'
+	import SheIcon from '$lib/components/Interface/SheIcon.svelte'
 </script>
 
 <div class="InputIndicators">
@@ -21,19 +21,19 @@
 
 	<div class="ArrowKeysIndicators">
 		<KeyboardIndicator identifier="arrowup" displayValue="▲" screenReaderText="Arrow key up">
-			<ArrowKeyUp />
+			<SheIcon library="pixelicons" icon="arrow-up" />
 		</KeyboardIndicator>
 
 		<KeyboardIndicator identifier="arrowdown" displayValue="▼" screenReaderText="Arrow key down">
-			<ArrowKeyDown />
+			<SheIcon library="pixelicons" icon="arrow-down" />
 		</KeyboardIndicator>
 
 		<KeyboardIndicator identifier="arrowleft" displayValue="◀︎" screenReaderText="Arrow key left">
-			<ArrowKeyLeft />
+			<SheIcon library="pixelicons" icon="arrow-left" />
 		</KeyboardIndicator>
 
 		<KeyboardIndicator identifier="arrowright" displayValue="▶︎" screenReaderText="Arrow key right">
-			<ArrowKeyRight />
+			<SheIcon library="pixelicons" icon="arrow-right" />
 		</KeyboardIndicator>
 	</div>
 </div>

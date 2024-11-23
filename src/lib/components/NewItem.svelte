@@ -4,7 +4,6 @@
 	import { useGltf, useSuspense } from '@threlte/extras'
 	import store from '../stores/store.svelte'
 	import { useThrelte } from '@threlte/core'
-	import { windowEvent } from '../modules/windowEvent'
 	import BoundingBox from './Helpers/BoundingBox.svelte'
 	import * as helpers from '../modules/three.helpers'
 	import cameraStore from './Camera/camera.store.svelte'

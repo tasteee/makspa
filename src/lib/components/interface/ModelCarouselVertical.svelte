@@ -1,36 +1,32 @@
 <script lang="ts">
-	import SheButton from './SheButton.svelte'
-	import store from '../../stores/store.svelte'
+	import SheIconButton from './SheIconButton.svelte'
+	import stores from '../../stores'
+	import models from '../../data/models.json'
 
-	const galleryItems = store.models.map((model) => {
+	const galleryItems = models.map((model) => {
 		return {
 			alt: model.name,
 			src: model.thumbnail,
 			uid: model.uid,
 			addItem: () => {
-				store.addItemToSpace(model)
+				stores.spaceItems.addItemFromModel(model)
 			}
 		}
 	})
-
-	const getImageUrl = (src: string) => {
-		return src
-		// return '/thumbnails/grass-block-f922aee0-7194-4e90-aa50-24040b1d5943.png'
-	}
 </script>
 
-<div class="ModelCarousel bg-surface-1 carousel carousel-vertical rounded-box">
+<div class="ModelCarousel">
 	<div class="carouselBox">
 		{#each galleryItems as galleryItem}
 			<div class="ModelItem">
-				<div class="ModelUnderlay" style="background-image: url({getImageUrl(galleryItem.src)})"></div>
+				<div class="ModelUnderlay" style="background-image: url('{galleryItem.src}')"></div>
 				<div class="IconsOverlay">
-					<SheButton kind="dark" size="large" class="ActionButton" iconLibrary="pixelarticons" icon="heart" />
-					<SheButton
+					<SheIconButton kind="dark" size="large" class="ActionButton" library="pixelarticons" icon="heart" />
+					<SheIconButton
 						kind="dark"
 						size="large"
 						class="ActionButton"
-						iconLibrary="pixelarticons"
+						library="pixelarticons"
 						icon="plus"
 						onClick={galleryItem.addItem}
 					/>
