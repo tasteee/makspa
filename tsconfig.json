@@ -1,5 +1,6 @@
 {
 	"extends": "./.svelte-kit/tsconfig.json",
+
 	"compilerOptions": {
 		"target": "ESNext",
 		"lib": ["DOM", "DOM.Iterable", "ESNext", "ES2015"],
@@ -17,22 +18,15 @@
 		"jsx": "react-jsx",
 		"experimentalDecorators": true,
 		"allowArbitraryExtensions": true,
-		"baseUrl": ".",
+
 		"paths": {
-			"@/*": ["src/*"],
-			"~/*": ["src/*"],
-			"$lib/*": ["src/lib/*"],
-			"@lib/*": ["src/lib/*"],
-			"components/*": ["src/lib/components/*"],
-			"@modules/*": ["src/lib/modules/*"],
-			"modules/*": ["src/lib/modules/*"],
-			"stores/*": ["src/lib/stores/*"],
-			"types/*": ["src/lib/types/*"],
-			"styles/*": ["src/lib/styles/*"]
+			"~/*": ["./src/*"]
 		},
+
 		"typeRoots": ["./node_modules/@types", "src/types/global.d.ts"]
 	},
-	"include": ["src", "src/lib/types/global.d.ts"]
+
+	"include": ["src", "src/types/app.d.ts", ".svelte-kit/ambient.d.ts"]
 }
 
 // "@theatre/core": "^0.7.2",

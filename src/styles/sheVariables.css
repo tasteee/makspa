@@ -1,0 +1,150 @@
+/* [SECTION] scrollbar variables */
+
+:root {
+	--scrollbar-color-thumb: var(--gray25);
+	--scrollbar-color-track: transparent;
+	--scrollbar-width-legacy: 8px;
+	--scrollbar-width: 8px;
+}
+
+/* [SECTION] color variables */
+
+/* [SUBSECTION] primaries */
+
+:root {
+	--white: var(--gray0);
+	--black: var(--gray40);
+}
+
+/* [SUBSECTION] grayscale */
+
+:root {
+	--gray0: rgb(255, 255, 255);
+	--gray1: rgb(252, 252, 252);
+	--gray2: rgb(250, 250, 250);
+	--gray3: rgb(247, 247, 247);
+	--gray4: rgb(244, 244, 245);
+	--gray5: rgb(240, 240, 241);
+	--gray6: rgb(236, 236, 238);
+	--gray7: rgb(232, 232, 234);
+	--gray8: rgb(228, 228, 231);
+	--gray9: rgb(224, 224, 227);
+	--gray10: rgb(220, 220, 223);
+	--gray11: rgb(216, 216, 220);
+	--gray12: rgb(212, 212, 216);
+	--gray13: rgb(199, 199, 204);
+	--gray14: rgb(186, 186, 193);
+	--gray15: rgb(174, 174, 181);
+	--gray16: rgb(161, 161, 170);
+	--gray17: rgb(149, 149, 158);
+	--gray18: rgb(137, 137, 146);
+	--gray19: rgb(125, 125, 134);
+	--gray20: rgb(113, 113, 122);
+	--gray21: rgb(105, 105, 114);
+	--gray22: rgb(97, 97, 106);
+	--gray23: rgb(90, 90, 99);
+	--gray24: rgb(82, 82, 91);
+	--gray25: rgb(77, 77, 86);
+	--gray26: rgb(72, 72, 80);
+	--gray27: rgb(68, 68, 75);
+	--gray28: rgb(63, 63, 70);
+	--gray29: rgb(57, 57, 63);
+	--gray30: rgb(51, 51, 56);
+	--gray31: rgb(45, 45, 49);
+	--gray32: rgb(39, 39, 42);
+	--gray33: rgb(35, 35, 38);
+	--gray34: rgb(31, 31, 34);
+	--gray35: rgb(28, 28, 31);
+	--gray36: rgb(24, 24, 27);
+	--gray37: rgb(18, 18, 20);
+	--gray38: rgb(9, 9, 11);
+	--gray39: rgb(4, 5, 6);
+	--gray40: rgb(0, 0, 0);
+
+	--grayGradient5: linear-gradient(to top right, var(--gray40), var(--gray37));
+	--grayGradient4: linear-gradient(to top right, var(--gray35), var(--gray32));
+	--grayGradient3: linear-gradient(to top right, var(--gray33), var(--gray30));
+	--grayGradient2: linear-gradient(to top right, var(--gray40), var(--gray33));
+
+	--gradientC: linear-gradient(#2b58e0, #d638a9, #982fd8, #ffbb37);
+	--gradientD: linear-gradient(90deg, #8f01ff 0%, #fdb83b 100%);
+
+	--gradientA: linear-gradient(#ffffff66, #ffffff00 100%), linear-gradient(#ffffff33, #ffffff33),
+		linear-gradient(55deg, var(--orange), var(--pink) 25%, var(--purple) 50%, var(--blue) 75%, var(--green));
+
+	--gradientB: radial-gradient(at 76% 0%, rgba(31, 221, 255, 0.36) 0px, transparent 50%),
+		radial-gradient(at 1% 0%, rgba(255, 133, 173, 0.26) 0px, transparent 50%),
+		radial-gradient(at 20% 100%, rgba(105, 102, 255, 0.47) 0px, transparent 50%);
+}
+
+/* [SECTION] transform variables */
+
+:root {
+	--rotateBottomAway: rotate3d(3, 0, 0, 30deg);
+	--error: #ff244c;
+	--yellow: #ffde34;
+	--orange: #fa0;
+	--pink: #fc66ca;
+	--purple: #9f6eff;
+	--blue: #00aaff;
+	--ross: #4200ff;
+	--green: #00ffaa;
+}
+
+/*
+:root {
+
+	--white: #ffffff;
+	--black: #101013;
+	--dark: #101013;
+	--body2: rgba(255, 255, 255, 0.6);
+	--lavendar: #b0b6fd;
+	--grey: #858585;
+	--dark-grade-2: #303030;
+	--dark-grade-1: #1a1a1a;
+	--untitled-ui-gray50: #f9fafb;
+	--light-grey: #aaa;
+	--dark-grey: #5f5e5e;
+
+
+	--untitled-ui-primary600: #7f56d9;
+	--untitled-ui-white: white;
+	--untitled-ui-primary700: #6941c6;
+	--untitled-ui-primary100: #f4ebff;
+	--untitled-ui-gray300: #d0d5dd;
+	--untitled-ui-gray700: #344054;
+	--untitled-ui-gray800: #1d2939;
+	--untitled-ui-gray100: #f2f4f7;
+	--untitled-ui-gray500: #667085;
+	--untitled-ui-gray600: #475467;
+	--untitled-ui-gray900: #101828;
+	--untitled-ui-primary300: #d6bbfb;
+	--untitled-ui-primary200: #e9d7fe;
+	--untitled-ui-primary50: #f9f5ff;
+	--untitled-ui-gray200: #eaecf0;
+	--untitled-ui-gray400: #98a2b3;
+	--untitled-ui-primary800: #53389e;
+	--untitled-ui-success50: #ecfdf3;
+	--untitled-ui-success700: #027a48;
+	--relume-library-lite-rl-black: black;
+	--relume-library-lite-rl-white: white;
+	--untitled-ui-primary900: #42307d;
+	--untitled-ui-primary500: #9e77ed;
+} */
+
+:root {
+	--shadowBorder40: inset 0 0 0 1px var(--gray40);
+	--shadowBorder32: inset 0 0 0 1px var(--gray32);
+	--shadowBorder30: inset 0 0 0 1px var(--gray30);
+	--shadowBorder25: inset 0 0 0 1px var(--gray25);
+	--shadowBorder20: inset 0 0 0 1px var(--gray20);
+	--shadowBorder15: inset 0 0 0 1px var(--gray15);
+	--shadowBorder12: inset 0 0 0 1px var(--gray12);
+	--shadowBorder10: inset 0 0 0 1px var(--gray10);
+	--shadowBorder8: inset 0 0 0 1px var(--gray8);
+	--shadowBorder0: inset 0 0 0 1px var(--gray0);
+
+	--activeShadowBorder: var(--shadowBorder0), 0 0 2px 2px #ffffff85, inset 0 0 2px 2px #ffffff85;
+	--hoverShadowBorder: var(--shadowBorder0), 0 0 12px 2px #ffffff02, inset 0 0 12px 2px #ffffff02,
+		inset -2px 2px 5px 2px rgb(254 242 153 / 2%);
+}

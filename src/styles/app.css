@@ -1,0 +1,168 @@
+* {
+	margin: 0;
+	padding: 0;
+	border: none;
+	outline: none;
+	box-sizing: border-box;
+}
+
+#root > div:first-of-type {
+	height: calc(100vh - 0px);
+}
+
+:root {
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+	top: 0;
+	left: 0;
+	overflow: hidden;
+	overscroll-behavior: contain;
+}
+
+canvas {
+	background: #010101;
+	height: 100vh !important;
+}
+
+* {
+	scrollbar-color: var(--gray32) transparent;
+	scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+	width: 12px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: var(--white);
+	border-radius: 20px;
+	border: 3px solid var(--gray25);
+}
+
+.she-vibe-normal {
+	--idle-text-color: var(--gray0);
+	--idle-icon-color: var(--gray0);
+	--idle-label-color: var(--gray0);
+	--idle-border-color: var(--gray25);
+	--idle-background-color: var(--gray25);
+
+	--hover-text-color: var(--gray0);
+	--hover-icon-color: var(--gray0);
+	--hover-label-color: var(--gray0);
+	--hover-border-color: var(--gray25);
+	--hover-background-color: var(--gray25);
+
+	--pressed-text-color: var(--gray0);
+	--pressed-icon-color: var(--gray0);
+	--pressed-label-color: var(--gray0);
+	--pressed-border-color: var(--gray25);
+	--pressed-background-color: var(--gray25);
+
+	--active-text-color: var(--gray0);
+	--active-icon-color: var(--gray0);
+	--active-label-color: var(--gray0);
+	--active-border-color: var(--gray25);
+	--active-background-color: var(--gray25);
+}
+
+.she-vibe-pop {
+	--idle-text-color: var(--gray0);
+	--idle-icon-color: var(--gray0);
+	--idle-label-color: var(--gray0);
+	--idle-border-color: var(--gray25);
+	--idle-background-color: var(--gray25);
+
+	--hover-text-color: var(--gray0);
+	--hover-icon-color: var(--gray0);
+	--hover-label-color: var(--gray0);
+	--hover-border-color: var(--gray25);
+	--hover-background-color: var(--gray25);
+
+	--pressed-text-color: var(--gray0);
+	--pressed-icon-color: var(--gray0);
+	--pressed-label-color: var(--gray0);
+	--pressed-border-color: var(--gray25);
+	--pressed-background-color: var(--gray25);
+
+	--active-text-color: var(--gray0);
+	--active-icon-color: var(--gray0);
+	--active-label-color: var(--gray0);
+	--active-border-color: var(--gray25);
+	--active-background-color: var(--gray25);
+}
+
+.she-vibe-mute {
+	--idle-text-color: var(--gray0);
+	--idle-icon-color: var(--gray0);
+	--idle-label-color: var(--gray0);
+	--idle-border-color: var(--gray25);
+	--idle-background-color: var(--gray25);
+
+	--hover-text-color: var(--gray0);
+	--hover-icon-color: var(--gray0);
+	--hover-label-color: var(--gray0);
+	--hover-border-color: var(--gray25);
+	--hover-background-color: var(--gray25);
+
+	--pressed-text-color: var(--gray0);
+	--pressed-icon-color: var(--gray0);
+	--pressed-label-color: var(--gray0);
+	--pressed-border-color: var(--gray25);
+	--pressed-background-color: var(--gray25);
+
+	--active-text-color: var(--gray0);
+	--active-icon-color: var(--gray0);
+	--active-label-color: var(--gray0);
+	--active-border-color: var(--gray25);
+	--active-background-color: var(--gray25);
+}
+
+.she-vibe-disabled {
+	--idle-text-color: var(--gray0);
+	--idle-icon-color: var(--gray0);
+	--idle-label-color: var(--gray0);
+	--idle-border-color: var(--gray25);
+	--idle-background-color: var(--gray25);
+
+	--hover-text-color: var(--gray0);
+	--hover-icon-color: var(--gray0);
+	--hover-label-color: var(--gray0);
+	--hover-border-color: var(--gray25);
+	--hover-background-color: var(--gray25);
+
+	--pressed-text-color: var(--gray0);
+	--pressed-icon-color: var(--gray0);
+	--pressed-label-color: var(--gray0);
+	--pressed-border-color: var(--gray25);
+	--pressed-background-color: var(--gray25);
+
+	--active-text-color: var(--gray0);
+	--active-icon-color: var(--gray0);
+	--active-label-color: var(--gray0);
+	--active-border-color: var(--gray25);
+	--active-background-color: var(--gray25);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 30px transparent inset !important;
+	-webkit-text-fill-color: white !important;
+}
+
+input {
+	/* prevent anything that tries to change this from ever getting there */
+	transition:
+		color calc(infinity * 1s) step-end,
+		background-color calc(infinity * 1s) step-end;
+
+	/* style the field as normal */
+	background-color: transparent;
+	color: CanvasText;
+}

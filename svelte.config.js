@@ -5,16 +5,7 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			'@': './src',
-			'~': './src',
-			$lib: './src/lib',
-			'@lib': './src/lib',
-			components: './src/lib/components',
-			'@modules': './src/lib/modules',
-			modules: './src/lib/modules',
-			stores: './src/lib/stores',
-			types: './src/lib/types',
-			styles: './src/lib/styles'
+			'~': './src'
 		}
 	},
 	preprocess: vitePreprocess()

@@ -1,5 +1,6 @@
-<script>
-	import '../app.css';
+<script lang="ts">
+	import { onMount } from 'svelte'
+	let props = $props()
 </script>
 
-<slot></slot>
+{@render props.children()}

@@ -1,4 +1,5 @@
 We are using THRELTE + SVELTE v5.
+
 THAT MEANS we use RUNES like $state, $props, $effect, $derived, etc.
 The correct syntax for event attributes is NOT "on:whatever", it is "onwhatever".
 Do NOT destructure props, or objects, or anything. Always use dot notation to get values.
@@ -7,4 +8,69 @@ Write CLEAN, COMPOSIBLE, FUNCTIONAL, EXPLICIT CODE.
 Use SVELTE 5 with RUNES like $state, $props, $effect, $derived, etc.
 Use SVELTE 5 with RUNES like $state, $props, $effect, $derived, etc.
 BE SURE TO USE THE CORRECT SYNTAX AND NOT SVELTE 4 SYNTAX.
-https://svelte.dev/docs/svelte/overview
+
+## Reactivity
+
+- Use `$state(value)` instead of `let` for reactive variables[1]
+- Replace `$:` with `$derived()` for computed values[1]
+- Use `$effect(() => { ... })` for side effects[1]
+
+## Props
+
+- Declare props using `$props()` with destructuring:
+  ````svelte
+  let {(propName, (optionalProp = defaultValue))} = $props(); ```[1]
+  ````
+
+## Events
+
+- Use `onclick={handler}` instead of `on:click={handler}`[1]
+- For component events, use callback props instead of `createEventDispatcher`[1]
+- Bubble events by accepting `onclick` prop in child components[1]
+
+## Snippets (replacing slots)
+
+- Use the `children` prop for default content:
+  ````svelte
+  {@render children?.()}
+  ```[1]
+  ````
+- For named slots, use named props:
+  ````svelte
+  let {(header, main, footer)} = $props();
+  {@render header()}
+  ```[1]
+  ````
+- Pass data to snippets:
+  ````svelte
+  {#snippet item(text)}
+  	<span>{text}</span>
+  {/snippet}
+  ```[1]
+  ````
+
+## Component Structure
+
+```svelte
+<script>
+	let count = $state(0)
+	let { title, onReset } = $props()
+	const doubleCount = $derived(count * 2)
+
+	$effect(() => {
+		if (count > 10) console.log('Count is high!')
+	})
+
+	function increment() {
+		count++
+	}
+</script>
+
+<h1>{@render title()}</h1>
+<button onclick={increment}>Count: {count}</button>
+<p>Double: {doubleCount}</p>
+<button onclick={onReset}>Reset</button>
+```
+
+This structure demonstrates reactive state, props, derived values,
+effects, and the new event syntax in a Svelte 5 component.

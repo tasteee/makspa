@@ -6,8 +6,22 @@
 		"**/CVS": true,
 		"**/.DS_Store": true,
 		"**/Thumbs.db": true,
-		"src/lib/components/Interface/_junk": true
+		"src/lib/components/Interface/_junk": true,
+		".vscode": true,
+		".svelte-kit": true,
+		".pnotes": true,
+		"node_modules": true,
+		"scripts": true,
+		"migrations": true
 	},
-	"hide-files.files": ["src/lib/components/Interface/_junk"],
+	"hide-files.files": [
+		"src/lib/components/Interface/_junk",
+		".vscode",
+		".svelte-kit",
+		".pnotes",
+		"node_modules",
+		"scripts",
+		"migrations"
+	],
 	"dimmer.enabled": false
 }

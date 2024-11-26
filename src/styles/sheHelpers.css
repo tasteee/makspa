@@ -1,0 +1,54 @@
+.noselect,
+.she-no-select {
+	user-select: none;
+}
+
+.column {
+	display: flex;
+	flex-direction: column;
+}
+
+.column.xc {
+	align-items: center;
+}
+
+.column.yc {
+	justify-content: center;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+}
+
+.row.xc {
+	justify-content: center;
+}
+
+.row.yc {
+	align-items: center;
+}
+
+.wrap {
+	flex-wrap: wrap;
+}
+
+.gap1 {
+	gap: 4px;
+}
+
+.gap2 {
+	gap: 8px;
+}
+
+.gap3 {
+	gap: 12px;
+}
+
+.gap4 {
+	gap: 16px;
+}
+
+.gap5 {
+	gap: 20px;
+}
