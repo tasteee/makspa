@@ -15,7 +15,7 @@
 	onMount(() => {
 		const urlPattern = new UrlPattern('/app/space/:id')
 		const match = urlPattern.match(globalThis.location.pathname)
-		mainStore.enterSpace(match.id)
+		mainStore.loadSpace(match.id)
 	})
 </script>
 

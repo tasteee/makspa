@@ -21,7 +21,8 @@ const createColorsRange = (startColor, endColor, count) => {
 	return bars
 }
 
-const vizBars = range(24)
+const BAR_COUNT = 8
+const vizBars = range(BAR_COUNT)
 
 class AudioStore {
 	context = $state(null)
@@ -136,9 +137,10 @@ class AudioStore {
 			const sum = slice.reduce((acc, val) => acc + val, 0)
 			const avg = slice.length ? sum / slice.length : 0
 			const normalizedHeight = Math.min(100, (avg / 255) * 100)
+			const alpha = Math.max(0.5, normalizedHeight / 100)
 
 			return {
-				background: `hsla(0, 0%, 0%, ${normalizedHeight / 100})`,
+				background: `hsla(0, 0%, 0%, ${alpha})`,
 				height: `${normalizedHeight}%`
 			}
 		})

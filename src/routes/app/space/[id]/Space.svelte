@@ -5,7 +5,7 @@
 
 	type PropsT = { id: string }
 	const props: PropsT = $props()
-	let items = $derived.by(() => Object.values(mainStore.items))
+	let items = $derived.by(() => Object.values(mainStore.space.items)) as ItemT[]
 </script>
 
 {#if items.length > 0}

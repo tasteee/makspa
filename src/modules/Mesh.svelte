@@ -10,7 +10,7 @@
 	let userData = { id }
 
 	const onCreate = (meshRef: THREE.Mesh) => {
-		mainStore.saveObject(id, meshRef)
+		mainStore.saveMesh(id, meshRef)
 	}
 </script>
 

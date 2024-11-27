@@ -26,7 +26,7 @@
 			display: flex;
 			justify-content: space-evenly;
 			align-items: flex-end;
-			background: linear-gradient(to top, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0));
+			/* background: linear-gradient(to top, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0)); */
 			padding: 0px;
 			z-index: 150;
 		}
@@ -36,7 +36,6 @@
 			min-width: 2px;
 			/* transform-origin: bottom; */
 			transition: height 0.05s ease;
-			opacity: 0.5;
 			/* box-shadow:
 				20px 0px 12px -5px rgba(0, 0, 0, 0.3),
 				20px 0px 24px -5px rgba(0, 0, 0, 0.5); */

@@ -66,7 +66,7 @@ type SpaceT = {
 	artists: string[]
 	color: string
 	isPublic: boolean
-	items: Record<string, ItemT>
+	items: any
 	sizeX: number
 	sizeY: number
 	sizeZ: number

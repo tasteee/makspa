@@ -5,13 +5,12 @@
 	import api from '~/database/api'
 	import { onMount } from 'svelte'
 	import SheFlex from '~/components/she/SheFlex.svelte'
-	import store from '~/stores/main-store.svelte'
-	import auth from '~/stores/auth.store.svelte'
+	import mainStore from '~/stores/main-store.svelte'
 
 	let spaces = $state([])
 
 	onMount(() => {
-		api.getSpacesByArtistId(store.artist.id).then((result) => {
+		api.getSpacesByArtistId(mainStore.artist.id).then((result) => {
 			const [error, spaceList] = result
 			if (error) throw error
 			if (!error) spaces = spaceList

@@ -1,3 +1,4 @@
+import debounce from 'just-debounce'
 import { Controls, Matrix4, Plane, Raycaster, Vector2, Vector3, MOUSE, TOUCH } from 'three'
 
 const _plane = new Plane()
@@ -21,6 +22,10 @@ const STATE = {
 }
 
 class DragControls extends Controls {
+	dispatchRightClick = (event) => {
+		this.dispatchEvent({ event, type: 'rightclick' })
+	}
+
 	constructor(objects, camera, domElement = null) {
 		super(camera, domElement)
 		this.objects = objects
@@ -28,7 +33,7 @@ class DragControls extends Controls {
 		this.transformGroup = false
 		this.rotateSpeed = 1
 		this.raycaster = new Raycaster()
-		this.mouseButtons = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.PAN, RIGHT: MOUSE.ROTATE }
+		this.mouseButtons = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.PAN, RIGHT: MOUSE.RIGHT }
 		this.touches = { ONE: TOUCH.PAN }
 		this._onPointerMove = onPointerMove.bind(this)
 		this._onPointerDown = onPointerDown.bind(this)
@@ -80,7 +85,7 @@ class DragControls extends Controls {
 					break
 
 				case 2:
-					action = this.mouseButtons.RIGHT
+					// action = this.mouseButtons.RIGHT
 					break
 
 				default:
@@ -143,6 +148,7 @@ class DragControls extends Controls {
 }
 
 function onPointerMove(event) {
+	if (event.button === 2) return
 	if (!this.enabled) return
 
 	const camera = this.object
@@ -178,7 +184,7 @@ function onPointerMove(event) {
 			// }
 		}
 
-		this.dispatchEvent({ type: 'drag', object: _selected })
+		this.dispatchEvent({ event, type: 'drag', object: _selected })
 		_previousPointer.copy(_pointer)
 	} else {
 		// hover support
@@ -225,6 +231,10 @@ function onPointerMove(event) {
 }
 
 function onPointerDown(event) {
+	if (event.button === 2) {
+		return this.dispatchRightClick(event, this.dispatchEvent)
+	}
+
 	const camera = this.object
 	const domElement = this.domElement
 	const raycaster = this.raycaster
@@ -241,9 +251,7 @@ function onPointerDown(event) {
 
 	if (_intersections.length > 0) {
 		if (this.transformGroup === true) {
-			// look for the outermost group in the object's upper hierarchy
-
-			_selected = findGroup(_intersections[0].object)
+			// look for the outermost group in the object's upper hier = findGroup(_intersections[0].object)
 		} else {
 			_selected = _intersections[0].object
 		}
@@ -266,7 +274,7 @@ function onPointerDown(event) {
 
 		domElement.style.cursor = 'move'
 
-		this.dispatchEvent({ type: 'dragstart', object: _selected })
+		this.dispatchEvent({ event, type: 'dragstart', object: _selected })
 	}
 
 	_previousPointer.copy(_pointer)

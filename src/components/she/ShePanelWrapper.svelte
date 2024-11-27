@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import ShePanel from './ShePanel.svelte'
-	import stores from '~/stores'
+	import mainStore from '~/stores/main-store.svelte'
 	const props = $props()
 </script>
 
-<ShePanel side="right" title="Item" onCloseClick={stores.items.deselectItem} isOpen isCollapsible>
+<ShePanel side="right" title="Item" onCloseClick={mainStore.deselectItem} isOpen isCollapsible>
 	{@render props.children()}
 </ShePanel>
 

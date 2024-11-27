@@ -10,7 +10,7 @@
 	let userData = { id }
 
 	const onCreate = (groupRef: THREE.Group) => {
-		mainStore.saveObject(id, groupRef)
+		mainStore.saveMesh(id, groupRef)
 	}
 </script>
 

@@ -4,6 +4,9 @@
 	import { useTask } from '@threlte/core'
 	import { AudioListener, Audio } from '@threlte/extras'
 	import audioStore from '~/stores/audio-store.svelte'
+	import { useThrelte } from '@threlte/core'
+	const { renderMode } = useThrelte()
+	renderMode.set('on-demand')
 
 	let audioListener = $state(null)
 	let backgroundAudio = $state(null)
@@ -27,6 +30,7 @@
 	})
 
 	useTask(() => {
+		if (!audioStore.backgroundAudio.isPlaying) return
 		// Re-generate the AudioViz bars.
 		audioStore.updateFrequencyData()
 	})

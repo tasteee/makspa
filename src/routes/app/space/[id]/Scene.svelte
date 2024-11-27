@@ -2,7 +2,8 @@
 	import { T } from '@threlte/core'
 	import { ContactShadows } from '@threlte/extras'
 	import { interactivity } from '@threlte/extras'
-	import Camera from './Camera.svelte'
+	// import Camera from './Camera.svelte'
+	import Camera from './PerspectiveCamera.svelte'
 	import Space from './Space.svelte'
 	import Ground from './Ground.svelte'
 	import { onMount, onDestroy } from 'svelte'
@@ -72,7 +73,6 @@
 		blur={space.hdrBlur / 100}
 		hdrPath={'/hdrs/' + space.hdr}
 		backgroundColor={space.backgroundColor}
-		mode={space.backgroundMode}
 	/>
 
 	<T.Group>

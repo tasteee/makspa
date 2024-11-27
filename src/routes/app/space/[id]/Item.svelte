@@ -24,6 +24,7 @@
 	let isDragging = $state(false)
 	let isMouseDown = $state(false)
 	let isPressedAlt = $derived.by(() => inputStore.pressedKeys.includes('alt'))
+	let isPressedShift = $derived.by(() => inputStore.pressedKeys.includes('shift'))
 
 	let dragAxes = $derived.by(() => {
 		if (!isSelected) return ''
@@ -57,7 +58,8 @@
 		mainStore.updateItem(updates)
 	}
 
-	const handleDragStart = () => {
+	const handleDragStart = (event) => {
+		console.log({ event })
 		if (!isSelected) return
 		cameraStore.controls.enabled = false
 		isDragging = true
@@ -94,6 +96,16 @@
 		})
 	}
 
+	const updateScale = (amount: number) => {
+		audioStore.playClip('itemScale')
+		mainStore.updateItem({
+			id: props.item.id,
+			scaleX: props.item.scaleX + amount,
+			scaleY: props.item.scaleY + amount,
+			scaleZ: props.item.scaleZ + amount
+		})
+	}
+
 	const handleKeyDown = (event) => {
 		const arrowKeys = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
 		if (!isSelected) return
@@ -103,8 +115,9 @@
 		const isDelete = key === 'delete'
 		const isFocus = key === ' '
 		const isDeselect = key === 'escape'
-		const isRotation = arrowKeys.includes(key)
+		const isArrow = arrowKeys.includes(key)
 
+		if (isDuplicate) event.preventDefault()
 		if (isDuplicate) mainStore.cloneItem(props.item.id)
 		if (isDuplicate) audioStore.playClip('itemDuplicate')
 
@@ -117,12 +130,24 @@
 		if (isDeselect) mainStore.deselectItem()
 		if (isDeselect) audioStore.playClip('itemDeselect')
 
-		if (!event.altKey && key === 'arrowup') updateRotation('x', -1)
-		if (!event.altKey && key === 'arrowdown') updateRotation('x', 1)
-		if (!event.altKey && key === 'arrowleft') updateRotation('y', 1)
-		if (!event.altKey && key === 'arrowright') updateRotation('y', -1)
-		if (event.altKey && key === 'arrowup') updateRotation('z', -1)
-		if (event.altKey && key === 'arrowdown') updateRotation('z', 1)
+		if (isArrow) {
+			const isScale = isPressedShift
+			const isRotation = !isScale
+
+			if (isScale) {
+				if (key === 'arrowup') updateScale(0.1)
+				if (key === 'arrowdown') updateScale(-0.1)
+			}
+
+			if (isRotation) {
+				if (isPressedAlt && key === 'arrowup') updateRotation('z', -1)
+				if (isPressedAlt && key === 'arrowdown') updateRotation('z', 1)
+				if (!isPressedAlt && key === 'arrowup') updateRotation('x', -1)
+				if (!isPressedAlt && key === 'arrowdown') updateRotation('x', 1)
+				if (!isPressedAlt && key === 'arrowleft') updateRotation('y', 1)
+				if (!isPressedAlt && key === 'arrowright') updateRotation('y', -1)
+			}
+		}
 	}
 
 	const handleHoverStart = (event) => {
@@ -143,6 +168,8 @@
 	}
 
 	function handleClick(event) {
+		event.stopPropagation()
+		console.log('click', { event })
 		audioStore.playClip('itemSelect')
 		if (isDragging) return
 		if (isSelected) return
@@ -160,6 +187,10 @@
 		if (isSelected) return
 		if (!isMouseDown) return
 		isMouseDown = false
+	}
+
+	const handleRightClick = (event) => {
+		console.log('right click', { event })
 	}
 
 	onMount(() => {
@@ -183,6 +214,7 @@
 		onpointerup={handlePointerUp}
 		onpointerover={handleHoverStart}
 		onpointerout={handleHoverEnd}
+		oncontextmenu={handleRightClick}
 		position={[positionX, positionY, positionZ]}
 		rotation={[rotationX, rotationY, rotationZ]}
 		scale={[scaleX, scaleY, scaleZ]}
@@ -204,6 +236,3 @@
 {#if mesh && isSelected}
 	<BoundingBox target={mesh} positionY={position[1]} />
 {/if}
-
-<!-- onHoverStart={handleHoverStart}
-			onHoverEnd={handleHoverEnd} -->

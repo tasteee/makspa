@@ -75,7 +75,7 @@ function getFileUrl(record: any, filename: string, options?: { thumb?: string })
 	const collectionId = record.collectionId || record.collectionName
 	const recordId = record.id
 	if (!collectionId || !recordId) return ''
-	return pocket.files.getUrl(record, filename, options)
+	return pocket.files.getURL(record, filename, options)
 }
 
 type SubscriptionOptionsT = {

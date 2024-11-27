@@ -4,6 +4,7 @@
 	import { useThrelte } from '@threlte/core'
 	import { DragControls } from './DragController.js'
 	import stores from '~/stores'
+	import debounce from 'just-debounce'
 
 	type MaybeVector2 = THREE.Vector2 | undefined
 	type ObjectEventT = { object: THREE.Object3D }
@@ -25,6 +26,7 @@
 		onDragEnd?: (event: DragEndEventT) => void
 		onDrag?: (event: DragEventT, delta: THREE.Vector3) => void
 		onCreate?: (dragControls: DragControls) => void
+		onRightClick?: (event: MouseEvent) => void
 	}
 
 	let isCapsLocked = $derived(stores.input.isCapsLocked)
@@ -146,12 +148,20 @@
 		invalidate()
 	}
 
+	const onClickRight = debounce((event) => {
+		props.onRightClick?.(event)
+	}, 100)
+
 	onMount(() => {
 		if (props.target) draggableObjects.push(props.target)
 		controls = new DragControls(draggableObjects, camera.current, renderer.domElement)
+
+		renderer.domElement.addEventListener('contextmenu', onClickRight)
+
 		controls.addEventListener('hoveron', onHoverStart)
 		controls.addEventListener('hoveroff', onHoverEnd)
 		controls.addEventListener('dragstart', onDragStart)
+		// controls.addEventListener('rightclick', onRightClick)
 		controls.addEventListener('dragend', onDragEnd)
 		controls.addEventListener('drag', onDrag)
 		props.onCreate?.(controls)
