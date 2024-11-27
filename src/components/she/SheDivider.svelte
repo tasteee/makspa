@@ -13,10 +13,10 @@
 		onClick?: () => void
 	}
 
-	const props: PropsT = $props()
-	const label = props.label ?? ''
-	const isLabelStart = !props.labelPosition || props.labelPosition === 'start'
-	const classes = classcat([props.class, props.nested && 'nested'])
+	let props: PropsT = $props()
+	let label = props.label ?? ''
+	let isLabelStart = !props.labelPosition || props.labelPosition === 'start'
+	let classes = classcat([props.class, props.nested && 'nested'])
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -44,7 +44,10 @@
 			size="small"
 			color="var(--gray15)"
 			icon={props.isOpen ? 'chevron-down' : 'chevron-up'}
-			onClick={props.onClick}
+			onClick={() => {
+				console.log('CLICKED!')
+				props.onClick()
+			}}
 		/>
 	{/if}
 </div>

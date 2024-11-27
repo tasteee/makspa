@@ -1,24 +1,42 @@
 <script lang="ts">
 	import { T } from '@threlte/core'
+	import { ContactShadows } from '@threlte/extras'
 	import { interactivity } from '@threlte/extras'
 	import Camera from './Camera.svelte'
-	import Lighting from './Lighting.svelte'
 	import Space from './Space.svelte'
 	import Ground from './Ground.svelte'
-	import ResetCameraButton from './ResetCameraButton.svelte'
 	import { onMount, onDestroy } from 'svelte'
 	import Environment from './Environment.svelte'
 	import mainStore from '~/stores/main-store.svelte'
 	import stores from '~/stores'
 
 	interactivity()
+
 	let space = $derived(mainStore.space || {}) as SpaceT
-	let environment = $derived(space.environment)
-	let environmentBlur = $derived(space.environmentBlur)
-	let showEnvironment = $derived(space.isEnvironmentVisible)
-	let backgroundColor = $derived(space.backgroundColor)
-	let environmentOnly = $derived(space.environmentOnly)
-	let backgroundType = $derived(space.backgroundType)
+
+	let lightState0 = $state({
+		positionX: 2,
+		positionY: 1,
+		positionZ: -2,
+		intensity: 1,
+		color: '#ffffff',
+		castShadow: true
+	})
+
+	let lightState1 = $state({
+		positionX: 2,
+		positionY: 1,
+		positionZ: -2,
+		intensity: 1,
+		shadow: true,
+		castShadow: true,
+		color: '#ffffff'
+	})
+
+	globalThis.lights = {
+		a: lightState0,
+		b: lightState1
+	}
 
 	onMount(() => {
 		stores.input.start()
@@ -27,28 +45,39 @@
 	onDestroy(() => {
 		stores.input.stop()
 	})
-
-	$inspect({
-		space
-	})
 </script>
 
 {#if !!space.id}
-	{#if showEnvironment}
-		<Environment
-			{environmentOnly}
-			blur={environmentBlur}
-			hdrPath={'/hdrs/' + environment}
-			{backgroundColor}
-			mode={backgroundType}
-		/>
-	{/if}
+	<!-- <T.DirectionalLight intensity={0.6} position={[4, 5, 4]} castShadow /> -->
+	<T.DirectionalLight
+		castShadow={lightState0.castShadow}
+		color={lightState0.color}
+		intensity={lightState0.intensity}
+		position={[lightState0.positionX, lightState0.positionY, lightState0.positionZ]}
+	/>
+	<T.AmbientLight
+		shadow={lightState1.shadow}
+		color={lightState1.color}
+		intensity={lightState1.intensity}
+		position={[lightState1.positionX, lightState1.positionY, lightState1.positionZ]}
+	/>
+	<!-- <T.HemisphereLight intensity={0.9} color="#ffffff" groundColor={mainStore.space.color} /> -->
+	<!-- <T.PointLight intensity={0.6} position={[0, 5, 0]} distance={20} decay={2} /> -->
+	<!-- <T.DirectionalLight castShadow position={[0, 20, 0]} /> -->
+	<ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />
+
+	<Environment
+		isHdrEnabled={space.isHdrEnabled}
+		intensity={space.hdrIntensity}
+		blur={space.hdrBlur / 100}
+		hdrPath={'/hdrs/' + space.hdr}
+		backgroundColor={space.backgroundColor}
+		mode={space.backgroundMode}
+	/>
 
 	<T.Group>
 		<Ground />
 		<Camera />
-		<Lighting />
-		<ResetCameraButton />
 
 		{#if space.id}
 			<Space id={space.id} />

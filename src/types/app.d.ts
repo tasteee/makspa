@@ -55,6 +55,7 @@ type ItemT = {
 	glowPositionZ: number
 	metalness: number
 	roughness: number
+	hasBeenSetUp: boolean
 }
 
 type SpaceT = {
@@ -70,12 +71,13 @@ type SpaceT = {
 	sizeY: number
 	sizeZ: number
 	visits: number
-	environment: string
-	environmentBlur: number
-	isEnvironmentVisible: boolean
-	environmentOnly: boolean
+	hdrIntensity: number
+	showHdrSky: boolean
+	hdr: string
+	hdrBlur: number
+	isHdrEnabled: boolean
 	backgroundColor: string
-	backgroundType: 'hdr' | 'color'
+	backgroundMode: 'hdr' | 'color'
 	isGridVisible: boolean
 	gridOpacity: number
 	gridCellLineColor: string
@@ -84,7 +86,7 @@ type SpaceT = {
 	gridSectionLineColor: string
 	gridSectionSize: number
 	gridSectionLineThickness: number
-	gridFadeStrength: number
+	gridFadeAmount: number
 	gridFadeDistance: number
 	isFloorVisible: boolean
 	floorColor1: string

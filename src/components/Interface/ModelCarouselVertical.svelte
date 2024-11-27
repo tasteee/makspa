@@ -2,6 +2,7 @@
 	import SheIconButton from '~/components/she/SheIconButton.svelte'
 	import models from '~/database/data/models.json'
 	import stores from '~/stores'
+	import audioStore from '~/stores/audio-store.svelte'
 	import mainStore from '~/stores/main-store.svelte'
 
 	const galleryItems = models.map((model) => {
@@ -9,6 +10,11 @@
 			id: model.id,
 			alt: model.name,
 			src: '/thumbnails/' + model.thumbnail,
+
+			heartItem: () => {
+				audioStore.playClip('itemFavorite')
+			},
+
 			addItem: () => {
 				mainStore.addItemFromModel(model)
 			}
@@ -22,7 +28,14 @@
 			<div class="ModelItem">
 				<div class="ModelUnderlay" style="background-image: url('{galleryItem.src}')"></div>
 				<div class="IconsOverlay">
-					<!-- <SheIconButton kind="dark" size="large" class="ActionButton" library="pixelarticons" icon="heart" /> -->
+					<SheIconButton
+						kind="dark"
+						size="large"
+						class="ActionButton"
+						library="pixelarticons"
+						icon="heart"
+						onClick={galleryItem.heartItem}
+					/>
 					<SheIconButton
 						kind="dark"
 						size="large"

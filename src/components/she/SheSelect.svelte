@@ -74,7 +74,7 @@
 		color: var(--gray12);
 		z-index: 10;
 		height: 100%;
-		padding-top: 1px;
+		padding: 0px 0px 1px;
 		width: 100%;
 	}
 

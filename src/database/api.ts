@@ -55,8 +55,9 @@ const createSpace = (space: SpaceT) => {
 	return too('createSpace', result)
 }
 
-const updateSpace = (space: SpaceT) => {
-	const result = spaces.update(space.id, space)
+const updateSpace = (space: Partial<SpaceT>) => {
+	const { id, ...rest } = space
+	const result = spaces.update(id, rest)
 	return too('updateSpace', result)
 }
 

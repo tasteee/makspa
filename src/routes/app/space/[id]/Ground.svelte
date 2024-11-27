@@ -24,7 +24,7 @@
 	let cellThickness = $derived(space.isGridVisible ? space.gridCellLineThickness : 0)
 	let sectionSize = $derived(space.gridSectionSize)
 	let sectionThickness = $derived(space.isGridVisible ? space.gridSectionLineThickness : 0)
-	let fadeStrength = $derived(space.gridFadeStrength)
+	let fadeStrength = $derived(space.gridFadeAmount)
 	let fadeDistance = $derived(space.gridFadeDistance)
 	let floorColor1 = $derived(space.floorColor1)
 	let floorColor2 = $derived(space.floorColor2)

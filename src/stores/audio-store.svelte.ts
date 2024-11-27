@@ -1,6 +1,7 @@
 import * as color from 'pex-color'
 import range from 'array-range'
 import { colord } from '~/modules/colors'
+import debounce from 'just-debounce'
 
 const createColorsRange = (startColor, endColor, count) => {
 	const start = colord(startColor)
@@ -16,7 +17,7 @@ const createColorsRange = (startColor, endColor, count) => {
 	}
 
 	bars[count - 1] = colord(endColor).toLch()
-	console.log({ barColors: bars })
+	// console.log({ barColors: bars })
 	return bars
 }
 
@@ -26,6 +27,7 @@ class AudioStore {
 	context = $state(null)
 	analyser = $state(null)
 	backgroundAudio = $state(null)
+	playingClips = new Set()
 
 	volume = $state(20)
 	isSoundtrackMuted = $state(false)
@@ -36,35 +38,19 @@ class AudioStore {
 	vizBars = $state(null)
 	vizBarColors = []
 
-	interfaceHoverSound0 = $state(null)
-	itemPlaceSound0 = $state(null)
-	itemDeleteSound0 = $state(null)
-	itemMoveSound0 = $state(null)
-	itemRotateSound0 = $state(null)
+	interfaceSoundsConfig = interfaceSoundsConfig
 
-	accentA05 = $state(null)
-	affirmationDryMetalUIButton1 = $state(null)
-	button02 = $state(null)
-	button04 = $state(null)
-	mergeEcho03 = $state(null)
-	organicHollowItemOrTilePlace1 = $state(null)
-	organicMetallicButton1 = $state(null)
-	organicPinBallLoad1 = $state(null)
-	organicUnlock2 = $state(null)
-	organicWoodBlockToneTap4AppClick = $state(null)
-	slideVibrate03 = $state(null)
-	uiPop03 = $state(null)
-	uiPopTiny03 = $state(null)
-	foleyGuitarStrike4 = $state(null)
-	foleyPipeHits4 = $state(null)
-	foleyPipeHits7 = $state(null)
-	builderGameMetalTabClick2Soft = $state(null)
-	builderGameMetalUIButtonClick2 = $state(null)
-	builderGameSwitchTiny10 = $state(null)
-	builderGameUITapButton = $state(null)
-	builderGameWeaponArrowImpact3Miss = $state(null)
-	builderGameWeaponArrowImpact4Hit = $state(null)
-	builderGameWoodUISwitchClick = $state(null)
+	interfaceSounds = $state({
+		buttonHover: null,
+		buttonClick: null,
+		itemAdd: null,
+		itemDelete: null,
+		itemRotate: null,
+		itemMove: null,
+		itemScale: null,
+		unavailable: null,
+		itemFavorite: null
+	})
 
 	setVolume = (volume: number) => {
 		this.volume = volume
@@ -86,14 +72,21 @@ class AudioStore {
 		this.backgroundAudio.stop()
 	}
 
-	playClip(clipId: string) {
-		if (!this[clipId]) return
-		this[clipId].play()
+	playClip = (clipId: string) => {
+		const config = this.interfaceSoundsConfig[clipId]
+		if (!this.interfaceSounds[clipId]) return
+		const isInPlayingList = this.playingClips.has(clipId)
+		const audio = this.interfaceSounds[clipId]
+		// console.log(clipId, isInPlayingList, audio)
+		if (isInPlayingList) audio.stop()
+		if (!isInPlayingList) this.playingClips.add(clipId)
+		audio.play()
 	}
 
-	stopClip(clipId: string) {
-		if (!this[clipId]) return
-		this[clipId].stop()
+	stopClip = (clipId: string) => {
+		if (!this.interfaceSounds[clipId]) return
+		this.interfaceSounds[clipId].stop()
+		this.playingClips.delete(clipId)
 	}
 
 	playPrevious = () => {
@@ -101,42 +94,13 @@ class AudioStore {
 		this.playTrack()
 	}
 
-	playClipHandler(clipId: string) {
+	playClipHandler = (clipId: string) => {
 		return () => this.playClip(clipId)
 	}
 
-	stopClipHandler(clipId: string) {
+	stopClipHandler = (clipId: string) => {
 		return () => this.stopClip(clipId)
 	}
-
-	updateVizBarColors(startColor, endColor) {
-		// this.vizBarColors = createColorsRange(startColor, endColor, 24)
-	}
-
-	// updateFrequencyData() {
-	// 	if (!this.analyser) return
-
-	// 	if (this.backgroundAudio && !this.backgroundAudio.gain.connected) {
-	// 		this.backgroundAudio.gain.connect(this.analyser)
-	// 	}
-
-	// 	this.analyser.getByteFrequencyData(this.frequencyData)
-	// 	const step = Math.floor(this.frequencyData.length / vizBars.length)
-
-	// 	this.vizBars = vizBars.map((bar, index) => {
-	// 		const start = index * step
-	// 		const end = start + step
-	// 		const slice = this.frequencyData.slice(start, end)
-	// 		const sum = slice.reduce((acc, val) => acc + val, 0)
-	// 		const avg = sum / slice.length
-	// 		const normalizedHeight = Math.min(100, (avg / 255) * 100)
-
-	// 		return {
-	// 			background: `hsla(0, 0%, 100%, ${normalizedHeight / 100})`,
-	// 			height: normalizedHeight + '%'
-	// 		}
-	// 	})
-	// }
 
 	updateFrequencyData = () => {
 		if (!this.analyser) return
@@ -170,16 +134,104 @@ class AudioStore {
 			const barEndIdx = Math.min(barStartIdx + step, endIdx)
 			const slice = this.frequencyData.slice(barStartIdx, barEndIdx)
 			const sum = slice.reduce((acc, val) => acc + val, 0)
-			const avg = slice.length ? sum / slice.length : 0 // Avoid division by zero
+			const avg = slice.length ? sum / slice.length : 0
 			const normalizedHeight = Math.min(100, (avg / 255) * 100)
-			// const lch = { ...this.vizBarColors[index], a: normalizedHeight }
 
 			return {
-				// background: colord(lch).toHex(),
 				background: `hsla(0, 0%, 0%, ${normalizedHeight / 100})`,
 				height: `${normalizedHeight}%`
 			}
 		})
+	}
+}
+
+const interfaceSoundsConfig = {
+	itemDuplicate: {
+		path: '/audio/clips/Bamboo_Hit_1.wav',
+		// Builder_Game_Weapon_Light_Swing_1.wav
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemFocus: {
+		path: '/audio/clips/OS_OTK_Sweep 10.wav',
+		// Builder_Game_Weapon_Light_Swing_1.wav
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemMove: {
+		path: '/audio/clips/Bamboo_Hit_1.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemRotate: {
+		path: '/audio/clips/Puzzle_Game_Organic_Wood_Block_Tone_Tap_4_App_Click.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemDelete: {
+		path: '/audio/clips/Builder_Game_UI_Bass_Tap_Button.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemDeselect: {
+		path: '/audio/clips/Builder_Game_UI_Bass_Tap_Button.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemSelect: {
+		path: '/audio/clips/Basement_Light_Switch.wav',
+		// Bluezone_BC0241_interface_beep_006.wav
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemHover: {
+		path: '/audio/clips/Builder_Game_Switch_Tiny_10.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	buttonHover: {
+		path: '/audio/clips/Builder_Game_Switch_Tiny_10.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	buttonClick: {
+		path: '/audio/clips/Domestic_Light_Switch.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemAdd: {
+		path: '/audio/clips/Puzzle_Game_UI_Pop_Tiny_03.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemScale: {
+		path: '/audio/clips/Puzzle_Game_Organic_Wood_Block_Tone_Tap_4_App_Click.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	unavailable: {
+		path: '/audio/clips/OS_OTK_Foley Guitar Strike 4.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
+	},
+	itemFavorite: {
+		path: '/audio/clips/Positive_Crossbred_Achievment_2.wav',
+		volume: 0.1,
+		playbackRate: 0.6,
+		debounceRate: 50
 	}
 }
 

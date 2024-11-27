@@ -4,7 +4,6 @@
 	import { useTask } from '@threlte/core'
 	import { AudioListener, Audio } from '@threlte/extras'
 	import audioStore from '~/stores/audio-store.svelte'
-	import sounds from '~/database/data/sounds.json'
 
 	let audioListener = $state(null)
 	let backgroundAudio = $state(null)
@@ -40,11 +39,15 @@
 	src="/audio/tracks/nakedpoetry.mp3"
 	loop
 	autoplay
-	detune={1000}
 	playbackRate={0.8}
 	{volume}
 />
 
-{#each Object.entries(sounds.interface) as [id, value]}
-	<Audio src={window.location.origin + value} bind:ref={audioStore[id]} volume={0.5} />
+{#each Object.entries(audioStore.interfaceSoundsConfig) as [id, config]}
+	<Audio
+		src={window.location.origin + config.path}
+		bind:ref={audioStore.interfaceSounds[id]}
+		playbackRate={config.playbackRate}
+		volume={config.volume}
+	/>
 {/each}

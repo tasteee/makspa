@@ -1,10 +1,10 @@
 /* [SECTION] scrollbar variables */
 
 :root {
-	--scrollbar-color-thumb: var(--gray25);
+	--scrollbar-color-thumb: var(--gray30);
 	--scrollbar-color-track: transparent;
-	--scrollbar-width-legacy: 8px;
-	--scrollbar-width: 8px;
+	--scrollbar-width-legacy: 4px;
+	--scrollbar-width: thin;
 }
 
 /* [SECTION] color variables */

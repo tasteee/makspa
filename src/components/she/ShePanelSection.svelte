@@ -14,19 +14,27 @@
 	}
 
 	let props: PropsT = $props()
-	let isOpen = $state(true)
-	let toggleOpen = () => (isOpen = !isOpen)
+	let isOpen = $state(props.isOpen ?? true)
+	let isOpenClass = $derived(isOpen ? 'opened' : 'closed')
 	let dirClass = $derived(props.row ? 'row' : 'column')
-	let classes = $derived(classcat([props.class, isOpen ? 'opened' : 'closed']))
+	let classes = $derived(classcat([props.class, isOpenClass]))
 
-	let onClick = () => {
+	const onClick = () => {
 		isOpen = !isOpen
-		props.onClick?.()
+		props.onClick()
 	}
 </script>
 
 <div class="ShePanelSection {classes}">
-	<SheDivider {isOpen} label={props.label} {onClick} />
+	<SheDivider
+		{isOpen}
+		label={props.label}
+		onClick={() => {
+			console.log('CLICKEDDDDD!!!')
+			console.log(props.isOpen, props.onClick)
+			onClick()
+		}}
+	/>
 	<div class="contentBox {dirClass} gap2">
 		{@render props.children()}
 	</div>

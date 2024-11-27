@@ -17,7 +17,7 @@
 	}
 
 	let props: PropsT = $props()
-	let hoverClipId = $derived(props.hoverClipId || 'clicky0')
+	let hoverClipId = $derived(props.hoverClipId || 'buttonHover')
 
 	let activeClass = props.isActive ? 'isActive' : ''
 	let sizeClass = props.size || 'medium'

@@ -27,7 +27,7 @@
 	let type = $derived(props.type ?? 'text')
 	let isDisabled = $derived(props.isDisabled ? 'isDisabled' : '')
 	let shouldShowRangeValue = $derived(type === 'range')
-	let hoverClipId = $derived(props.hoverClipId || 'clicky0')
+	let hoverClipId = $derived(props.hoverClipId || 'buttonHover')
 	// Format number according to decimals
 	function formatNumber(value: number | string): any {
 		const num = parseFloat(value as string)
@@ -237,7 +237,7 @@
 		background: var(--gray20);
 		height: 2px;
 		border-radius: 1px;
-		padding-top: 0;
+		padding: 0px 0px 1px;
 	}
 
 	input + .rangeValueInput {

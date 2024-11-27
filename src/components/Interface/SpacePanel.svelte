@@ -14,130 +14,88 @@
 	import hdrs from '~/database/data/hdrs.json'
 	import menuBar from '~/stores/menuBar.store.svelte'
 	import mainStore from '~/stores/main-store.svelte'
+	import { useToggler } from '~/modules/state-hooks.svelte'
 
 	let isOpen = $derived.by(() => menuBar.activePanel === 'space')
 	let space = $derived(mainStore.space)
-	let name = $derived(space.name)
-	let about = $derived(space.about)
 
-	let gridOpacity = $derived(space.gridOpacity / 100)
-	let gridCellLineColor = $derived(space.gridCellLineColor)
-	let gridSectionLineColor = $derived(space.gridSectionLineColor)
-	let sectionSize = $derived(space.gridSectionSize)
-	let sectionThickness = $derived(space.gridSectionLineThickness)
-	let environmentBlur = $derived(space.environmentBlur)
-	let showEnvironment = $derived(space.isEnvironmentVisible)
-	let backgroundType = $derived(space.backgroundType)
-	let backgroundColor = $derived(space.backgroundColor)
+	const updateName = mainStore.createUpdater('name')
+	const updateAbout = mainStore.createUpdater('about')
+	const updateSpaceWidth = mainStore.createUpdater('sizeX')
+	const updateSpaceHeight = mainStore.createUpdater('sizeY')
+	const updateSpaceDepth = mainStore.createUpdater('sizeZ')
+	const updateGridOpacity = mainStore.createUpdater('gridOpacity')
+	const updateGridSectionColor = mainStore.createUpdater('gridSectionLineColor')
+	const updateGridColor = mainStore.createUpdater('gridCellLineColor')
+	const updateCellSize = mainStore.createUpdater('gridCellSize')
+	const updateCellThickness = mainStore.createUpdater('gridCellLineThickness')
+	const updateSectionSize = mainStore.createUpdater('gridSectionSize')
+	const updateSectionThickness = mainStore.createUpdater('gridSectionLineThickness')
+	const updateFadeStrength = mainStore.createUpdater('gridFadeAmount')
+	const updateFadeDistance = mainStore.createUpdater('gridFadeDistance')
+	const updatebackgroundMode = mainStore.createUpdater('backgroundMode')
+	const updatebackgroundColor = mainStore.createUpdater('backgroundColor')
+	const updateShowEnvironment = mainStore.createUpdater('isHdrEnabled')
+	const updateHdr = mainStore.createUpdater('hdr')
+	const updatehdrBlur = mainStore.createUpdater('hdrBlur')
+	const updatehdrIntensity = mainStore.createUpdater('hdrIntensity')
+	const updateShowFloor = mainStore.createUpdater('isFloorVisible')
+	const updateFloorOpacity1 = mainStore.createUpdater('floorOpacity1')
+	const updateFloorColor1 = mainStore.createUpdater('floorColor1')
+	const updateFloorOpacity2 = mainStore.createUpdater('floorOpacity2')
+	const updateFloorColor2 = mainStore.createUpdater('floorColor2')
+	const updateShowGrid = mainStore.createUpdater('isGridVisible')
+	const updateSpaceColor = mainStore.createUpdater('color')
 
-	const updater = (key: string) => (value: boolean | string | number) => {
-		mainStore.updateSpace({ [key]: value })
+	const floorSectionOpen = useToggler(true)
+	const floorColorOpen1 = useToggler(true)
+	const floorColorOpen2 = useToggler(true)
+	const gridSectionOpen = useToggler(true)
+	const sizeSectionOpen = useToggler(true)
+	const infoSectionOpen = useToggler(true)
+	const visibilitySectionOpen = useToggler(true)
+	const cellsSectionOpen = useToggler(true)
+	const sectionsSectionOpen = useToggler(true)
+	const environmentSectionOpen = useToggler(true)
+
+	const toggleGridOpen = () => {
+		console.log('--------clickedddd')
+		gridSectionOpen.toggle()
 	}
 
-	const updateName = updater('name')
-	const updateAbout = updater('about')
-	const updateSpaceWidth = updater('sizeX')
-	const updateSpaceHeight = updater('sizeY')
-	const updateSpaceDepth = updater('sizeZ')
-	const updateGridOpacity = updater('gridOpacity')
-	const updateGridSectionColor = updater('gridSectionLineColor')
-	const updateGridColor = updater('gridCellLineColor')
-	const updateCellSize = updater('gridCellSize')
-	const updateCellThickness = updater('gridCellLineThickness')
-	const updateSectionSize = updater('gridSectionSize')
-	const updateSectionThickness = updater('gridSectionLineThickness')
-	const updateFadeStrength = updater('gridFadeStrength')
-	const updateFadeDistance = updater('gridFadeDistance')
-	const updateBackgroundType = updater('backgroundType')
-	const updatebackgroundColor = updater('backgroundColor')
-
-	const updateShowFloor = updater('isFloorVisible')
-	const updateFloorOpacity1 = updater('floorOpacity1')
-	const updateFloorColor1 = updater('floorColor1')
-	const updateFloorOpacity2 = updater('floorOpacity2')
-	const updateFloorColor2 = updater('floorColor2')
-	const updateShowGrid = updater('isGridVisible')
-	const updateEnvironmentBlur = updater('environmentBlur')
-	const updateShowEnvironment = updater('isEnvironmentVisible')
-	const updateEnvironmentOnly = updater('environmentOnly')
-	const updateSpaceColor = updater('color')
-
-	let isFloorSectionOpen = $state(true)
-	let isFloorColorOpen1 = $state(true)
-	let isFloorColorOpen2 = $state(true)
-	let isGridSectionOpen = $state(true)
-	let isSizeSectionOpen = $state(true)
-	let isInfoSectionOpen = $state(true)
-	let isVisibilitySectionOpen = $state(true)
-	let isCellsSectionOpen = $state(true)
-	let isSectionsSectionOpen = $state(true)
-	let isEnvironmentSectionOpen = $state(true)
-	let isBackgroundSectionOpen = $state(true)
-
-	const toggleEnvironmentSection = () => (isEnvironmentSectionOpen = !isEnvironmentSectionOpen)
-	let toggleFloorSectionOpen = () => (isFloorSectionOpen = !isFloorSectionOpen)
-	let toggleFloorColorOpen1 = () => (isFloorColorOpen1 = !isFloorColorOpen1)
-	let toggleFloorColorOpen2 = () => (isFloorColorOpen2 = !isFloorColorOpen2)
-	let toggleGridSection = () => (isGridSectionOpen = !isGridSectionOpen)
-	let toggleSizeSection = () => (isSizeSectionOpen = !isSizeSectionOpen)
-	let toggleInfoSection = () => (isInfoSectionOpen = !isInfoSectionOpen)
-	let toggleVisibilitySection = () => (isVisibilitySectionOpen = !isVisibilitySectionOpen)
-	let toggleCellsSection = () => (isCellsSectionOpen = !isCellsSectionOpen)
-	let toggleSectionsSection = () => (isSectionsSectionOpen = !isSectionsSectionOpen)
-	let toggleBackgroundSection = () => (isBackgroundSectionOpen = !isBackgroundSectionOpen)
-
-	let environment = $derived(space.environment)
-	let updateEnvironment = updater('environment')
-
-	const environmentOptions = hdrs.map((hdr) => ({
+	const hdrOptions = hdrs.map((hdr) => ({
 		label: hdr.name,
 		value: hdr.fileName
 	}))
+
+	$inspect(gridSectionOpen)
 </script>
 
 {#snippet environmentSection()}
-	<ShePanelSection label="Environment" isOpen={isEnvironmentSectionOpen} onClick={toggleEnvironmentSection}>
-		<SheSwitch label="Enable HDR" value={showEnvironment} onChange={updateShowEnvironment} />
-		{#if showEnvironment}
-			<SheSelect label="HDR" options={environmentOptions} value={environment} onChange={updateEnvironment} />
+	<ShePanelSection label="Environment" isOpen={environmentSectionOpen.value} onClick={environmentSectionOpen.toggle}>
+		<SheSwitch label="Enable HDR" value={space.isHdrEnabled} onChange={updateShowEnvironment} />
 
-			<ShePanelInnerSection label="Background" isOpen={isBackgroundSectionOpen} onClick={toggleBackgroundSection}>
-				<SheSelect
-					label="Type"
-					options={[
-						{ label: 'None', value: 'none' },
-						{ label: 'HDR Background', value: 'hdr' },
-						{ label: 'Solid Color', value: 'color' }
-					]}
-					value={backgroundType}
-					onChange={updateBackgroundType}
-				/>
+		{#if space.isHdrEnabled}
+			<SheSelect label="HDR" options={hdrOptions} value={space.hdr} onChange={updateHdr} />
 
-				{#if backgroundType === 'hdr'}
-					<SheInput
-						type="range"
-						label="Blur"
-						min="0"
-						max="1"
-						step="0.05"
-						value={environmentBlur}
-						onChange={updateEnvironmentBlur}
-					/>
-				{/if}
-
-				<!-- Background Options -->
-				{#if backgroundType === 'color'}
-					<SheColorInput label="0 Color" value={backgroundColor} onChange={updatebackgroundColor} />
-				{/if}
-			</ShePanelInnerSection>
+			<SheInput
+				type="range"
+				label="Intensity"
+				min="0"
+				max="100"
+				step="1"
+				value={space.hdrIntensity}
+				onChange={updatehdrIntensity}
+			/>
 		{/if}
+		<SheColorInput label="Background" value={space.backgroundColor} onChange={updatebackgroundColor} />
 	</ShePanelSection>
 {/snippet}
 
 {#snippet infoSection()}
-	<ShePanelSection label="Info" isOpen={isInfoSectionOpen} onClick={toggleInfoSection}>
-		<SheInput label="Name" value={name} onChange={updateName} />
-		<SheInput type="textarea" label="About" value={about} onChange={updateAbout} />
+	<ShePanelSection label="Info" isOpen={infoSectionOpen.value} onClick={infoSectionOpen.toggle}>
+		<SheInput label="Name" value={space.name} onChange={updateName} />
+		<SheInput type="textarea" label="About" value={space.about} onChange={updateAbout} />
 		<SheColorInput label="Color" value={space.color} onChange={updateSpaceColor} />
 	</ShePanelSection>
 {/snippet}
@@ -151,7 +109,7 @@
 		decimals="1"
 		min="0"
 		max="100"
-		value={gridOpacity}
+		value={space.gridOpacity}
 		onChange={updateGridOpacity}
 	/>
 	<SheSwitch label="Show Grid" value={space.isGridVisible} onChange={updateShowGrid} />
@@ -164,15 +122,15 @@
 {/snippet}
 
 {#snippet gridSection()}
-	<ShePanelSection label="Grid" isOpen={isGridSectionOpen} onClick={toggleGridSection}>
+	<ShePanelSection label="Grid" isOpen={gridSectionOpen.value} onClick={toggleGridOpen}>
 		{@render gridOptions()}
 		{@render gridLines()}
 	</ShePanelSection>
 {/snippet}
 
 {#snippet cellsSection()}
-	<ShePanelInnerSection label="Cell Lines" isOpen={isCellsSectionOpen} onClick={toggleCellsSection}>
-		<SheColorInput label="1 Color" value={gridCellLineColor} onChange={updateGridColor} />
+	<ShePanelInnerSection label="Cell Lines" isOpen={cellsSectionOpen.value} onClick={cellsSectionOpen.toggle}>
+		<SheColorInput label="Color" value={space.gridCellLineColor} onChange={updateGridColor} />
 		<ShePanelRow>
 			<SheInput
 				type="number"
@@ -199,8 +157,8 @@
 {/snippet}
 
 {#snippet sectionsSection()}
-	<ShePanelInnerSection label="Section Lines" isOpen={isSectionsSectionOpen} onClick={toggleSectionsSection}>
-		<SheColorInput label="2Color" value={gridSectionLineColor} onChange={updateGridSectionColor} />
+	<ShePanelInnerSection label="Section Lines" isOpen={sectionsSectionOpen.value} onClick={sectionsSectionOpen.toggle}>
+		<SheColorInput label="2Color" value={space.gridSectionLineColor} onChange={updateGridSectionColor} />
 		<ShePanelRow>
 			<SheInput
 				type="number"
@@ -209,7 +167,7 @@
 				max="10"
 				step="0.1"
 				decimals="1"
-				value={sectionSize}
+				value={space.gridSectionSize}
 				onChange={updateSectionSize}
 			/>
 			<SheInput
@@ -219,7 +177,7 @@
 				max="10"
 				step="0.1"
 				decimals="1"
-				value={sectionThickness}
+				value={space.gridSectionLineThickness}
 				onChange={updateSectionThickness}
 			/>
 		</ShePanelRow>
@@ -227,18 +185,18 @@
 {/snippet}
 
 {#snippet visibilitySection()}
-	<ShePanelSection label="Visibility" row isOpen={isVisibilitySectionOpen} onClick={toggleVisibilitySection}>
-		<SheInput type="number" label="Strength" value={space.gridFadeStrength} onChange={updateFadeStrength} />
+	<ShePanelSection label="Visibility" row isOpen={visibilitySectionOpen.value} onClick={visibilitySectionOpen.toggle}>
+		<SheInput type="number" label="Strength" value={space.gridFadeAmount} onChange={updateFadeStrength} />
 		<SheInput type="number" label="Distance" value={space.gridFadeDistance} onChange={updateFadeDistance} />
 	</ShePanelSection>
 {/snippet}
 
 {#snippet floorSection()}
-	<ShePanelSection label="Floor" isOpen={isFloorSectionOpen} onClick={toggleFloorSectionOpen}>
+	<ShePanelSection label="Floor" isOpen={floorSectionOpen.value} onClick={floorSectionOpen.toggle}>
 		{@render sizeSection()}
 
-		<ShePanelInnerSection label="Color 1" isOpen={isFloorColorOpen1} onClick={toggleFloorColorOpen1}>
-			<SheColorInput label="3 Color" value={space.floorColor1} onChange={updateFloorColor1} />
+		<ShePanelInnerSection label="Color 1" isOpen={floorColorOpen1.value} onClick={floorColorOpen1.toggle}>
+			<SheColorInput label="Color" value={space.floorColor1} onChange={updateFloorColor1} />
 			<SheInput
 				type="range"
 				label="Opacity"
@@ -250,8 +208,8 @@
 				onChange={updateFloorOpacity1}
 			/>
 		</ShePanelInnerSection>
-		<ShePanelInnerSection label="Color 2" isOpen={isFloorColorOpen2} onClick={toggleFloorColorOpen2}>
-			<SheColorInput label="4 Color" value={space.floorColor2} onChange={updateFloorColor2} />
+		<ShePanelInnerSection label="Color 2" isOpen={floorColorOpen2.value} onClick={floorColorOpen2.toggle}>
+			<SheColorInput label="Color" value={space.floorColor2} onChange={updateFloorColor2} />
 			<SheInput
 				type="range"
 				label="Opacity"
@@ -267,7 +225,7 @@
 {/snippet}
 
 {#snippet sizeSection()}
-	<ShePanelInnerSection label="Size" isOpen={isSizeSectionOpen} onClick={toggleSizeSection}>
+	<ShePanelInnerSection label="Size" isOpen={sizeSectionOpen.value} onClick={sizeSectionOpen.toggle}>
 		<div class="row gap1">
 			<SheInput
 				type="number"

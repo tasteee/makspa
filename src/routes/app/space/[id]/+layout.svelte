@@ -17,16 +17,6 @@
 		const match = urlPattern.match(globalThis.location.pathname)
 		mainStore.enterSpace(match.id)
 	})
-
-	$effect(() => {
-		if (!mainStore.space) return
-		const color1 = mainStore.space.floorColor1
-		const color2 = mainStore.space.floorColor2
-		console.log('updating bar colors', color1, color2)
-		audioStore.updateVizBarColors(color1, color2)
-	})
-
-	// console.log('rendeing /app/space/:id')
 </script>
 
 <Canvas>

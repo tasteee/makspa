@@ -1,5 +1,17 @@
 {
 	"interface": {
+		"itemMove": "/audio/clips/Puzzle_Game_Organic_Wood_Block_Tone_Tap_4_App_Click.wav",
+		"itemRotate": "/audio/clips/Puzzle_Game_Organic_Wood_Block_Tone_Tap_4_App_Click.wav",
+		"itemDelete": "/audio/clips/OS_OTK_Foley Guitar Strike 4.wav",
+
+		"buttonHover": "/audio/clips/Builder_Game_Switch_Tiny_10.wav",
+		"buttonClick": "/audio/clips/Builder_Game_Switch_Tiny_10.wav",
+		"itemAdd": "",
+		"itemScale": "",
+		"unavailable": "",
+		"itemFavorite": "",
+
+		"clicky0": "/audio/clips/Builder_Game_Switch_Tiny_10.wav",
 		"accentA05": "/audio/clips/Puzzle_Game_Accent_A_05.wav",
 		"affirmationDryMetalUIButton1": "/audio/clips/Puzzle_Game_Affirmation_Dry_Metal_UI_Button_1.wav",
 		"button02": "/audio/clips/Puzzle_Game_Button_02.wav",
@@ -9,7 +21,7 @@
 		"organicMetallicButton1": "/audio/clips/Puzzle_Game_Organic_Metallic_Button_1.wav",
 		"organicPinBallLoad1": "/audio/clips/Puzzle_Game_Organic_Pin_Ball_Load_1.wav",
 		"organicUnlock2": "/audio/clips/Puzzle_Game_Organic_Unlock_2.wav",
-		"organicWoodBlockToneTap4AppClick": "/audio/clips/Puzzle_Game_Organic_Wood_Block_Tone_Tap_4_App_Click.wav",
+
 		"slideVibrate03": "/audio/clips/Puzzle_Game_Slide_Vibrate_03.wav",
 		"uiPop03": "/audio/clips/Puzzle_Game_UI_Pop_03.wav",
 		"uiPopTiny03": "/audio/clips/Puzzle_Game_UI_Pop_Tiny_03.wav",
@@ -18,7 +30,6 @@
 		"foleyPipeHits7": "/audio/clips/OS_OTK_Foley Pipe Hits 7.wav",
 		"builderGameMetalTabClick2Soft": "/audio/clips/Builder_Game_Metal_Tab_Click_2_Soft.wav",
 		"builderGameMetalUIButtonClick2": "/audio/clips/Builder_Game_Metal_UI_Button_Click_2.wav",
-		"clicky0": "/audio/clips/Builder_Game_Switch_Tiny_10.wav",
 		"negative0": "/audio/clips/Builder_Game_UI_Bass_Tap_Button.wav",
 		"builderGameWeaponArrowImpact3Miss": "/audio/clips/Builder_Game_Weapon_Arrow_Impact_3_Miss.wav",
 		"builderGameWeaponArrowImpact4Hit": "/audio/clips/Builder_Game_Weapon_Arrow_Impact_4_Hit.wav",

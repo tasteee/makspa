@@ -36,15 +36,23 @@ class MainStore {
 	}
 
 	syncSpaceWithDatabase = debounce(() => {
-		console.log('syncing')
+		// console.log('syncing')
 		api.updateSpace({
 			...this.space,
 			items: this.items
 		})
-	}, 250)
+	}, 500)
+
+	syncSpaceItemsWithDatabase = debounce(() => {
+		// console.log('syncing')
+		api.updateSpace({
+			id: this.space.id,
+			items: this.items
+		})
+	}, 500)
 
 	updateSpace = (updates: Partial<SpaceT>) => {
-		console.log('updating space', updates)
+		// console.log('updating space', updates)
 		this.space = { ...this.space, ...updates }
 		this.syncSpaceWithDatabase()
 	}
@@ -54,21 +62,23 @@ class MainStore {
 	}
 
 	enterSpace = async (spaceId: string) => {
-		console.log('entering space', spaceId)
-		const space = await this.loadSpace(spaceId)
-		console.log('loadedspace', space)
+		// console.log('entering space', spaceId)
+		const fullSpace = await this.loadSpace(spaceId)
+		// console.log('loadedspace', fullSpace)
+		const { items, ...space } = fullSpace
 		this.space = space
+		this.items = items
 	}
 
 	exitSpace = () => {
-		console.log('exiting space')
+		// console.log('exiting space')
 		this.space = null
 		window.location.assign('/app/home')
 	}
 
 	loadSpaces = async () => {
 		const [error, spaces] = await api.getSpacesByArtistId(this.artist.id)
-		console.log('loaded spaces', this.artist.id, spaces)
+		// console.log('loaded spaces', this.artist.id, spaces)
 		return spaces
 	}
 
@@ -78,6 +88,7 @@ class MainStore {
 		if (!error) console.log('loadSpace results: ', space)
 		if (error) throw error
 		loaders.stop('space')
+
 		return space
 	}
 
@@ -117,7 +128,10 @@ class MainStore {
 		this.items = items
 	}
 
+	models = {}
+
 	addItemFromModel = (model: any) => {
+		this.models[model.id] = model
 		const item = { ...model, ...DEFAULT_ITEM } as any
 		item.id = nanoid()
 		item.model = model.id
@@ -127,15 +141,20 @@ class MainStore {
 		item.modelUrl = '/models/' + model.file + `?id=${item.id}`
 		this.items[item.id] = item
 		this.selectItem(item.id)
+		this.syncSpaceItemsWithDatabase()
+		return item.id
 	}
 
 	cloneItem = (id: string) => {
-		const baseItem = this.getItemById(id)
-		const item = { ...baseItem, id: nanoid() }
-		item.positionX -= 0.25
-		item.positionZ -= 0.25
-		this.items[item.id] = item
-		this.selectedItemId = item.id
+		const baseItem = { ...this.getItemById(id) }
+		baseItem.id = nanoid()
+		baseItem.positionX += 0.5
+		baseItem.positionZ += 0.5
+		baseItem.modelUrl = baseItem.modelUrl + baseItem.id
+		// console.log({ baseItem })
+		this.items[baseItem.id] = baseItem
+		this.selectItem(baseItem.id)
+		this.syncSpaceItemsWithDatabase()
 	}
 
 	// loadItemsForSpace = async (id: SpaceIdT) => {
@@ -146,12 +165,13 @@ class MainStore {
 	updateItem = ({ id, ...updates }) => {
 		const newItem = { ...this.items[id], ...updates }
 		this.items[id] = newItem
+		this.syncSpaceItemsWithDatabase()
 	}
 
 	deleteItem = (id: string) => {
 		this.objects = Object.fromEntries(Object.entries(this.objects).filter(([key]) => key !== id))
 		this.items = Object.fromEntries(Object.entries(this.items).filter(([key]) => key !== id))
-		console.log('ITEMS:', this.items)
+		// console.log('ITEMS:', this.items)
 
 		// If the deleted item was selected, deselect it
 		if (this.selectedItemId === id) {
@@ -166,6 +186,10 @@ class MainStore {
 
 	deselectItem = () => {
 		this.selectedItemId = null
+	}
+
+	createUpdater = (key: string) => (value: boolean | string | number) => {
+		this.updateSpace({ [key]: value })
 	}
 }
 

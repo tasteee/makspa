@@ -1,16 +1,15 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte'
-
+	import { onMount, onDestroy } from 'svelte'
 	import inputStore from '~/stores/input.store.svelte'
-
 	import { T } from '@threlte/core'
 	import BoundingBox from '~/modules/BoundingBox.svelte'
 	import u from '~/modules/utilities'
 	import { percentageToRadians } from '~/modules/numbers'
 	import DragControls from '~/modules/DragControls.svelte'
 	import { useModel } from '~/modules/useModel.svelte'
-	import stores from '~/stores'
 	import mainStore from '~/stores/main-store.svelte'
+	import cameraStore from '~/stores/camera.store.svelte'
+	import audioStore from '~/stores/audio-store.svelte'
 
 	type PropsT = {
 		item: ItemT
@@ -24,7 +23,7 @@
 	let isObstructive = $derived(props.item.isObstructive)
 	let isDragging = $state(false)
 	let isMouseDown = $state(false)
-	let isPressedAlt = $derived.by(() => stores.input.pressedKeys.includes('alt'))
+	let isPressedAlt = $derived.by(() => inputStore.pressedKeys.includes('alt'))
 
 	let dragAxes = $derived.by(() => {
 		if (!isSelected) return ''
@@ -48,30 +47,33 @@
 	const gltf = useModel(props.item.modelUrl)
 
 	const setUpMesh = () => {
+		if (props.item.hasBeenSetUp) return
 		const adjustment = u.three.getNegativeAdjustmentToZeroY(mesh)
 		const newPositionY = positionY + adjustment
 		const rotationDegrees = u.three.getRotationYDegrees(mesh)
 		const correctedRotation = u.three.getCorrectedAlignmentRotationY(rotationDegrees)
 		const updates = { id: props.item.id, rotationY: correctedRotation, positionY: newPositionY }
+		props.item.hasBeenSetUp = true
 		mainStore.updateItem(updates)
 	}
 
 	const handleDragStart = () => {
 		if (!isSelected) return
-		stores.camera.controls.enabled = false
+		cameraStore.controls.enabled = false
 		isDragging = true
-		console.log('dragging')
+		// console.log('dragging')
 	}
 
 	const handleDragEnd = () => {
 		if (!isSelected) return
-		stores.camera.controls.enabled = true
+		cameraStore.controls.enabled = true
 		isDragging = false
-		console.log('drag end')
+		// console.log('drag end')
 	}
 
 	const handleDrag = (event) => {
 		if (!isSelected) return
+		audioStore.playClip('itemMove')
 
 		mainStore.updateItem({
 			id: props.item.id,
@@ -84,6 +86,7 @@
 	const updateRotation = (axis, amount) => {
 		const key = `rotation` + axis.toUpperCase()
 		const value = props.item[key] + amount
+		audioStore.playClip('itemRotate')
 
 		mainStore.updateItem({
 			id: props.item.id,
@@ -92,12 +95,28 @@
 	}
 
 	const handleKeyDown = (event) => {
+		const arrowKeys = ['arrowup', 'arrowdown', 'arrowleft', 'arrowright']
 		if (!isSelected) return
 		const key = event.key.toLowerCase()
-		console.log(props.item.name + ' IS SELECTED WHEN KEY PRESSED: ' + key)
-		if (key === 'delete') mainStore.deleteItem(props.item.id)
-		if (key === ' ') stores.camera.moveToItem(props.item.id)
-		if (key === 'escape') mainStore.deselectItem()
+		const withControl = inputStore.pressedKeys.includes('control')
+		const isDuplicate = withControl && key === 'd'
+		const isDelete = key === 'delete'
+		const isFocus = key === ' '
+		const isDeselect = key === 'escape'
+		const isRotation = arrowKeys.includes(key)
+
+		if (isDuplicate) mainStore.cloneItem(props.item.id)
+		if (isDuplicate) audioStore.playClip('itemDuplicate')
+
+		if (isDelete) mainStore.deleteItem(props.item.id)
+		if (isDelete) audioStore.playClip('itemDelete')
+
+		if (isFocus) cameraStore.moveToItem(props.item.id)
+		if (isFocus) audioStore.playClip('itemFocus')
+
+		if (isDeselect) mainStore.deselectItem()
+		if (isDeselect) audioStore.playClip('itemDeselect')
+
 		if (!event.altKey && key === 'arrowup') updateRotation('x', -1)
 		if (!event.altKey && key === 'arrowdown') updateRotation('x', 1)
 		if (!event.altKey && key === 'arrowleft') updateRotation('y', 1)
@@ -106,22 +125,25 @@
 		if (event.altKey && key === 'arrowdown') updateRotation('z', 1)
 	}
 
-	window.addEventListener('keydown', handleKeyDown)
-
 	const handleHoverStart = (event) => {
+		event.stopPropagation()
+		const amount = isSelected ? 0.4 : 0.25
 		// console.log({ midColor: mainStore.midColor })
 		event.object.material.emissive.set(mainStore.midColor)
-		event.object.material.emissiveIntensity = 0.5
-		event.object.material.emissive.opacity = 0.5
+		event.object.material.emissiveIntensity = amount
+		event.object.material.emissive.opacity = amount
 		event.object.castShadow = true
 		event.object.receiveShadow = true
+		audioStore.playClip('itemHover')
 	}
 
 	const handleHoverEnd = (event) => {
+		event.stopPropagation()
 		event.object.material.emissive.set(0, 0, 0)
 	}
 
 	function handleClick(event) {
+		audioStore.playClip('itemSelect')
 		if (isDragging) return
 		if (isSelected) return
 		event?.stopPropagation?.()
@@ -140,6 +162,11 @@
 		isMouseDown = false
 	}
 
+	onMount(() => {
+		window.addEventListener('keydown', handleKeyDown)
+		audioStore.playClip('itemAdd')
+	})
+
 	onDestroy(() => {
 		window.removeEventListener('keydown', handleKeyDown)
 	})
@@ -154,6 +181,8 @@
 		onclick={handleClick}
 		onpointerdown={handlePointerDown}
 		onpointerup={handlePointerUp}
+		onpointerover={handleHoverStart}
+		onpointerout={handleHoverEnd}
 		position={[positionX, positionY, positionZ]}
 		rotation={[rotationX, rotationY, rotationZ]}
 		scale={[scaleX, scaleY, scaleZ]}
@@ -164,8 +193,6 @@
 		<DragControls
 			isEnabled={isSelected}
 			axes={dragAxes}
-			onHoverStart={handleHoverStart}
-			onHoverEnd={handleHoverEnd}
 			onDragStart={handleDragStart}
 			onDragEnd={handleDragEnd}
 			onDrag={handleDrag}
@@ -177,3 +204,6 @@
 {#if mesh && isSelected}
 	<BoundingBox target={mesh} positionY={position[1]} />
 {/if}
+
+<!-- onHoverStart={handleHoverStart}
+			onHoverEnd={handleHoverEnd} -->

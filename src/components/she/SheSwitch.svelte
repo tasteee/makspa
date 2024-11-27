@@ -14,10 +14,11 @@
 	let props: PropsT = $props()
 	let checked = $derived(props.value ?? false)
 	let size = $derived(props.size ?? 'medium')
-	let hoverClipId = $derived(props.hoverClipId || 'clicky0')
+	let hoverClipId = $derived(props.hoverClipId || 'buttonHover')
+
 	function handleChange(e: Event) {
 		const target = e.target as HTMLInputElement
-		props.onChange?.(target.checked)
+		props.onChange(target.checked)
 	}
 </script>
 
@@ -114,11 +115,12 @@
 	.circle {
 		position: absolute;
 		top: 50%;
-		left: 2px;
+		left: 3px;
 		transform: translateY(-50%);
 		background-color: var(--gray15);
 		border-radius: 50%;
-		transition: all 0.2s ease;
+		width: 18px;
+		height: 18px;
 	}
 
 	/* Checked state */
@@ -128,8 +130,7 @@
 
 	.SheSwitch[data-checked='true'] .circle {
 		background-color: var(--gray0);
-		left: calc(100% - 2px);
-		transform: translate(-100%, -50%);
+		left: 19px; /* Slight adjustment to ensure the circle stays inside */
 	}
 
 	/* Disabled state */
@@ -147,6 +148,10 @@
 
 	.SheSwitch[data-disabled='true'] .circle {
 		background-color: var(--gray25);
+	}
+
+	.SheSwitch[data-checked='false'] .SwitchWrapper {
+		background-color: var(--gray30); /* Or any other background color for "unchecked" state */
 	}
 
 	/* Size specific styles */

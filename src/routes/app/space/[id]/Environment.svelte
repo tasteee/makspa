@@ -1,44 +1,58 @@
 <script lang="ts">
 	import * as THREE from 'three'
 	import { useThrelte } from '@threlte/core'
-	import { onDestroy } from 'svelte'
 	import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
-	type PropsT = {
+	let props = $props<{
+		isHdrEnabled: boolean
 		hdrPath: string
-		environmentOnly?: boolean
 		blur?: number
+		intensity?: number
 		backgroundColor?: string
-		mode?: string
-	}
+	}>()
 
-	let props: PropsT = $props()
-	let hdrPath = $derived(props.hdrPath)
-	let mode = $derived(props.mode || 'environment')
 	const { scene, renderer } = useThrelte()
-	let envMap = $state<THREE.Texture>(null)
+	let envMap = $state<THREE.Texture | null>(null)
+	let intensity = $derived((props.intensity ?? 1) / 100) // Intensity can be in range [0, 1]
+	let blur = $derived(props.blur ?? 0)
+	let backgroundColor = $derived(props.backgroundColor ?? '#000000')
 
+	// Reactively update background and environment map
 	$effect(() => {
-		if (mode === 'none') {
-			scene.background = null
-		}
+		// Always set the background color
+		scene.background = new THREE.Color(backgroundColor)
 
-		if (mode === 'color') {
-			scene.background = new THREE.Color(props.backgroundColor)
-		}
-
-		if (mode === 'hdr') {
-			if (!envMap) return
-			scene.background = envMap
-
-			if (!props.environmentOnly && props.blur >= 0) {
-				scene.backgroundBlurriness = props.blur
-			}
+		if (props.isHdrEnabled && envMap) {
+			// If HDR is enabled, set the environment map
+			scene.environment = envMap
+			scene.backgroundRotation = new THREE.Euler(0, 0, 0)
+			scene.environmentIntensity = intensity
+			scene.environmentRotation = new THREE.Euler(0, 0, 0)
+			scene.backgroundBlurriness = blur
+		} else {
+			// Disable environment map if HDR is not enabled
+			scene.environment = null
 		}
 	})
 
+	// Apply environment map to materials of objects if enabled
 	$effect(() => {
-		if (hdrPath) loadHDR(hdrPath)
+		if (envMap) {
+			scene.traverse((object: THREE.Object3D) => {
+				if (object instanceof THREE.Mesh) {
+					// Apply environment map to materials that support it (like MeshStandardMaterial)
+					object.material.envMap = envMap
+					object.material.needsUpdate = true
+				}
+			})
+		}
+	})
+
+	// Load HDR when the path changes
+	$effect(() => {
+		if (props.hdrPath && props.isHdrEnabled) {
+			loadHDR(props.hdrPath)
+		}
 	})
 
 	async function loadHDR(path: string) {
@@ -49,6 +63,8 @@
 			const texture = await exrLoader.loadAsync(path)
 			const envMapCube = pmremGenerator.fromEquirectangular(texture)
 			envMap = envMapCube.texture
+
+			// Cleanup
 			texture.dispose()
 			pmremGenerator.dispose()
 		} catch (error) {
@@ -56,7 +72,12 @@
 		}
 	}
 
-	onDestroy(() => {
-		scene.background = null
+	// Cleanup resources
+	$effect(() => {
+		return () => {
+			scene.background = null
+			scene.environment = null
+			envMap?.dispose()
+		}
 	})
 </script>

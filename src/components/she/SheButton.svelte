@@ -2,6 +2,7 @@
 	import SheIcon from './SheIcon.svelte'
 	import classcat from 'classcat'
 	import audioStore from '~/stores/audio-store.svelte'
+
 	type PropsT = {
 		class?: string
 		kind?: 'dark' | 'light' | 'mid' | string
@@ -19,7 +20,7 @@
 
 	// SVELTE 5: RUNES: $props()
 	let props: PropsT = $props()
-	let hoverClipId = $derived(props.hoverClipId || 'clicky0')
+	let hoverClipId = $derived(props.hoverClipId || 'buttonHover')
 	let iconSide = $derived(props.iconSide || 'left')
 	let activeClass = props.isActive ? 'isActive' : ''
 	let hasIconClass = props.icon ? 'hasIcon' : ''
