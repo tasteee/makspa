@@ -201,7 +201,7 @@ class PerspectiveCameraConfiguration {
 	far = 1000
 	zoom = 1.5
 	minZoom = 0.1
-	maxZoom = 15
+	maxZoom = 22
 	polarAngle = 1.0223005175331172
 	minPolarAngle = percentageToDegrees(45.264)
 	maxPolarAngle = percentageToDegrees(88.264)
@@ -215,6 +215,7 @@ class PerspectiveCameraConfiguration {
 	dollyToCursor = true
 	dollyDragInverted = false
 	restThreshold = 0.0025
+	frustumSize = 10
 
 	// Adjust initial position for better view
 	position = [2, 2, 2]
@@ -232,6 +233,10 @@ export class PerspectiveCameraStore {
 		this.camera.aspect = this.config.aspect
 		this.camera.near = this.config.near
 		this.camera.far = this.config.far
+		const aspect = window.innerWidth / window.innerHeight
+		const frustumSize = this.config.frustumSize
+		this.camera.left = (-frustumSize * aspect) / 2
+		this.camera.right = (frustumSize * aspect) / 2
 		this.camera.updateProjectionMatrix()
 	}
 
@@ -335,6 +340,7 @@ export class PerspectiveCameraStore {
 	calculateWorldSpaceOffset = (screenSpaceOffset: number): number => {
 		const viewWidth = this.camera.right - this.camera.left
 		const worldSpaceOffset = (screenSpaceOffset * viewWidth) / window.innerWidth
+		console.log({ viewWidth, cameraRight: this.camera.right, cameraLeft: this.camera.left, worldSpaceOffset })
 		return worldSpaceOffset / 2 / this.camera.zoom
 	}
 
@@ -346,18 +352,22 @@ export class PerspectiveCameraStore {
 
 		console.log('menuBar.activePanel', menuBar.activePanel)
 		if (!!menuBar.activePanel) {
-			const offsetX = this.calculateWorldSpaceOffset(200)
-			const offsetZ = this.calculateWorldSpaceOffset(180)
+			const offsetX = this.calculateWorldSpaceOffset(46)
+			const offsetZ = this.calculateWorldSpaceOffset(46)
 			targetX += -offsetX
 			targetZ += offsetZ
 			targetY -= 0.125
+			console.log({ offsetX, offsetZ })
 		}
+
+		console.log({ targetX, targetY, targetZ })
 
 		this.controls.moveTo(targetX, targetY, targetZ, true)
 	}
 
 	moveToItem = (id: string) => {
 		const item = mainStore.space.items[id]
+		console.log('MOVING TO ITEM', item)
 		this.moveTo(item.positionX, item.positionY, item.positionZ)
 	}
 

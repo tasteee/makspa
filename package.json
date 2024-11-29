@@ -66,6 +66,7 @@
 		"just-throttle": "^4.2.0",
 		"koxy-js": "^1.1.1",
 		"lucide-svelte": "^0.461.0",
+		"mitt": "^3.0.1",
 		"onetime": "^7.0.0",
 		"pex-color": "^2.2.0",
 		"pocketbase": "^0.22.0",

@@ -3,7 +3,6 @@
 	import { Canvas } from '@threlte/core'
 	import Scene from './Scene.svelte'
 	import { World } from '@threlte/rapier'
-	import MovementControlOptions from '~/components/MovementControlOptions.svelte'
 	import SheIcon from '~/components/she/SheIcon.svelte'
 	import TopBar from '~/components/TopBar.svelte'
 	import mainStore from '~/stores/main-store.svelte'
@@ -15,6 +14,7 @@
 	import SheButtonGroup from '~/components/she/SheButtonGroup.svelte'
 	import SheButton from '~/components/she/SheButton.svelte'
 	import SheFlex from '~/components/she/SheFlex.svelte'
+	import MovementControlOptions from '~/components/MovementControlOptions.svelte'
 
 	onMount(() => {
 		const urlPattern = new UrlPattern('/app/space/:id')
@@ -31,7 +31,9 @@
 
 <SheFlex style="z-index: 100;">
 	<TopBar />
-	<MovementControlOptions />
+	{#if mainStore.isItemSelected}
+		<MovementControlOptions />
+	{/if}
 </SheFlex>
 
 {#if !!audio.analyser}

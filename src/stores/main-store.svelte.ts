@@ -8,8 +8,7 @@ import debounce from 'just-debounce'
 
 class MainStore {
 	artist = $state(auth.authData)
-	space = $state<SpaceT>(null)
-	items = $state<ItemMapT>({})
+	space = $state<SpaceT>({} as any)
 	meshes = {}
 
 	isDragging = $state(false)
@@ -57,7 +56,7 @@ class MainStore {
 		this.clickedItemId = null
 	}
 
-	getItemById = (id: string) => this.space.items[id]
+	getItemById = (id: string) => this.space?.items[id]
 	saveMesh = (id: string, mesh: any) => (this.meshes[id] = mesh)
 	getMesh = (id: string) => this.meshes[id]
 
@@ -100,6 +99,7 @@ class MainStore {
 		delete this.meshes[id]
 		delete this.space.items[id]
 		if (this.selectedItemId === id) this.deselectItem()
+		this.syncSpaceWithDatabase()
 	}
 
 	selectItem = (id: string) => {

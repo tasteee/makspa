@@ -17,10 +17,10 @@
 	let space = $derived(mainStore.space || {}) as SpaceT
 
 	let lightState0 = $state({
-		positionX: 2,
+		positionX: -2,
 		positionY: 1,
-		positionZ: -2,
-		intensity: 1,
+		positionZ: 0,
+		intensity: 0.6,
 		color: '#ffffff',
 		castShadow: true
 	})
@@ -28,8 +28,8 @@
 	let lightState1 = $state({
 		positionX: 2,
 		positionY: 1,
-		positionZ: -2,
-		intensity: 1,
+		positionZ: 0,
+		intensity: 0.5,
 		shadow: true,
 		castShadow: true,
 		color: '#ffffff'
@@ -56,12 +56,16 @@
 	onDestroy(() => {
 		inputStore.stop()
 	})
+
+	let aaa = $state(true)
+
+	window.toggleAAA = () => (aaa = !aaa)
 </script>
 
 {#if !!space.id}
 	<!-- <T.DirectionalLight intensity={0.6} position={[4, 5, 4]} castShadow /> -->
 	<T.DirectionalLight
-		castShadow={lightState0.castShadow}
+		castShadow
 		color={lightState0.color}
 		intensity={lightState0.intensity}
 		position={[lightState0.positionX, lightState0.positionY, lightState0.positionZ]}
@@ -72,7 +76,9 @@
 		intensity={lightState1.intensity}
 		position={[lightState1.positionX, lightState1.positionY, lightState1.positionZ]}
 	/>
-	<!-- <T.HemisphereLight intensity={0.9} color="#ffffff" groundColor={mainStore.space.color} /> -->
+	{#if aaa}
+		<T.HemisphereLight intensity={0.6} color="#ffffff" groundColor={mainStore.space.color} />
+	{/if}
 	<!-- <T.PointLight intensity={0.6} position={[0, 5, 0]} distance={20} decay={2} /> -->
 	<!-- <T.DirectionalLight castShadow position={[0, 20, 0]} /> -->
 	<ContactShadows scale={10} blur={2} far={2.5} opacity={0.5} />
