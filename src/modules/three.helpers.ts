@@ -6,6 +6,36 @@ const getBottomMostPointY = (mesh: THREE.Mesh) => {
 	return bottomY
 }
 
+const getBottomFourCorners = (mesh: THREE.Mesh) => {
+	const boundingBox = new THREE.Box3().setFromObject(mesh)
+	const bottom = boundingBox.min
+	const bottomFourCorners = [
+		new THREE.Vector3(bottom.x, bottom.y, bottom.z),
+		new THREE.Vector3(bottom.x, bottom.y, bottom.z + boundingBox.max.z),
+		new THREE.Vector3(bottom.x + boundingBox.max.x, bottom.y, bottom.z),
+		new THREE.Vector3(bottom.x + boundingBox.max.x, bottom.y, bottom.z + boundingBox.max.z)
+	]
+	return bottomFourCorners
+}
+
+const getBoxCornerPoints = (mesh: THREE.Mesh) => {
+	const boundingBox = new THREE.Box3().setFromObject(mesh)
+	const low = boundingBox.min
+	const high = boundingBox.max
+
+	const corner1 = new THREE.Vector3(low.x, low.y, low.z)
+	const corner2 = new THREE.Vector3(high.x, low.y, low.z)
+	const corner3 = new THREE.Vector3(low.x, high.y, low.z)
+	const corner4 = new THREE.Vector3(low.x, low.y, high.z)
+
+	const corner5 = new THREE.Vector3(high.x, high.y, low.z)
+	const corner6 = new THREE.Vector3(high.x, low.y, high.z)
+	const corner7 = new THREE.Vector3(low.x, high.y, high.z)
+	const corner8 = new THREE.Vector3(high.x, high.y, high.z)
+
+	return [corner1, corner2, corner3, corner4, corner5, corner6, corner7, corner8]
+}
+
 const getNegativeAdjustmentToZeroY = (mesh: THREE.Mesh) => {
 	const bottomY = getBottomMostPointY(mesh)
 	const adjustment = -bottomY
@@ -43,5 +73,7 @@ export {
 	moveMeshToZeroY,
 	checkMeshAlignedAxis,
 	getRotationYDegrees,
-	getCorrectedAlignmentRotationY
+	getCorrectedAlignmentRotationY,
+	getBoxCornerPoints,
+	getBottomFourCorners
 }

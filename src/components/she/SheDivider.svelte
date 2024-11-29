@@ -75,9 +75,13 @@
 		}
 
 		.SheDividerLabel {
-			color: var(--gray15);
+			color: var(--gray5);
 			font-size: 16px;
 			white-space: nowrap;
+		}
+
+		.ShePanelInnerSection .SheDividerLabel {
+			color: var(--gray15);
 		}
 
 		.DividerLine {

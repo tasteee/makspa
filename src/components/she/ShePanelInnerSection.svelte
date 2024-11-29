@@ -52,5 +52,9 @@
 			overflow: hidden;
 			margin-bottom: 0px;
 		}
+
+		.ShePanelInnerSection .SheDivider {
+			margin-top: 4px;
+		}
 	}
 </style>

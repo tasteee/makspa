@@ -10,6 +10,8 @@
 	import mainStore from '~/stores/main-store.svelte'
 	import cameraStore from '~/stores/camera.store.svelte'
 	import audioStore from '~/stores/audio-store.svelte'
+	import * as THREE from 'three'
+	import HeightLines from '~/modules/HeightLines.svelte'
 
 	type PropsT = {
 		item: ItemT
@@ -23,6 +25,7 @@
 	let isObstructive = $derived(props.item.isObstructive)
 	let isDragging = $state(false)
 	let isMouseDown = $state(false)
+	let mouseDownTime = $state(0)
 	let isPressedAlt = $derived.by(() => inputStore.pressedKeys.includes('alt'))
 	let isPressedShift = $derived.by(() => inputStore.pressedKeys.includes('shift'))
 
@@ -44,6 +47,12 @@
 	let opacity = $derived(props.item.opacity / 100)
 	let position = $derived.by(() => [positionX, positionY, positionZ])
 
+	$effect(() => {
+		if (!mesh) return
+		const box = u.three.getBoxCornerPoints(mesh)
+		console.log({ box })
+	})
+
 	// svelte-ignore state_referenced_locally
 	const gltf = useModel(props.item.modelUrl)
 
@@ -59,18 +68,17 @@
 	}
 
 	const handleDragStart = (event) => {
-		console.log({ event })
 		if (!isSelected) return
 		cameraStore.controls.enabled = false
 		isDragging = true
-		// console.log('dragging')
+		mainStore.isDragging = true
 	}
 
 	const handleDragEnd = () => {
 		if (!isSelected) return
 		cameraStore.controls.enabled = true
 		isDragging = false
-		// console.log('drag end')
+		mainStore.isDragging = false
 	}
 
 	const handleDrag = (event) => {
@@ -151,10 +159,11 @@
 	}
 
 	const handleHoverStart = (event) => {
+		if (inputStore.isMouseDown) return
 		event.stopPropagation()
-		const amount = isSelected ? 0.4 : 0.25
+		const amount = isSelected ? 0.4 : 0.15
 		// console.log({ midColor: mainStore.midColor })
-		event.object.material.emissive.set(mainStore.midColor)
+		event.object.material.emissive.set('#ffffff')
 		event.object.material.emissiveIntensity = amount
 		event.object.material.emissive.opacity = amount
 		event.object.castShadow = true
@@ -169,24 +178,30 @@
 
 	function handleClick(event) {
 		event.stopPropagation()
-		console.log('click', { event })
-		audioStore.playClip('itemSelect')
+		event?.preventDefault?.()
 		if (isDragging) return
 		if (isSelected) return
-		event?.stopPropagation?.()
-		event?.preventDefault?.()
-		mainStore.selectItem(props.item.id)
 	}
 
 	const handlePointerDown = () => {
 		if (isSelected) return
+		console.log('pointer down')
 		isMouseDown = true
+		mouseDownTime = Date.now()
 	}
 
-	const handlePointerUp = () => {
+	const handlePointerUp = (event) => {
+		event?.stopPropagation?.()
+		event?.preventDefault?.()
 		if (isSelected) return
-		if (!isMouseDown) return
+		console.log('pointer up')
+		const clickDuration = Date.now() - mouseDownTime
+		const wasMouseDown = !!isMouseDown
+		console.log(wasMouseDown, clickDuration)
 		isMouseDown = false
+		if (!wasMouseDown || clickDuration > 400) return
+		audioStore.playClip('itemSelect')
+		mainStore.selectItem(props.item.id)
 	}
 
 	const handleRightClick = (event) => {
@@ -235,4 +250,5 @@
 
 {#if mesh && isSelected}
 	<BoundingBox target={mesh} positionY={position[1]} />
+	<HeightLines positionX={position[0]} positionY={position[1]} positionZ={position[2]} target={mesh} />
 {/if}

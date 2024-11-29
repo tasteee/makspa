@@ -12,6 +12,7 @@ class MainStore {
 	items = $state<ItemMapT>({})
 	meshes = {}
 
+	isDragging = $state(false)
 	selectedItemId = $state(null)
 	hoveredItemId = $state(null)
 	clickedItemId = $state(null)

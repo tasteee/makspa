@@ -1,8 +1,9 @@
 <script lang="ts">
+	import mainStore from '~/stores/main-store.svelte'
 	import cameraStore from '~/stores/camera.store.svelte'
-
 	import SheIconButton from '~/components/she/SheIconButton.svelte'
 	import stores from '~/stores'
+	import TopBarPanels from './TopBarPanels.svelte'
 
 	type TopBarPropsT = {
 		title?: string
@@ -14,7 +15,7 @@
 	let togglePanel = (panel: string) => () => stores.menuBar.togglePanel(panel)
 </script>
 
-<div class="SheTopBar noselect {props.class}">
+<div class="TopBar noselect {props.class}">
 	{#if props.title}
 		<div class="TopBarTitle">{props.title}</div>
 	{/if}
@@ -52,9 +53,13 @@
 	</div>
 </div>
 
+{#if !!mainStore.space?.id}
+	<TopBarPanels />
+{/if}
+
 <style>
 	:global {
-		.SheTopBar {
+		.TopBar {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -65,13 +70,13 @@
 			display: inline-flex;
 		}
 
-		.SheTopBar .TopBarTitle {
+		.TopBar .TopBarTitle {
 			color: var(--gray0);
 			font-size: 18px;
 			font-weight: 500;
 		}
 
-		.SheTopBar .IconsContainer {
+		.TopBar .IconsContainer {
 			margin-top: 16px;
 			margin-left: 12px;
 			display: inline-flex;
@@ -80,7 +85,7 @@
 			height: 40px;
 		}
 
-		.SheTopBar .TopBarIconButton {
+		.TopBar .TopBarIconButton {
 			width: 48px;
 			height: 48px;
 			display: flex;
@@ -95,7 +100,7 @@
 			transition: all 0.2s ease; */
 		}
 
-		.SheTopBar .TopBarPanels {
+		.TopBar .TopBarPanels {
 			position: absolute;
 			top: 76px; /* 64px + 12px gap */
 			left: 0;

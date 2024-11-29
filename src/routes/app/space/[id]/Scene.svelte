@@ -10,6 +10,7 @@
 	import Environment from './Environment.svelte'
 	import mainStore from '~/stores/main-store.svelte'
 	import stores from '~/stores'
+	import inputStore from '~/stores/input.store.svelte'
 
 	interactivity()
 
@@ -39,12 +40,21 @@
 		b: lightState1
 	}
 
+	$effect(() => {
+		const canvas = document.querySelector('canvas')
+		if (mainStore.isDragging) {
+			canvas.style.cursor = 'none'
+		} else {
+			canvas.style.cursor = 'default'
+		}
+	})
+
 	onMount(() => {
-		stores.input.start()
+		inputStore.start()
 	})
 
 	onDestroy(() => {
-		stores.input.stop()
+		inputStore.stop()
 	})
 </script>
 

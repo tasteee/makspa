@@ -3,6 +3,7 @@
 	import SheIcon from './SheIcon.svelte'
 	import classcat from 'classcat'
 	import audioStore from '~/stores/audio-store.svelte'
+	import debounce from 'just-debounce'
 
 	type PropsT = {
 		id?: string
@@ -28,6 +29,7 @@
 	let isDisabled = $derived(props.isDisabled ? 'isDisabled' : '')
 	let shouldShowRangeValue = $derived(type === 'range')
 	let hoverClipId = $derived(props.hoverClipId || 'buttonHover')
+
 	// Format number according to decimals
 	function formatNumber(value: number | string): any {
 		const num = parseFloat(value as string)
@@ -36,7 +38,7 @@
 		return Number(num.toFixed(props.decimals))
 	}
 
-	function handleInput(event: Event) {
+	const handleInput = debounce((event: Event) => {
 		const target = event.target as HTMLInputElement | HTMLTextAreaElement
 		let value: string | number = target.value
 
@@ -47,7 +49,7 @@
 
 		if (type === 'color') value = target.value.toUpperCase()
 		props.onChange?.(value)
-	}
+	}, 100)
 
 	let classes = $derived(classcat([props.class, type, size, isDisabled]))
 </script>
@@ -63,7 +65,6 @@
 			step={props.step}
 			disabled={props.isDisabled}
 			oninput={handleInput}
-			onchange={handleInput}
 		/>
 	</div>
 {/if}
@@ -138,7 +139,7 @@
 	}
 
 	.SheInput:has([type='range']):not(.slider) {
-		margin-bottom: 8px;
+		margin-bottom: 2px;
 	}
 
 	.SheInput.small {

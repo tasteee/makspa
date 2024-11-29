@@ -1,6 +1,8 @@
 <script lang="ts">
 	import SheIcon from './SheIcon.svelte'
 	import { getContrastingTextColor } from '~/modules/colors'
+	import { useDebounce } from '~/modules/useDebouncedValue.svelte'
+	import debounce from 'just-debounce'
 
 	type PropsT = {
 		value: string
@@ -11,33 +13,39 @@
 	}
 
 	const props: PropsT = $props()
-	const value = $derived.by(() => props.value.toUpperCase())
-	const textColor = $derived.by(() => getContrastingTextColor(value))
+	// const debouncedValue = useDebounce(props.value.toUpperCase(), 250)
+	const textColor = $derived.by(() => getContrastingTextColor(props.value))
+
+	// $effect(() => {
+	// 	if (!debouncedValue.value) return
+	// 	if (props.value === debouncedValue.value) return
+	// 	props.onChange(debouncedValue.value)
+	// })
 
 	function copyToClipboard(event: Event) {
 		event.preventDefault()
 		event.stopPropagation()
-		navigator.clipboard.writeText(value)
+		navigator.clipboard.writeText(props.value)
 	}
 
-	function handleInput(event: Event) {
+	const handleInput = debounce((event: Event) => {
 		const target = event.target as HTMLInputElement
 		props.onChange?.(target.value.toUpperCase())
-	}
+	}, 333)
 </script>
 
 <label
 	class="SheInput SheColorInput {props.class}"
 	data-disabled={props.isDisabled}
-	style="--selected-color: {value}; --gradient-stop: 20%; --text-color: {textColor};"
+	style="--selected-color: {props.value}; --gradient-stop: 20%; --text-color: {textColor};"
 >
-	<input type="color" class="ColorPicker" {value} oninput={handleInput} disabled={props.isDisabled} />
+	<input type="color" class="ColorPicker" value={props.value} oninput={handleInput} disabled={props.isDisabled} />
 
 	{#if props.label}
 		<span class="label">{props.label}</span>
 	{/if}
 
-	<span class="ColorDisplay" style="color: var(--text-color);">{value}</span>
+	<span class="ColorDisplay" style="color: var(--text-color);">{props.value}</span>
 	<button class="copyButton" onclick={copyToClipboard}>
 		<SheIcon library="pixelarticons" icon="copy" size="small" color="var(--text-color)" />
 	</button>

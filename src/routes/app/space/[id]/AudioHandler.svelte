@@ -15,18 +15,18 @@
 	$effect(() => {
 		if (!audioListener) return
 		if (audioStore.context) return
+		console.log({ audioListener })
 		audioStore.context = audioListener.context
 		audioStore.analyser = audioStore.context.createAnalyser()
 		audioStore.analyser.fftSize = 2048
-		console.log({ audioListener })
 	})
 
 	$effect(() => {
 		if (!backgroundAudio) return
 		if (audioStore.backgroundAudio) return
+		console.log({ backgroundAudio })
 		audioStore.backgroundAudio = backgroundAudio
 		audioStore.backgroundAudio.setVolume(0.5)
-		console.log({ backgroundAudio })
 	})
 
 	useTask(() => {
@@ -42,7 +42,7 @@
 	bind:ref={audioStore.backgroundAudio}
 	src="/audio/tracks/nakedpoetry.mp3"
 	loop
-	autoplay
+	autoplay={false}
 	playbackRate={0.8}
 	{volume}
 />

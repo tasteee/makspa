@@ -15,7 +15,9 @@
 		iconLibrary?: string
 		icon?: string
 		fillWidth?: boolean
+		style?: string
 		hoverClipId?: string
+		gap?: string
 	}
 
 	// SVELTE 5: RUNES: $props()
@@ -30,6 +32,10 @@
 	let classes = $derived(
 		classcat([props.class, props.kind, sizeClass, activeClass, hasIconClass, hasChildrenClass, fillWidthClass])
 	)
+
+	const style = $derived(props.style || '')
+	const gap = $derived(props.gap ? `gap: ${props.gap};` : '')
+	const finalStyle = $derived(`${style} ${gap}`)
 </script>
 
 {#snippet icon()}
@@ -41,6 +47,7 @@
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
 <button
 	class="SheButton {classes}"
+	style={finalStyle}
 	disabled={props.isDisabled}
 	onclick={props.onClick}
 	onpointerenter={audioStore.playClipHandler(hoverClipId)}

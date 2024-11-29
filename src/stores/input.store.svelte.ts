@@ -14,6 +14,7 @@ class InputStore {
 	isActive = $state(false)
 	pressedKeys = $state([])
 	isCapsLocked = $state(false)
+	isMouseDown = $state(false)
 
 	isPressedW = $derived.by(() => this.pressedKeys.includes('w'))
 	isPressedS = $derived.by(() => this.pressedKeys.includes('s'))
@@ -83,6 +84,14 @@ class InputStore {
 		this.mouseY = event.clientY
 	}
 
+	handleMouseDown = () => {
+		this.isMouseDown = true
+	}
+
+	handleMouseUp = () => {
+		this.isMouseDown = false
+	}
+
 	handleFirstClick = () => {
 		document.removeEventListener('click', this.handleFirstClick)
 		this.hasMouseClicked = true
@@ -94,6 +103,8 @@ class InputStore {
 		document.addEventListener('keyup', this.handleKeyUp)
 		document.addEventListener('mousemove', this.handleMouseMove)
 		document.addEventListener('click', this.handleFirstClick)
+		document.addEventListener('mousedown', this.handleMouseDown)
+		document.addEventListener('mouseup', this.handleMouseUp)
 		this.isActive = true
 	}
 

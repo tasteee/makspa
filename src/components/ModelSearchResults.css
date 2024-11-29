@@ -1,0 +1,51 @@
+.ModelSearchResults {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	background: var(--base2);
+	padding: 10px;
+}
+
+.ModelSearchResults .carouselBox {
+	/* grid grid-cols-2 gap-2 */
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 12px;
+}
+
+.ModelItem {
+	width: 100%;
+	position: relative;
+	overflow: visible;
+}
+
+.ModelUnderlay {
+	padding-bottom: 100%;
+	opacity: 1;
+	transition: all 0.25s ease-in-out;
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+	width: 100%;
+	height: 100%;
+}
+
+.ModelItem:hover .ModelUnderlay {
+	opacity: 0.5;
+}
+
+.IconsOverlay {
+	opacity: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	transition: all 0.25s ease-in-out;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.ModelItem:hover .IconsOverlay {
+	opacity: 1;
+}

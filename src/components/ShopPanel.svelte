@@ -4,7 +4,7 @@
 	import SheIcon from '~/components/she/SheIcon.svelte'
 	import SheInput from '~/components/she/SheInput.svelte'
 	import SheIconButton from '~/components/she/SheIconButton.svelte'
-	import ModelCarouselVertical from './ModelCarouselVertical.svelte'
+	import ModelCarouselVertical from './ModelSearchResults.svelte'
 	import shop from '~/stores/shop.store.svelte'
 	import stores from '~/stores'
 
