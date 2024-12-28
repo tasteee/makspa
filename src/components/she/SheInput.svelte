@@ -196,7 +196,7 @@
 	}
 
 	.SheInput:hover {
-		background: var(--gray35);
+		/* background: var(--gray35); */
 	}
 
 	.SheInput:focus-within {

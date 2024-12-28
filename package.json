@@ -81,7 +81,7 @@
 		"svelte-navigator": "^3.2.2",
 		"svelte-pilot": "^6.0.3",
 		"tailwind-merge": "^2.5.4",
-		"three": "^0.170.0",
+		"three": "^0.171.0",
 		"three-freeform-controls": "^0.3.0",
 		"unplugin-auto-import": "^0.18.5",
 		"url-pattern": "^1.0.3",

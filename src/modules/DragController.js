@@ -1,4 +1,3 @@
-import debounce from 'just-debounce'
 import { Controls, Matrix4, Plane, Raycaster, Vector2, Vector3, MOUSE, TOUCH } from 'three'
 
 const _plane = new Plane()

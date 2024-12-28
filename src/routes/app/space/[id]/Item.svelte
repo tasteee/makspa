@@ -12,6 +12,7 @@
 	import audioStore from '~/stores/audio-store.svelte'
 	import * as THREE from 'three'
 	import HeightLines from '~/modules/HeightLines.svelte'
+	import { withMinMax } from '~/modules/withMinMax'
 
 	type PropsT = {
 		item: ItemT
@@ -50,7 +51,6 @@
 	$effect(() => {
 		if (!mesh) return
 		const box = u.three.getBoxCornerPoints(mesh)
-		console.log({ box })
 	})
 
 	// svelte-ignore state_referenced_locally
@@ -67,7 +67,7 @@
 		mainStore.updateItem(updates)
 	}
 
-	const handleDragStart = (event) => {
+	const handleDragStart = () => {
 		if (!isSelected) return
 		cameraStore.controls.enabled = false
 		isDragging = true
@@ -85,11 +85,23 @@
 		if (!isSelected) return
 		audioStore.playClip('itemMove')
 
+		const maxX = (mainStore.space.sizeX / 2) + 0.5
+		const minX = -maxX
+		const positionX = withMinMax(minX, maxX, event.object.position.x)
+
+		const maxY = mainStore.space.sizeY / 2
+		const minY = -maxY
+		const positionY = withMinMax(minY, maxY, event.object.position.y)
+
+		const maxZ = (mainStore.space.sizeZ / 2) + 0.5
+		const minZ = -maxZ
+		const positionZ = withMinMax(minZ, maxZ, event.object.position.z)
+
 		mainStore.updateItem({
 			id: props.item.id,
-			positionX: event.object.position.x,
-			positionY: event.object.position.y,
-			positionZ: event.object.position.z
+			positionX,
+			positionY,
+			positionZ,
 		})
 	}
 
@@ -143,8 +155,9 @@
 			const isRotation = !isScale
 
 			if (isScale) {
-				if (key === 'arrowup') updateScale(0.1)
-				if (key === 'arrowdown') updateScale(-0.1)
+				const amount = inputStore.isCapsLocked ? 0.005 : 0.01
+				if (key === 'arrowup') updateScale(amount)
+				if (key === 'arrowdown') updateScale(-amount)
 			}
 
 			if (isRotation) {
@@ -161,8 +174,8 @@
 	const handleHoverStart = (event) => {
 		if (inputStore.isMouseDown) return
 		event.stopPropagation()
-		const amount = isSelected ? 0.4 : 0.15
-		// console.log({ midColor: mainStore.midColor })
+		const amount = isSelected ? 0.1: 0.05
+				// console.log({ midColor: mainStore.midColor })
 		event.object.material.emissive.set('#ffffff')
 		event.object.material.emissiveIntensity = amount
 		event.object.material.emissive.opacity = amount

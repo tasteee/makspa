@@ -8,6 +8,7 @@ class Auth {
 	isAuthenticated = $state(pocket.authStore.isValid)
 
 	login = async (username: string, password: string) => {
+		console.log({username, password})
 		const [error, authData] = await api.login(username, password)
 		if (error) return console.error('failed auth', error)
 		if (!error) console.log('logged in', authData)

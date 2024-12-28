@@ -30,7 +30,7 @@
 	}
 
 	let isCapsLocked = $derived(stores.input.isCapsLocked)
-	let snapAmount = $derived(isCapsLocked ? 0.01 : 0.025)
+	let snapAmount = $derived(isCapsLocked ? 0.0005 : 0.01)
 
 	const { camera, renderer, invalidate } = useThrelte()
 	let props: DragControlsPropsT = $props()

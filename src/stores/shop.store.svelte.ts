@@ -13,7 +13,10 @@ class ShopStore {
 		this.isLoading = true
 
 		setTimeout(() => {
-			this.results = models
+			this.results = models.filter(model => {
+				return model.name.toLowerCase().includes(this.query.toLowerCase())
+			})
+
 			this.isLoading = false
 		}, 123)
 

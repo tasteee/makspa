@@ -2,54 +2,14 @@ import * as THREE from 'three'
 import CameraControls from 'camera-controls'
 import mainStore from '~/stores/main-store.svelte'
 import menuBar from '~/stores/menuBar.store.svelte'
-import { percentageToDegrees } from '~/modules/numbers'
-
-class IsometricCameraConfiguration {
-	camera = null
-	controls = null
-	zoom = 2
-	minZoom = 1.5
-	maxZoom = 25
-	dollySpeed = 2
-	truckSpeed = 1.5
-	isometricAngle = percentageToDegrees(36)
-	rotationX = percentageToDegrees(-36)
-	rotationY = percentageToDegrees(45)
-	distance = 10
-	makeDefault = true
-	near = -100
-	far = 1000
-	enableDamping = false
-	enablePan = true
-	minDistance = 5
-	maxDistance = 15
-	// polarAngle = percentageToDegrees(55.264)
-	polarAngle = 1.0223005175331172
-	minPolarAngle = percentageToDegrees(45.264)
-	maxPolarAngle = percentageToDegrees(88.264)
-	azimuthAngle = Math.PI / 4
-	frustumSize = 10
-	boundaryFriction = 0.1
-	boundaryEnclosesCamera = false
-	smoothTime = 0.3
-	draggingSmoothTime = 0.125
-	azimuthRotateSpeed = 1
-	polarRotateSpeed = 1
-	verticalDragToForward = true
-	dollyToCursor = true
-	dollyDragInverted = false
-	restThreshold = 0.0025
-	positionX = this.distance * Math.sin(Math.PI / 4)
-	positionY = this.distance * Math.sin(this.isometricAngle)
-	positionZ = this.distance * Math.sin(Math.PI / 4)
-	position = [this.positionX, this.positionY, this.positionZ]
-	target = { x: 0.0, y: 0, z: 0.0 }
-}
+import isometricCameraConfig from '~/configs/isometric-camera-config'
+import perspectiveCameraConfig from '~/configs/perspective-camera-config'
+import sideScrollerCamera from '~/configs/sidescroller-camera-config.svelte'
 
 class CameraStore {
 	camera = $state(null)
 	controls = $state(null)
-	config = new IsometricCameraConfiguration()
+	config = isometricCameraConfig
 
 	updateFrustum = () => {
 		const aspect = window.innerWidth / window.innerHeight
@@ -191,41 +151,10 @@ class CameraStore {
 export const isometricCameraStore = new CameraStore()
 globalThis.isometricCameraStore = isometricCameraStore
 
-class PerspectiveCameraConfiguration {
-	camera = null
-	controls = null
-	verticalDragToForward = true
-	fov = 50 // Increased FOV for better perspective
-	aspect = globalThis.innerWidth / globalThis.innerHeight
-	near = 0.01
-	far = 1000
-	zoom = 1.5
-	minZoom = 0.1
-	maxZoom = 22
-	polarAngle = 1.0223005175331172
-	minPolarAngle = percentageToDegrees(45.264)
-	maxPolarAngle = percentageToDegrees(88.264)
-	minDistance = 0.1
-	maxDistance = 5
-	dollySpeed = 1
-	truckSpeed = 3
-	smoothTime = 0.1
-	azimuthRotateSpeed = 1
-	polarRotateSpeed = 1
-	dollyToCursor = true
-	dollyDragInverted = false
-	restThreshold = 0.0025
-	frustumSize = 10
-
-	// Adjust initial position for better view
-	position = [2, 2, 2]
-	target = { x: 0, y: 0, z: 0 }
-}
-
 export class PerspectiveCameraStore {
 	camera = $state(null)
 	controls = $state(null)
-	config = new PerspectiveCameraConfiguration()
+	config = perspectiveCameraConfig
 
 	updateProjectionMatrix = () => {
 		this.config.aspect = window.innerWidth / window.innerHeight
@@ -386,3 +315,4 @@ export class PerspectiveCameraStore {
 export const perspectiveCameraStore = new PerspectiveCameraStore()
 globalThis.perspectiveCameraStore = perspectiveCameraStore
 export default perspectiveCameraStore
+export { sideScrollerCamera }

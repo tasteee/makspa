@@ -57,7 +57,7 @@
 	{/if}
 
 	{#if space.isFloorVisible}
-		<T.Group position={[0, -0.08, 0]} receiveShadow castShadow bind:ref={floorGroup} ondblclick={handleGroundClick}>
+		<T.Group position={[0, -0.0255, 0]} receiveShadow castShadow bind:ref={floorGroup} ondblclick={handleGroundClick}>
 			<AutoColliders shape={'cuboid'}>
 				<T.Mesh bind:ref={floor}>
 					<T.BoxGeometry args={[space.sizeX, 0.05, space.sizeZ]} />
