@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SheButton from './SheButton.svelte'
 	import SheFlex from './SheFlex.svelte'
 	import classcat from 'classcat'
 	type PropsT = {
@@ -38,6 +37,11 @@
 
 				&:last-of-type {
 					border-radius: 0 5px 5px 0;
+				}
+
+				&:hover {
+					background-color: var(--gray30);
+					color: var(--gray0);
 				}
 			}
 		}

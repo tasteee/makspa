@@ -1,7 +1,9 @@
 import * as color from 'pex-color'
 import range from 'array-range'
 import { colord } from '~/modules/colors'
+import throttle from 'just-throttle'
 import debounce from 'just-debounce'
+import mainStore from './main-store.svelte'
 
 const createColorsRange = (startColor, endColor, count) => {
 	const start = colord(startColor)
@@ -73,7 +75,7 @@ class AudioStore {
 		this.backgroundAudio.stop()
 	}
 
-	playClip = (clipId: string) => {
+	playClip = throttle((clipId: string) => {
 		const config = this.interfaceSoundsConfig[clipId]
 		if (!this.interfaceSounds[clipId]) return
 		const isInPlayingList = this.playingClips.has(clipId)
@@ -82,7 +84,7 @@ class AudioStore {
 		if (isInPlayingList) audio.stop()
 		if (!isInPlayingList) this.playingClips.add(clipId)
 		audio.play()
-	}
+	}, 35)
 
 	stopClip = (clipId: string) => {
 		if (!this.interfaceSounds[clipId]) return
@@ -145,6 +147,10 @@ class AudioStore {
 			}
 		})
 	}
+
+	playDragSound = () => {
+		audioStore.playClip('itemMove')
+	}
 }
 
 const interfaceSoundsConfig = {
@@ -158,7 +164,7 @@ const interfaceSoundsConfig = {
 	itemFocus: {
 		path: '/audio/clips/OS_OTK_Sweep 10.wav',
 		// Builder_Game_Weapon_Light_Swing_1.wav
-		volume: 0.1,
+		volume: 0.7,
 		playbackRate: 0.6,
 		debounceRate: 50
 	},
@@ -187,11 +193,11 @@ const interfaceSoundsConfig = {
 		debounceRate: 50
 	},
 	itemSelect: {
-		path: '/audio/clips/Basement_Light_Switch.wav',
+		path: '/audio/clips/Domestic_Light_Switch.wav',
 		// Bluezone_BC0241_interface_beep_006.wav
-		volume: 0.1,
-		playbackRate: 0.6,
-		debounceRate: 50
+		volume: 0.7,
+		playbackRate: 1,
+		debounceRate: 19
 	},
 	itemHover: {
 		path: '/audio/clips/Builder_Game_Switch_Tiny_10.wav',

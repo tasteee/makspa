@@ -2,12 +2,13 @@
 	import * as THREE from 'three'
 	import { useThrelte } from '@threlte/core'
 	import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+	import { onMount } from 'svelte'
 
 	let props = $props<{
 		isHdrEnabled: boolean
 		hdrPath: string
 		blur?: number
-		intensity?: number
+		intensity: number
 		backgroundColor?: string
 	}>()
 
@@ -23,6 +24,8 @@
 		scene.background = new THREE.Color(backgroundColor)
 
 		if (props.isHdrEnabled && envMap) {
+			console.log('HDR IS ENABLED\n\n\n')
+			console.log('inteeee', props.intensity)
 			// If HDR is enabled, set the environment map
 			scene.environment = envMap
 			scene.backgroundRotation = new THREE.Euler(0, 0, 0)
@@ -80,4 +83,6 @@
 			envMap?.dispose()
 		}
 	})
+
+	onMount(() => {})
 </script>

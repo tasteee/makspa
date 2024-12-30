@@ -1,299 +1,227 @@
 import { Controls, Matrix4, Plane, Raycaster, Vector2, Vector3, MOUSE, TOUCH } from 'three'
 
-const _plane = new Plane()
-const _pointer = new Vector2()
-const _offset = new Vector3()
-const _diff = new Vector2()
-const _previousPointer = new Vector2()
-const _intersection = new Vector3()
-const _worldPosition = new Vector3()
-const _inverseMatrix = new Matrix4()
-const _up = new Vector3()
-const _right = new Vector3()
-let _selected = null
-let _hovered = null
-const _intersections = []
+const MOUSE_BUTTONS = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.PAN, RIGHT: MOUSE.RIGHT }
+
+const MOUSE_ACTIONS = {
+	0: MOUSE_BUTTONS.LEFT,
+	1: MOUSE_BUTTONS.MIDDLE,
+	2: MOUSE_BUTTONS.RIGHT
+}
 
 const STATE = {
 	NONE: -1,
 	PAN: 0,
-	ROTATE: 1
+	ROTATE: -1
 }
 
+const PLANE = new Plane()
+const POINTER = new Vector2()
+const OFFSET = new Vector3()
+const DIFF = new Vector2()
+const PREVIOUSPOINTER = new Vector2()
+const INTERSECTION = new Vector3()
+const WORLD_POSITION = new Vector3()
+const INVERSE_MATRIX = new Matrix4()
+const UP_VECTOR = new Vector3()
+const RIGHT_VECTOR = new Vector3()
+const INTERSECTIONS = []
+let selectedObject = null
+let hoveredObject = null
+
 class DragControls extends Controls {
-	dispatchRightClick = (event) => {
-		this.dispatchEvent({ event, type: 'rightclick' })
-	}
+	controlMode = 'move'
+	controlAxes = 'xz'
+	recursive = true
+	transformGroup = false
+	rotateSpeed = 0.05
+	raycaster = new Raycaster()
+	mouseButtons = MOUSE_BUTTONS
+	touches = { ONE: TOUCH.PAN }
 
 	constructor(objects, camera, domElement = null) {
 		super(camera, domElement)
 		this.objects = objects
-		this.recursive = true
-		this.transformGroup = false
-		this.rotateSpeed = 1
-		this.raycaster = new Raycaster()
-		this.mouseButtons = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.PAN, RIGHT: MOUSE.RIGHT }
-		this.touches = { ONE: TOUCH.PAN }
-		this._onPointerMove = onPointerMove.bind(this)
-		this._onPointerDown = onPointerDown.bind(this)
-		this._onPointerCancel = onPointerCancel.bind(this)
-		this._onContextMenu = onContextMenu.bind(this)
 		if (domElement !== null) this.connect()
 	}
 
 	connect() {
-		this.domElement.addEventListener('pointermove', this._onPointerMove)
-		this.domElement.addEventListener('pointerdown', this._onPointerDown)
-		this.domElement.addEventListener('pointerup', this._onPointerCancel)
-		this.domElement.addEventListener('pointerleave', this._onPointerCancel)
-		this.domElement.addEventListener('contextmenu', this._onContextMenu)
+		this.domElement.addEventListener('pointermove', this.onPointerMove)
+		this.domElement.addEventListener('pointerdown', this.onPointerDown)
+		this.domElement.addEventListener('pointerup', this.onPointerCancel)
+		this.domElement.addEventListener('pointerleave', this.onPointerCancel)
+		this.domElement.addEventListener('contextmenu', this.onContextMenu)
 		this.domElement.style.touchAction = 'none' // disable touch scroll
 	}
 
-	disconnect() {
-		this.domElement.removeEventListener('pointermove', this._onPointerMove)
-		this.domElement.removeEventListener('pointerdown', this._onPointerDown)
-		this.domElement.removeEventListener('pointerup', this._onPointerCancel)
-		this.domElement.removeEventListener('pointerleave', this._onPointerCancel)
-		this.domElement.removeEventListener('contextmenu', this._onContextMenu)
+	dispose() {
+		this.domElement.removeEventListener('pointermove', this.onPointerMove)
+		this.domElement.removeEventListener('pointerdown', this.onPointerDown)
+		this.domElement.removeEventListener('pointerup', this.onPointerCancel)
+		this.domElement.removeEventListener('pointerleave', this.onPointerCancel)
+		this.domElement.removeEventListener('contextmenu', this.onContextMenu)
 		this.domElement.style.touchAction = 'auto'
 		this.domElement.style.cursor = ''
 	}
 
-	dispose = this.disconnect
-
-	_updatePointer(event) {
+	updatePointer = (event) => {
 		const rect = this.domElement.getBoundingClientRect()
-		_pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
-		_pointer.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1
+		POINTER.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+		POINTER.y = (-(event.clientY - rect.top) / rect.height) * 2 + 1
 	}
 
-	_updateState(event) {
-		let action
+	updateState = (event) => {
+		const action = MOUSE_ACTIONS[event.button] || null
+		this.state = STATE.NONE
+		if (action === MOUSE.PAN) this.state = STATE.PAN
+		if (action === MOUSE.ROTATE) this.state = STATE.ROTATE
+		const shouldEnableAxisY = this.state === STATE.PAN
+		this.enableYAxisMovement = shouldEnableAxisY
+	}
 
-		if (event.pointerType === 'touch') {
-			action = this.touches.ONE
+	onPointerMove = (event) => {
+		// If right clicking, do nothing.
+		if (event.button === 2) return
+		if (!this.enabled) return
+
+		const camera = this.object
+		const domElement = this.domElement
+		const raycaster = this.raycaster
+
+		this.updatePointer(event)
+		raycaster.setFromCamera(POINTER, camera)
+
+		const isPan = this.state === STATE.PAN && this.controlMode === 'move'
+		const isRotate = this.controlMode === 'rotate'
+
+		if (selectedObject) {
+			if (isPan) {
+				if (raycaster.ray.intersectPlane(PLANE, INTERSECTION)) {
+					selectedObject.position.copy(INTERSECTION.sub(OFFSET).applyMatrix4(INVERSE_MATRIX))
+					// selectedObject.position.divideScalar(0.1).floor().multiplyScalar(0.25).addScalar(0.05)
+					// selectedObject.position.x = Math.floor(selectedObjecZt.position.x / 0.1) * 0.1 + 0.05
+					// selectedObject.position.z = Math.floor(selectedObject.position.z / 0.1) * 0.1 + 0.05
+					// selectedObject.position.y = 0.05
+				}
+			}
+
+			if (isRotate) {
+				DIFF.subVectors(POINTER, PREVIOUSPOINTER).multiplyScalar(this.rotateSpeed)
+			}
+
+			this.dispatchEvent({ event, type: 'drag', object: selectedObject })
+			PREVIOUSPOINTER.copy(POINTER)
 		} else {
-			switch (event.button) {
-				case 0:
-					action = this.mouseButtons.LEFT
-					break
+			const isMouse = event.pointerType === 'mouse'
+			const isPen = event.pointerType === 'pen'
 
-				case 1:
-					action = this.mouseButtons.MIDDLE
-					break
+			if (isMouse || isPen) {
+				INTERSECTIONS.length = 0
 
-				case 2:
-					// action = this.mouseButtons.RIGHT
-					break
+				raycaster.setFromCamera(POINTER, camera)
+				raycaster.intersectObjects(this.objects, this.recursive, INTERSECTIONS)
 
-				default:
-					action = null
+				if (INTERSECTIONS.length > 0) {
+					const object = INTERSECTIONS[0].object
+
+					PLANE.setFromNormalAndCoplanarPoint(
+						camera.getWorldDirection(PLANE.normal),
+						WORLD_POSITION.setFromMatrixPosition(object.matrixWorld)
+					)
+
+					if (hoveredObject !== object && hoveredObject !== null) {
+						this.dispatchEvent({ type: 'hoveroff', object: hoveredObject })
+
+						domElement.style.cursor = 'auto'
+						hoveredObject = null
+					}
+
+					if (hoveredObject !== object) {
+						this.dispatchEvent({ type: 'hoveron', object: object })
+
+						domElement.style.cursor = 'pointer'
+						hoveredObject = object
+					}
+				} else {
+					if (hoveredObject !== null) {
+						this.dispatchEvent({ type: 'hoveroff', object: hoveredObject })
+
+						domElement.style.cursor = 'auto'
+						hoveredObject = null
+					}
+				}
 			}
 		}
 
-		switch (action) {
-			case MOUSE.PAN:
-			case TOUCH.PAN:
-				this.state = STATE.PAN
-				break
-
-			case MOUSE.ROTATE:
-			case TOUCH.ROTATE:
-				this.state = STATE.ROTATE
-				break
-
-			default:
-				this.state = STATE.NONE
-		}
+		PREVIOUSPOINTER.copy(POINTER)
 	}
 
-	getRaycaster() {
-		console.warn('THREE.DragControls: getRaycaster() has been deprecated. Use controls.raycaster instead.') // @deprecated r169
-		return this.raycaster
-	}
-
-	setObjects(objects) {
-		console.warn('THREE.DragControls: setObjects() has been deprecated. Use controls.objects instead.') // @deprecated r169
-		this.objects = objects
-	}
-
-	getObjects() {
-		console.warn('THREE.DragControls: getObjects() has been deprecated. Use controls.objects instead.') // @deprecated r169
-		return this.objects
-	}
-
-	activate() {
-		console.warn('THREE.DragControls: activate() has been renamed to connect().') // @deprecated r169
-		this.connect()
-	}
-
-	deactivate() {
-		console.warn('THREE.DragControls: deactivate() has been renamed to disconnect().') // @deprecated r169
-		this.disconnect()
-	}
-
-	set mode(value) {
-		console.warn(
-			'THREE.DragControls: The .mode property has been removed. Define the type of transformation via the .mouseButtons or .touches properties.'
-		) // @deprecated r169
-	}
-
-	get mode() {
-		console.warn(
-			'THREE.DragControls: The .mode property has been removed. Define the type of transformation via the .mouseButtons or .touches properties.'
-		) // @deprecated r169
-	}
-}
-
-function onPointerMove(event) {
-	if (event.button === 2) return
-	if (!this.enabled) return
-
-	const camera = this.object
-	const domElement = this.domElement
-	const raycaster = this.raycaster
-
-	this._updatePointer(event)
-	raycaster.setFromCamera(_pointer, camera)
-
-	const isPan = this.state === STATE.PAN
-	const isRotate = this.state === STATE.ROTATE
-
-	if (_selected) {
-		if (isPan) {
-			if (raycaster.ray.intersectPlane(_plane, _intersection)) {
-				_selected.position.copy(_intersection.sub(_offset).applyMatrix4(_inverseMatrix))
-				// _selected.position.divideScalar(0.1).floor().multiplyScalar(0.25).addScalar(0.05)
-				// _selected.position.x = Math.floor(_selected.position.x / 0.1) * 0.1 + 0.05
-				// _selected.position.z = Math.floor(_selected.position.z / 0.1) * 0.1 + 0.05
-				// _selected.position.y = 0.05
-			}
+	onPointerDown = (event) => {
+		if (event.button === 2) {
+			// return this.dispatchRightClick(event, this.dispatchEvent)
+			return
 		}
 
-		if (isRotate) {
-			// _diff.subVectors(_pointer, _previousPointer).multiplyScalar(this.rotateSpeed)
-			// console.log({ _diff, _previousPointer, _pointer })
-			// if (event.altKey) {
-			// 	// When Alt is pressed, rotate around X axis only
-			// 	_selected.rotateOnWorldAxis(_right, -_diff.y)
-			// } else {
-			// 	// Default behavior: rotate around Y axis only
-			// 	_selected.rotateOnWorldAxis(_up, _diff.x)
-			// }
-		}
+		const camera = this.object
+		const domElement = this.domElement
+		const raycaster = this.raycaster
 
-		this.dispatchEvent({ event, type: 'drag', object: _selected })
-		_previousPointer.copy(_pointer)
-	} else {
-		// hover support
+		if (this.enabled === false) return
 
-		if (event.pointerType === 'mouse' || event.pointerType === 'pen') {
-			_intersections.length = 0
+		this.updatePointer(event)
+		this.updateState(event)
 
-			raycaster.setFromCamera(_pointer, camera)
-			raycaster.intersectObjects(this.objects, this.recursive, _intersections)
+		INTERSECTIONS.length = 0
 
-			if (_intersections.length > 0) {
-				const object = _intersections[0].object
+		raycaster.setFromCamera(POINTER, camera)
+		raycaster.intersectObjects(this.objects, this.recursive, INTERSECTIONS)
 
-				_plane.setFromNormalAndCoplanarPoint(
-					camera.getWorldDirection(_plane.normal),
-					_worldPosition.setFromMatrixPosition(object.matrixWorld)
-				)
-
-				if (_hovered !== object && _hovered !== null) {
-					this.dispatchEvent({ type: 'hoveroff', object: _hovered })
-
-					domElement.style.cursor = 'auto'
-					_hovered = null
-				}
-
-				if (_hovered !== object) {
-					this.dispatchEvent({ type: 'hoveron', object: object })
-
-					domElement.style.cursor = 'pointer'
-					_hovered = object
-				}
+		if (INTERSECTIONS.length > 0) {
+			if (this.transformGroup === true) {
+				// look for the outermost group in the object's upper hier = findGroup(INTERSECTIONS[0].object)
 			} else {
-				if (_hovered !== null) {
-					this.dispatchEvent({ type: 'hoveroff', object: _hovered })
+				selectedObject = INTERSECTIONS[0].object
+			}
 
-					domElement.style.cursor = 'auto'
-					_hovered = null
+			PLANE.setFromNormalAndCoplanarPoint(
+				camera.getWorldDirection(PLANE.normal),
+				WORLD_POSITION.setFromMatrixPosition(selectedObject.matrixWorld)
+			)
+
+			if (raycaster.ray.intersectPlane(PLANE, INTERSECTION)) {
+				if (this.state === STATE.PAN) {
+					INVERSE_MATRIX.copy(selectedObject.parent.matrixWorld).invert()
+					OFFSET.copy(INTERSECTION).sub(WORLD_POSITION.setFromMatrixPosition(selectedObject.matrixWorld))
+				} else if (this.state === STATE.ROTATE) {
+					// the controls only support Y+ up
+					UP_VECTOR.set(0, 1, 0).applyQuaternion(camera.quaternion).normalize()
+					RIGHT_VECTOR.set(1, 0, 0).applyQuaternion(camera.quaternion).normalize()
 				}
 			}
-		}
-	}
 
-	_previousPointer.copy(_pointer)
-}
+			domElement.style.cursor = 'move'
 
-function onPointerDown(event) {
-	if (event.button === 2) {
-		return this.dispatchRightClick(event, this.dispatchEvent)
-	}
-
-	const camera = this.object
-	const domElement = this.domElement
-	const raycaster = this.raycaster
-
-	if (this.enabled === false) return
-
-	this._updatePointer(event)
-	this._updateState(event)
-
-	_intersections.length = 0
-
-	raycaster.setFromCamera(_pointer, camera)
-	raycaster.intersectObjects(this.objects, this.recursive, _intersections)
-
-	if (_intersections.length > 0) {
-		if (this.transformGroup === true) {
-			// look for the outermost group in the object's upper hier = findGroup(_intersections[0].object)
-		} else {
-			_selected = _intersections[0].object
+			this.dispatchEvent({ event, type: 'dragstart', object: selectedObject })
 		}
 
-		_plane.setFromNormalAndCoplanarPoint(
-			camera.getWorldDirection(_plane.normal),
-			_worldPosition.setFromMatrixPosition(_selected.matrixWorld)
-		)
+		PREVIOUSPOINTER.copy(POINTER)
+	}
 
-		if (raycaster.ray.intersectPlane(_plane, _intersection)) {
-			if (this.state === STATE.PAN) {
-				_inverseMatrix.copy(_selected.parent.matrixWorld).invert()
-				_offset.copy(_intersection).sub(_worldPosition.setFromMatrixPosition(_selected.matrixWorld))
-			} else if (this.state === STATE.ROTATE) {
-				// the controls only support Y+ up
-				_up.set(0, 1, 0).applyQuaternion(camera.quaternion).normalize()
-				_right.set(1, 0, 0).applyQuaternion(camera.quaternion).normalize()
-			}
+	onPointerCancel = () => {
+		if (this.enabled === false) return
+
+		if (selectedObject) {
+			this.dispatchEvent({ type: 'dragend', object: selectedObject })
+			selectedObject = null
 		}
 
-		domElement.style.cursor = 'move'
-
-		this.dispatchEvent({ event, type: 'dragstart', object: _selected })
+		this.domElement.style.cursor = hoveredObject ? 'pointer' : 'auto'
+		this.state = STATE.NONE
 	}
 
-	_previousPointer.copy(_pointer)
-}
-
-function onPointerCancel() {
-	if (this.enabled === false) return
-
-	if (_selected) {
-		this.dispatchEvent({ type: 'dragend', object: _selected })
-		_selected = null
+	onContextMenu = (event) => {
+		if (this.enabled === false) return
+		event.preventDefault()
 	}
-
-	this.domElement.style.cursor = _hovered ? 'pointer' : 'auto'
-	this.state = STATE.NONE
-}
-
-function onContextMenu(event) {
-	if (this.enabled === false) return
-	event.preventDefault()
 }
 
 function findGroup(obj, group = null) {

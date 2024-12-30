@@ -15,14 +15,12 @@ class InputStore {
 	pressedKeys = $state([])
 	isCapsLocked = $state(false)
 	isMouseDown = $state(false)
-
 	isPressedW = $derived.by(() => this.pressedKeys.includes('w'))
 	isPressedS = $derived.by(() => this.pressedKeys.includes('s'))
 	isPressedA = $derived.by(() => this.pressedKeys.includes('a'))
 	isPressedD = $derived.by(() => this.pressedKeys.includes('d'))
 	isPressedQ = $derived.by(() => this.pressedKeys.includes('q'))
 	isPressedE = $derived.by(() => this.pressedKeys.includes('e'))
-
 	isPressedSpace = $derived.by(() => this.pressedKeys.includes('space'))
 	isPressedShift = $derived.by(() => this.pressedKeys.includes('shift'))
 	isPressedControl = $derived.by(() => this.pressedKeys.includes('control'))
@@ -30,23 +28,20 @@ class InputStore {
 	isPressedCapsLock = $derived.by(() => this.pressedKeys.includes('capslock'))
 	isPressedDelete = $derived.by(() => this.pressedKeys.includes('delete'))
 	isPressedEscape = $derived.by(() => this.pressedKeys.includes('escape'))
-
 	isPressedArrowUp = $derived.by(() => this.pressedKeys.includes('arrowup'))
 	isPressedArrowDown = $derived.by(() => this.pressedKeys.includes('arrowdown'))
 	isPressedArrowLeft = $derived.by(() => this.pressedKeys.includes('arrowleft'))
 	isPressedArrowRight = $derived.by(() => this.pressedKeys.includes('arrowright'))
-
-	isPressedDigit1 = $derived.by(() => this.pressedKeys.includes('digit1'))
-	isPressedDigit2 = $derived.by(() => this.pressedKeys.includes('digit2'))
-	isPressedDigit3 = $derived.by(() => this.pressedKeys.includes('digit3'))
-	isPressedDigit4 = $derived.by(() => this.pressedKeys.includes('digit4'))
-	isPressedDigit5 = $derived.by(() => this.pressedKeys.includes('digit5'))
-	isPressedDigit6 = $derived.by(() => this.pressedKeys.includes('digit6'))
-	isPressedDigit7 = $derived.by(() => this.pressedKeys.includes('digit7'))
-	isPressedDigit8 = $derived.by(() => this.pressedKeys.includes('digit8'))
-	isPressedDigit9 = $derived.by(() => this.pressedKeys.includes('digit9'))
-	isPressedDigit0 = $derived.by(() => this.pressedKeys.includes('digit0'))
-
+	isPressedDigit1 = $derived.by(() => this.pressedKeys.includes('1'))
+	isPressedDigit2 = $derived.by(() => this.pressedKeys.includes('2'))
+	isPressedDigit3 = $derived.by(() => this.pressedKeys.includes('3'))
+	isPressedDigit4 = $derived.by(() => this.pressedKeys.includes('4'))
+	isPressedDigit5 = $derived.by(() => this.pressedKeys.includes('5'))
+	isPressedDigit6 = $derived.by(() => this.pressedKeys.includes('6'))
+	isPressedDigit7 = $derived.by(() => this.pressedKeys.includes('7'))
+	isPressedDigit8 = $derived.by(() => this.pressedKeys.includes('8'))
+	isPressedDigit9 = $derived.by(() => this.pressedKeys.includes('9'))
+	isPressedDigit0 = $derived.by(() => this.pressedKeys.includes('0'))
 	isPressedF1 = $derived.by(() => this.pressedKeys.includes('f1'))
 	isPressedF2 = $derived.by(() => this.pressedKeys.includes('f2'))
 	isPressedF3 = $derived.by(() => this.pressedKeys.includes('f3'))
@@ -59,7 +54,8 @@ class InputStore {
 	isPressedF10 = $derived.by(() => this.pressedKeys.includes('f10'))
 	isPressedF11 = $derived.by(() => this.pressedKeys.includes('f11'))
 	isPressedF12 = $derived.by(() => this.pressedKeys.includes('f12'))
-
+	isBacktickPressed = $derived.by(() => this.pressedKeys.includes('`'))
+	isBackspacePressed = $derived.by(() => this.pressedKeys.includes('backspace'))
 	isArrowPressed = $derived.by(() => u.array.includesSome(this.pressedKeys, ARROW_KEYS))
 	isModifierPressed = $derived.by(() => u.array.includesSome(this.pressedKeys, MODIFIER_KEYS))
 	isDigitPressed = $derived.by(() => u.array.includesSome(this.pressedKeys, DIGIT_KEYS))
@@ -78,10 +74,38 @@ class InputStore {
 
 	handleKeyDown = this.handleKey(true)
 	handleKeyUp = this.handleKey(false)
+	recentMouseHistoryY: number[] = []
 
 	handleMouseMove = (event: MouseEvent) => {
 		this.mouseX = event.clientX
 		this.mouseY = event.clientY
+		this.recentMouseHistoryY = [...this.recentMouseHistoryY, event.clientY].slice(-15)
+	}
+
+	determineMouseDirectionY = (): 'up' | 'down' | 'neutral' => {
+		if (this.recentMouseHistoryY.length < 2) return 'neutral'
+
+		let upCount = 0
+		let downCount = 0
+
+		for (let i = 1; i < this.recentMouseHistoryY.length; i++) {
+			const currentY = this.recentMouseHistoryY[i]
+			const previousY = this.recentMouseHistoryY[i - 1]
+
+			if (currentY < previousY) {
+				upCount++
+			} else if (currentY > previousY) {
+				downCount++
+			}
+		}
+
+		if (upCount > downCount) {
+			return 'up'
+		} else if (downCount > upCount) {
+			return 'down'
+		} else {
+			return 'neutral'
+		}
 	}
 
 	handleMouseDown = () => {

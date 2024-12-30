@@ -5,6 +5,8 @@
 	import { DragControls } from './DragController.js'
 	import stores from '~/stores'
 	import debounce from 'just-debounce'
+	import mainStore from '~/stores/main-store.svelte.js'
+	import inputStore from '~/stores/input.store.svelte.js'
 
 	type MaybeVector2 = THREE.Vector2 | undefined
 	type ObjectEventT = { object: THREE.Object3D }
@@ -16,8 +18,6 @@
 	type HoverEndEventT = EventWithObjectT<'hoveroff'>
 
 	type DragControlsPropsT = {
-		isEnabled?: boolean
-		axes: string
 		target?: THREE.Object3D
 		dragLimits?: [MaybeVector2, MaybeVector2, MaybeVector2]
 		onHoverStart?: (event: HoverStartEventT) => void
@@ -29,24 +29,21 @@
 		onRightClick?: (event: MouseEvent) => void
 	}
 
-	let isCapsLocked = $derived(stores.input.isCapsLocked)
-	let snapAmount = $derived(isCapsLocked ? 0.0005 : 0.01)
-
 	const { camera, renderer, invalidate } = useThrelte()
 	let props: DragControlsPropsT = $props()
-	let isAxisEnabledX = $derived(props.axes.includes('x'))
-	let isAxisEnabledY = $derived(props.axes.includes('y'))
-	let isAxisEnabledZ = $derived(props.axes.includes('z'))
+	let isAxisEnabledX = $derived(mainStore.dragControlsAxes.includes('x'))
+	let isAxisEnabledY = $derived(mainStore.dragControlsAxes.includes('y'))
+	let isAxisEnabledZ = $derived(mainStore.dragControlsAxes.includes('z'))
 	let previousMousePosition = new THREE.Vector2()
 	let controls = $state<DragControls>(null!)
-	let draggableObjects = $state<THREE.Object3D[]>([])
 	let previousPosition = new THREE.Vector3()
 	let delta = new THREE.Vector3()
-	let isEnabled = $derived(props.isEnabled)
 
-	// Track initial drag state
+	// Track initial states
 	let initialIntersectPoint = new THREE.Vector3()
 	let initialObjectOffset = new THREE.Vector3()
+	let initialScale = new THREE.Vector3()
+	let initialRotation = new THREE.Euler()
 	let newPosition = new THREE.Vector3()
 
 	const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0)) // XZ plane
@@ -56,8 +53,17 @@
 
 	$effect(() => {
 		if (!controls) return
-		controls.enabled = !!isEnabled
+		controls.enabled = true
+		controls.controlAxes = mainStore.dragControlsAxes
+		controls.controlMode = mainStore.dragControlsMode
 	})
+
+	const getMouseDelta = () => {
+		return {
+			x: stores.input.mouseX - previousMousePosition.x,
+			y: stores.input.mouseY - previousMousePosition.y
+		}
+	}
 
 	const applyAxisConstraints = (position: THREE.Vector3): THREE.Vector3 => {
 		const constrainedPosition = position.clone()
@@ -78,6 +84,73 @@
 		return intersectPoint
 	}
 
+	const clampNumber = ({ min, max, value }) => {
+		return Math.max(min, Math.min(max, value))
+	}
+
+	// Clamps the x y and z positions to a min and max value.
+	const clampPosition = (position: THREE.Vector3): THREE.Vector3 => {
+		const dragLimits = mainStore.dragPositionLimits
+		position.x = clampNumber({ ...dragLimits.x, value: position.x })
+		position.y = clampNumber({ ...dragLimits.y, value: position.y })
+		position.z = clampNumber({ ...dragLimits.z, value: position.z })
+		return position
+	}
+
+	const handleLift = (event: DragEventT) => {
+		const snapAmount = mainStore.snapAmount
+		const constrainedPosition = applyAxisConstraints(event.object.position)
+		const limitedPosition = clampPosition(constrainedPosition)
+		limitedPosition.y = Math.floor(limitedPosition.y / snapAmount) * snapAmount
+		event.object.position.copy(limitedPosition)
+		delta.subVectors(limitedPosition, previousPosition)
+		previousPosition.copy(limitedPosition)
+		props.onDrag?.(event, delta)
+		invalidate()
+	}
+
+	const handleMove = (event: DragEventT) => {
+		const snapAmount = mainStore.snapAmount
+
+		const intersectionPoint = getIntersectionPoint()
+		newPosition.copy(intersectionPoint).add(initialObjectOffset)
+		newPosition.y = previousPosition.y
+		const constrainedPosition = applyAxisConstraints(newPosition)
+		const limitedPosition = clampPosition(constrainedPosition)
+		limitedPosition.z = Math.floor(limitedPosition.z / snapAmount) * snapAmount
+		limitedPosition.x = Math.floor(limitedPosition.x / snapAmount) * snapAmount
+		event.object.position.copy(limitedPosition)
+		delta.subVectors(limitedPosition, previousPosition)
+		previousPosition.copy(limitedPosition)
+
+		props.onDrag?.(event, delta)
+		invalidate()
+	}
+
+	const handleScale = (event: DragEventT) => {
+		const mouseDelta = getMouseDelta()
+		const scaleFactor = 1 - mouseDelta.y * 0.01
+
+		if (isAxisEnabledX) event.object.scale.x *= scaleFactor
+		if (isAxisEnabledY) event.object.scale.y *= scaleFactor
+		if (isAxisEnabledZ) event.object.scale.z *= scaleFactor
+
+		previousMousePosition.set(stores.input.mouseX, stores.input.mouseY)
+		props.onDrag?.(event, delta)
+		invalidate()
+	}
+
+	const handleRotate = (event: DragEventT) => {
+		const mouseDelta = getMouseDelta()
+		const rotationFactor = mouseDelta.x * 0.001
+		if (isAxisEnabledX) event.object.rotation.x += rotationFactor
+		if (isAxisEnabledY) event.object.rotation.y += rotationFactor
+		if (isAxisEnabledZ) event.object.rotation.z += rotationFactor
+		previousMousePosition.set(stores.input.mouseX, stores.input.mouseY)
+		props.onDrag?.(event, delta)
+		invalidate()
+	}
+
 	const onHoverStart = (event: HoverStartEventT) => {
 		previousMousePosition.set(stores.input.mouseX, stores.input.mouseY)
 		props.onHoverStart?.(event)
@@ -93,6 +166,8 @@
 		initialIntersectPoint.copy(getIntersectionPoint())
 		initialObjectOffset.copy(event.object.position).sub(initialIntersectPoint)
 		previousPosition.copy(event.object.position)
+		initialScale.copy(event.object.scale)
+		initialRotation.copy(event.object.rotation)
 		previousMousePosition.set(stores.input.mouseX, stores.input.mouseY)
 		props.onDragStart?.(event)
 		invalidate()
@@ -103,49 +178,16 @@
 		invalidate()
 	}
 
-	const getLimitedPosition = (position: THREE.Vector3): THREE.Vector3 => {
-		if (!props.dragLimits) return position
-		const [xLimits, yLimits, zLimits] = props.dragLimits
-		if (xLimits) position.x = Math.max(xLimits[0]!, Math.min(xLimits[1]!, position.x))
-		if (yLimits) position.y = Math.max(yLimits[0]!, Math.min(yLimits[1]!, position.y))
-		if (zLimits) position.z = Math.max(zLimits[0]!, Math.min(zLimits[1]!, position.z))
-		return position
-	}
-
-	const onDragY = (event: DragEventT) => {
-		const constrainedPosition = applyAxisConstraints(event.object.position)
-		const limitedPosition = getLimitedPosition(constrainedPosition)
-		limitedPosition.y = Math.floor(limitedPosition.y / snapAmount) * snapAmount
-
-		event.object.position.copy(limitedPosition)
-		delta.subVectors(limitedPosition, previousPosition)
-		previousPosition.copy(limitedPosition)
-		props.onDrag?.(event, delta)
-		invalidate()
-	}
-
 	const onDrag = (event: DragEventT) => {
-		previousMousePosition.set(stores.input.mouseX, stores.input.mouseY)
-		if (isAxisEnabledY) return onDragY(event)
-		onDragXZ(event)
-	}
+		const isMove = mainStore.dragControlsMode === 'move'
+		const isScale = mainStore.dragControlsMode === 'scale'
+		const isRotate = mainStore.dragControlsMode === 'rotate'
+		const isAxisY = mainStore.dragControlsAxes.includes('y')
 
-	const onDragXZ = (event: DragEventT) => {
-		const intersectionPoint = getIntersectionPoint()
-		newPosition.copy(intersectionPoint).add(initialObjectOffset)
-		newPosition.y = previousPosition.y
-
-		const constrainedPosition = applyAxisConstraints(newPosition)
-		const limitedPosition = getLimitedPosition(constrainedPosition)
-		limitedPosition.z = Math.floor(limitedPosition.z / snapAmount) * snapAmount
-		limitedPosition.x = Math.floor(limitedPosition.x / snapAmount) * snapAmount
-
-		event.object.position.copy(limitedPosition)
-		delta.subVectors(limitedPosition, previousPosition)
-		previousPosition.copy(limitedPosition)
-
-		props.onDrag?.(event, delta)
-		invalidate()
+		if (isMove && isAxisY) handleLift(event)
+		if (isMove && !isAxisY) handleMove(event)
+		if (isScale) handleScale(event)
+		if (isRotate) handleRotate(event)
 	}
 
 	const onClickRight = debounce((event) => {
@@ -153,21 +195,22 @@
 	}, 100)
 
 	onMount(() => {
-		if (props.target) draggableObjects.push(props.target)
-		controls = new DragControls(draggableObjects, camera.current, renderer.domElement)
+		controls = new DragControls([props.target], camera.current, renderer.domElement)
 
 		renderer.domElement.addEventListener('contextmenu', onClickRight)
-
 		controls.addEventListener('hoveron', onHoverStart)
 		controls.addEventListener('hoveroff', onHoverEnd)
 		controls.addEventListener('dragstart', onDragStart)
-		// controls.addEventListener('rightclick', onRightClick)
 		controls.addEventListener('dragend', onDragEnd)
 		controls.addEventListener('drag', onDrag)
+		controls.enabled = true
+
 		props.onCreate?.(controls)
 	})
 
 	onDestroy(() => {
-		controls?.dispose()
+		controls.enabled = false
+		controls.dispose()
+		renderer.domElement.removeEventListener('contextmenu', onClickRight)
 	})
 </script>

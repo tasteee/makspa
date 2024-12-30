@@ -28,11 +28,16 @@
 	onDestroy(() => {
 		window.removeEventListener('keydown', store.handlers.keyDown)
 	})
+
+	const getMeshFromGltfData = (data) => {
+		if (data.scene) return data.scene.children[0]
+		if (data.v) return data.v.scene.children[0]
+	}
 </script>
 
 {#await gltf then data}
 	<T.Mesh
-		is={data.scene.children[0]}
+		is={getMeshFromGltfData(data)}
 		castShadow
 		receiveShadow
 		bind:ref={store.mesh}

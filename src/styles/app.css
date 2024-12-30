@@ -21,6 +21,10 @@
 }
 
 canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw !important;
 	background: #010101;
 	height: 100vh !important;
 }
@@ -165,4 +169,13 @@ input {
 	/* style the field as normal */
 	background-color: transparent;
 	color: CanvasText;
+}
+
+#itemControlsContainer {
+	height: 200px;
+	position: absolute;
+	width: 100vw;
+	bottom: 0px;
+	z-index: 1000;
+	left: 0px;
 }

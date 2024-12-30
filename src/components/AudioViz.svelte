@@ -24,6 +24,7 @@
 			width: 100vw;
 			height: 80px;
 			display: flex;
+			display: none;
 			justify-content: space-evenly;
 			align-items: flex-end;
 			/* background: linear-gradient(to top, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0)); */

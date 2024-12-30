@@ -1,5 +1,5 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
-import AutoImport from 'unplugin-auto-import/vite'
+// import AutoImport from 'unplugin-auto-import/vite'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vitest/config'

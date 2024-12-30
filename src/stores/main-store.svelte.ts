@@ -5,12 +5,26 @@ import { nanoid } from 'nanoid'
 import camera from './camera.store.svelte'
 import auth from './auth.store.svelte'
 import debounce from 'just-debounce'
+import { radiansToPercentage } from '~/modules/numbers'
+import inputStore from './input.store.svelte'
+
+const handleKeyPress = (key: string, handler: any) => {
+	const outerHandler = (event) => {
+		if (event.repeat) return
+		console.log('key', key, event.key)
+		if (event.key.toLowerCase() === key.toLowerCase()) handler()
+	}
+
+	window.addEventListener('keypress', outerHandler)
+	return () => window.removeEventListener('keypress', outerHandler)
+}
 
 class MainStore {
 	artist = $state(auth.authData)
 	space = $state<SpaceT>({} as any)
 	meshes = {}
 
+	snapAmount = $state(0.05)
 	isDragging = $state(false)
 	selectedItemId = $state(null)
 	hoveredItemId = $state(null)
@@ -21,19 +35,53 @@ class MainStore {
 	selectedItem = $derived.by(() => this.getSelectedItem())
 	isItemSelected = $derived(() => !!this.selectedItemId)
 
+	dragControlsAxes = $state('xz')
+	dragControlsMode = $state('move')
+
+	dragPositionLimits = $derived({
+		x: { min: -24, max: 24 },
+		y: { min: 0, max: 12 },
+		z: { min: -24, max: 24 }
+	})
+
+	setUpMesh = (options) => {
+		if (options.item.hasBeenSetUp) return
+		const adjustment = u.three.getNegativeAdjustmentToZeroY(options.mesh)
+		const newPositionY = options.item.positionY + adjustment
+		const rotationDegrees = u.three.getRotationYDegrees(options.mesh)
+		const correctedRotation = u.three.getCorrectedAlignmentRotationY(rotationDegrees)
+		const updates = { id: options.item.id, rotationY: correctedRotation, positionY: newPositionY }
+		options.item.hasBeenSetUp = true
+		mainStore.updateItem(updates)
+	}
+
 	syncSpaceWithDatabase = debounce(() => {
 		api.updateSpace(this.space)
-	}, 500)
+	}, 1599)
 
 	updateSpace = (updates: Partial<SpaceT>) => {
 		this.space = { ...this.space, ...updates }
 		this.syncSpaceWithDatabase()
 	}
 
+	getItemRotationPercentage = (value: number) => {
+		const percentageValue = radiansToPercentage(value)
+		const step = 5
+		const final = Math.round(percentageValue / step) * step
+		console.log(value, '-->', final)
+		return final
+	}
+
 	loadSpace = async (spaceId: string) => {
 		loaders.start('space')
-		const [error, space] = await api.getSpaceById(spaceId)
+		const [, space] = await api.getSpaceById(spaceId)
 		this.space = space as any
+
+		for (const key in space.items) {
+			const item = space.items[key]
+			item.isScaleLinked = true
+		}
+
 		loaders.stop('space')
 	}
 
@@ -56,7 +104,7 @@ class MainStore {
 		this.clickedItemId = null
 	}
 
-	getItemById = (id: string) => this.space?.items[id]
+	getItemById = (id: string) => this.space?.items?.[id]
 	saveMesh = (id: string, mesh: any) => (this.meshes[id] = mesh)
 	getMesh = (id: string) => this.meshes[id]
 

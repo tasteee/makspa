@@ -26,7 +26,7 @@
 			})
 	})
 
-	const LINE_WIDTH = 0.005
+	const LINE_WIDTH = 0.0025
 </script>
 
 {#if bottomCorners.length}

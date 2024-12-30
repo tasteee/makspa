@@ -1,6 +1,4 @@
 <script lang="ts">
-	import * as helpers from '~/modules/numbers'
-	import SheIcon from './SheIcon.svelte'
 	import classcat from 'classcat'
 	import audioStore from '~/stores/audio-store.svelte'
 	import debounce from 'just-debounce'
@@ -22,6 +20,8 @@
 		hoverClipId?: string
 	}
 
+	let intervalId: any = null
+	const CHANGE_INTERVAL = 200 // 5 times per second = 1000ms / 5 = 200ms
 	let props: PropsT = $props()
 
 	let size = $derived(props.size ?? 'medium')
@@ -52,6 +52,38 @@
 	}, 100)
 
 	let classes = $derived(classcat([props.class, type, size, isDisabled]))
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (type !== 'number' || (event.key !== 'ArrowUp' && event.key !== 'ArrowDown')) {
+			return
+		}
+
+		event.preventDefault()
+
+		const input = event.target as HTMLInputElement
+		const step = Number(input.step) || 1
+		const direction = event.key === 'ArrowUp' ? 1 : -1
+
+		function updateValue() {
+			const currentValue = Number(input.value) || 0
+			const newValue = formatNumber(currentValue + step * direction)
+			// input.value = String(newValue)
+			props.onChange?.(newValue)
+		}
+
+		updateValue() // Immediate update
+
+		if (intervalId === null) {
+			intervalId = setInterval(updateValue, CHANGE_INTERVAL)
+		}
+	}
+
+	function handleKeyUp() {
+		if (intervalId !== null) {
+			clearInterval(intervalId)
+			intervalId = null
+		}
+	}
 </script>
 
 {#if type === 'slider'}
@@ -96,6 +128,8 @@
 				disabled={props.isDisabled}
 				oninput={handleInput}
 				onchange={handleInput}
+				onkeydown={handleKeyDown}
+				onkeyup={handleKeyUp}
 			/>
 		{/if}
 		{#if shouldShowRangeValue}
@@ -115,6 +149,7 @@
 
 <style>
 	.SheInput {
+		white-space: nowrap;
 		display: inline-flex;
 		align-items: center;
 		gap: 12px;
@@ -159,6 +194,8 @@
 	}
 
 	.SheInput input {
+		text-align: right;
+		min-width: 12px;
 		height: calc(100% - 1px) !important;
 	}
 

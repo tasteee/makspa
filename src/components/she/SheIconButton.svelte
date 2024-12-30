@@ -9,6 +9,7 @@
 		size?: 'small' | 'medium' | 'large' | string
 		isDisabled?: boolean
 		isActive?: boolean
+		iconColor?: string
 		onClick?: () => void
 		iconSide?: 'left' | 'right' | string
 		library?: string
@@ -16,9 +17,17 @@
 		hoverClipId?: string
 	}
 
+	const iconSizes = {
+		small: 'xsmall',
+		medium: 'small',
+		large: 'medium',
+		xlarge: 'large'
+	}
+
 	let props: PropsT = $props()
 	let hoverClipId = $derived(props.hoverClipId || 'buttonHover')
 
+	let iconSize = $derived(iconSizes[props.size])
 	let activeClass = props.isActive ? 'isActive' : ''
 	let sizeClass = props.size || 'medium'
 	let library = $derived(props.library || 'pixelarticons')
@@ -33,7 +42,7 @@
 	onpointerenter={audioStore.playClipHandler(hoverClipId)}
 	onpointerleave={audioStore.stopClipHandler(hoverClipId)}
 >
-	<SheIcon size={props.size} {library} icon={props.icon} class="SheIconButtonIcon" />
+	<SheIcon color={props.iconColor} size={iconSize} {library} icon={props.icon} class="SheIconButtonIcon" />
 </button>
 
 <style>
@@ -71,9 +80,9 @@
 			}
 
 			&.large {
-				height: 40px;
-				width: 40px;
-				min-width: 40px;
+				height: 36px;
+				width: 36px;
+				min-width: 36px;
 				padding: 0px;
 			}
 

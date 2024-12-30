@@ -7,6 +7,11 @@
 
 	const handleGroundClick = (event: MouseEvent) => {
 		event.stopPropagation()
+		const isFloorClick = event.eventObject.name === 'floor'
+		const isGroundClick = event.eventObject.name === 'ground'
+		console.log({ isFloorClick, isGroundClick })
+		if (!isFloorClick && !isGroundClick) return
+		console.log('Ground clicked', event)
 		const shouldDeselect = !!mainStore.selectedItemId
 		if (shouldDeselect) mainStore.deselectItem()
 	}
@@ -34,9 +39,10 @@
 	})
 </script>
 
-<T.Group position={[0.5, -0.0005, 0.5]} bind:ref={group}>
+<T.Group position={[0.5, -0.0005, 0.5]} bind:ref={group} name="ground">
 	{#if space.isGridVisible}
 		<Grid
+			receiveShadow
 			type="grid"
 			gridSize={[space.sizeX, space.sizeZ]}
 			cellSize={space.gridCellSize}
@@ -57,9 +63,9 @@
 	{/if}
 
 	{#if space.isFloorVisible}
-		<T.Group position={[0, -0.0255, 0]} receiveShadow castShadow bind:ref={floorGroup} ondblclick={handleGroundClick}>
+		<T.Group name="floor" position={[0, -0.03, 0]} receiveShadow bind:ref={floorGroup} ondblclick={handleGroundClick}>
 			<AutoColliders shape={'cuboid'}>
-				<T.Mesh bind:ref={floor}>
+				<T.Mesh bind:ref={floor} receiveShadow>
 					<T.BoxGeometry args={[space.sizeX, 0.05, space.sizeZ]} />
 					<T.MeshStandardMaterial color={space.floorColor2} opacity={space.floorOpacity2 / 100} transparent />
 				</T.Mesh>
