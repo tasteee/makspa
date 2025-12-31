@@ -23,3 +23,7 @@ vite.config.ts.timestamp-*
 
 static/models
 static/thumbnails
+
+# PocketBase
+CHANGELOG.md
+LICENSE.md

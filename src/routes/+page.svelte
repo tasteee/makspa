@@ -12,6 +12,7 @@
 	import ShePanelRow from '~/components/she/ShePanelRow.svelte'
 	import SheFlex from '~/components/she/SheFlex.svelte'
 	import auth from '~/stores/auth.store.svelte'
+	import '../fillPocketDb'
 
 	let username = $state('')
 	let password = $state('')
